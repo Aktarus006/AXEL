@@ -1,0 +1,77 @@
+<?php
+
+namespace App\Enums;
+
+enum Material: string
+{
+    case or = "Or";
+    case or_rose = "Or Rose";
+    case or_jaune = "Or Jaune";
+    case or_blanc = "Or Blanc";
+    case or_vert = "Or Vert";
+    case argent = "Argent";
+    case platine = "Platine";
+    case diamant = "Diamant";
+    case rubis = "Rubis";
+    case saphir = "Saphir";
+    case emeraude = "Emeraude";
+    case perle = "Perle";
+    case amethyste = "Améthyste";
+    case topaze = "Topaze";
+    case quartz = "Quartz";
+    case onyx = "Onyx";
+    case opale = "Opale";
+    case turquoise = "Turquoise";
+    case lapis_lazuli = "Lapis Lazuli";
+    case malachite = "Malachite";
+    case agate = "Agate";
+    case corail = "Corail";
+    case nacre = "Nacre";
+    case ivoire = "Ivoire";
+    case bois = "Bois";
+    case cuir = "Cuir";
+    case tissu = "Tissu";
+    case verre = "Verre";
+    case aigue_marine = "Aigue-Marine";
+    case tourmaline = "Tourmaline";
+    case citrine = "Citrine";
+    case peridot = "Péridot";
+    case spinelle = "Spinelle";
+    case zircon = "Zircon";
+    case pierre_de_lune = "Pierre de Lune";
+    case labradorite = "Labradorite";
+    case obsidienne = "Obsidienne";
+    case jaspe = "Jaspe";
+    case rhodonite = "Rhodonite";
+    case rhodochrosite = "Rhodochrosite";
+    case rhodolite = "Rhodolite";
+    case rhodizite = "Rhodizite";
+    case andalousite = "Andalousite";
+    case andradite = "Andradite";
+    case ambre = "Ambre";
+    case apatite = "Apatite";
+    case azurite = "Azurite";
+    case beryl = "Béryl";
+    case beryl_jaune = "Béryl Jaune";
+    case calcite = "Calcite";
+    case cristal_de_roche = "Cristal de Roche";
+    case morganite = "Morganite";
+    case spinelle_noir = "Spinelle Noir";
+    case heliodore = "Héliodore";
+    case cornaline = "Cornaline";
+    case chrysoberyl = "Chrysoberyl";
+    case diopside = "Diopside";
+    case opale_de_feu = "Opale de Feu";
+    case oeil_du_tigre = "Oeil du Tigre";
+    case grenat = "Grenat";
+    case grenat_mandarin = "Grenat Mandarin";
+    case iolite = "Iolite";
+    case kunzite = "Kunzite";
+    case prasiolite = "Prasiolite";
+    case quartz_fume = "Quartz Fumé";
+    case quartz_rose = "Quartz Rose";
+    case scapolite = "Scapolite";
+    case tanzanite = "Tanzanite";
+    case nylon = "Nylon";
+    case cordon = "Cordon";
+}

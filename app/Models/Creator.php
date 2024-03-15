@@ -1,0 +1,54 @@
+<?php
+
+namespace App\Models;
+
+use App\Enums\Status;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Creator extends Model
+{
+    use HasFactory;
+
+    protected $casts = [
+        "id" => "integer",
+        "date_of_birth" => "date",
+        "online" => "boolean",
+        "collaboration_id" => "integer",
+    ];
+
+    public function collaborations(): HasMany
+    {
+        return $this->hasMany(Collaboration::class);
+    }
+
+    public static function getForm(): array
+    {
+        return [
+            TextInput::make("first_name")->label("Préom")->required(),
+            TextInput::make("last_name")->label("Nom")->required(),
+            DatePicker::make("date_of_birth")
+                ->label("Date de naissance")
+                ->required(),
+            RichEditor::make("description")->label("Biographie")->required(),
+            FileUpload::make("avatar")->image()->avatar()->imageEditor(),
+            TextInput::make("website")->label("Site web")->url(),
+            Radio::make("online")
+                ->options(Status::class)
+                ->inline()
+                ->default(Status::OFFLINE),
+            Select::make("collaboration_id")
+                ->label("Collaboration")
+                ->options(Collaboration::all()->pluck("name", "id")->toArray())
+                ->required(),
+        ];
+    }
+}

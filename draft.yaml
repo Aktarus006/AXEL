@@ -1,0 +1,58 @@
+models:
+  Jewel:
+    name: string
+    price: float
+    cover: text
+    description: string
+    image: text
+    type: string
+    material: string
+    online: boolean
+    creation_date: date
+    collection_id: unsignedInteger nullable
+    collaboration_id: unsignedInteger nullable
+    relationships:
+      belongsTo: collection, collaboration
+
+  Collection:
+    name: string
+    description: text
+    image: text
+    cover: text
+    online: boolean
+    creation_date: date
+    relationships:
+      hasMany: jewel, collaboration
+
+  Collaboration:
+    name: string
+    description: text
+    image: text
+    online: boolean
+    creation_date: date
+    collection_id: unsignedInteger nullable
+    relationships:
+      belongsTo: collection
+      belongsToMany: creator
+
+  Creator:
+    first_name: string
+    last_name: string
+    date_of_birth: date
+    description: string
+    avatar: text
+    website_url: text
+    online: boolean
+    collaboration_id: unsignedInteger nullable
+    relationships:
+      hasMany: collaboration
+
+  News:
+    title: string
+    description: string
+    image: text
+    online: boolean
+    creation_date: date
+    relationships:
+      belongsTo: collaboration
+      belongsToMany: jewel
