@@ -9,9 +9,16 @@ enum Material: string
     case or_jaune = "Or Jaune";
     case or_blanc = "Or Blanc";
     case or_vert = "Or Vert";
+    case or_noir = "Or Noir";
+    case or_blanc_non_rhodie = "Or Blanc non Rhodié";
     case argent = "Argent";
     case platine = "Platine";
     case diamant = "Diamant";
+    case diamant_noir = "Diamant Noir";
+    case diamant_champagne = "Diamant Champagne";
+    case diamant_chocolat = "Diamant Chocolat";
+    case diamant_rose = "Diamant Rose";
+    case diamant_jaune = "Diamant Jaune";
     case rubis = "Rubis";
     case saphir = "Saphir";
     case emeraude = "Emeraude";

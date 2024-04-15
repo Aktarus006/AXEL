@@ -18,4 +18,6 @@ enum Type: string
     case sertis_grains = "Sertis grains";
     case sertis_creneaux = "Sertis créneaux";
     case sertis_rails = "Sertis rails";
+    case sertis_masse = "Sertis masse";
+    case parure = "Parure";
 }
