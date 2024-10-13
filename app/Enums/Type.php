@@ -4,20 +4,20 @@ namespace App\Enums;
 
 enum Type: string
 {
-    case collier = "Collier";
-    case bracelet = "Bracelet";
-    case boucle_d_oreille = 'Boucles d\'oreilles';
-    case bague = "Bague";
-    case alliance = "Alliance";
-    case bouche_trou = "Bouche-trou";
-    case gourmette = "Gourmette";
-    case pendentif = "Pendentif";
-    case chaine = "Chaine";
-    case sertis_clos = "Sertis clos";
-    case sertis_griffes = "Sertis griffes";
-    case sertis_grains = "Sertis grains";
-    case sertis_creneaux = "Sertis créneaux";
-    case sertis_rails = "Sertis rails";
-    case sertis_masse = "Sertis masse";
-    case parure = "Parure";
+    case COLLIER = "Collier";
+    case BRACELET = "Bracelet";
+    case BOUCLES_D_OREILLES = "Boucles d'oreilles";
+    case BAGUE = "Bague";
+    case ALLIANCE = "Alliance";
+    case BOUCHE_TROU = "Bouche-trou";
+    case GOURMETTE = "Gourmette";
+    case PENDENTIF = "Pendentif";
+    case CHAINE = "Chaîne";
+    case SERTIS_CLOS = "Sertis clos";
+    case SERTIS_GRIFFES = "Sertis griffes";
+    case SERTIS_GRAINS = "Sertis grains";
+    case SERTIS_CRENEAUX = "Sertis créneaux";
+    case SERTIS_RAILS = "Sertis rails";
+    case SERTIS_MASSE = "Sertis masse";
+    case PARURE = "Parure";
 }

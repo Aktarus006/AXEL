@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\Material;
 use App\Filament\Resources\JewelResource\Pages;
 use App\Filament\Resources\JewelResource\RelationManagers;
 use App\Models\Jewel;

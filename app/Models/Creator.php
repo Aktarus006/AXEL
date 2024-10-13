@@ -48,7 +48,6 @@ class Creator extends Model
             Select::make("collaboration_id")
                 ->label("Collaboration")
                 ->options(Collaboration::all()->pluck("name", "id")->toArray())
-                ->required(),
         ];
     }
 }

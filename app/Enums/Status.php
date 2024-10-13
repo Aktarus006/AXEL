@@ -6,10 +6,10 @@ use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 
-enum Status: string implements HasLabel, HasColor, HasIcon
+enum Status: int implements HasLabel, HasColor, HasIcon
 {
-    case ONLINE = "Online";
-    case OFFLINE = "Offline";
+    case ONLINE = 1;
+    case OFFLINE = 0;
 
     public function getLabel(): ?string
     {
