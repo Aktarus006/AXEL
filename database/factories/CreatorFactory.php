@@ -28,7 +28,7 @@ class CreatorFactory extends Factory
             'avatar' => $this->faker->text(),
             'website_url' => $this->faker->text(),
             'online' => $this->faker->boolean(),
-            'collaboration_id' => $this->faker->randomNumber(),
+            'collection_id' => $this->faker->randomNumber(),
         ];
     }
 }

@@ -27,7 +27,7 @@ class Creator extends Model
 
     public function collaborations(): HasMany
     {
-        return $this->hasMany(Collaboration::class);
+        return $this->hasMany(Collection::class);
     }
 
     public static function getForm(): array
@@ -45,9 +45,9 @@ class Creator extends Model
                 ->options(Status::class)
                 ->inline()
                 ->default(Status::OFFLINE),
-            Select::make("collaboration_id")
-                ->label("Collaboration")
-                ->options(Collaboration::all()->pluck("name", "id")->toArray())
+            Select::make("collection_id")
+                ->label("Collection")
+                ->options(Collection::all()->pluck("name", "id")->toArray())
         ];
     }
 }

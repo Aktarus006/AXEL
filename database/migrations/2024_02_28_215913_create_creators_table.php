@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->text("avatar");
             $table->text("website_url");
             $table->string("online");
-            $table->unsignedInteger("collaboration_id")->nullable();
+            $table->unsignedInteger("collection_id")->nullable();
             $table->timestamps();
         });
     }
