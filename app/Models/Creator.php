@@ -40,7 +40,7 @@ class Creator extends Model
                 ->required(),
             RichEditor::make("description")->label("Biographie")->required(),
             FileUpload::make("avatar")->image()->avatar()->imageEditor(),
-            TextInput::make("website")->label("Site web")->url(),
+            TextInput::make("website_url")->label("Site web")->url(),
             Radio::make("online")
                 ->options(Status::class)
                 ->inline()
