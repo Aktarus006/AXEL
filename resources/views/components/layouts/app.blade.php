@@ -1,4 +1,4 @@
-<html class="bg-black text-gray-600">
+<html class="bg-white text-gray-600">
     <head>
     <title>{{ config('app.name') }}</title>
 

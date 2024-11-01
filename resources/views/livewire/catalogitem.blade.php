@@ -5,21 +5,22 @@ use function Livewire\Volt\{state};
 
 state(["key", "jewel", "mediaUrl"]);
 ?>
-<div class="group relative">
-    <a href="/jewels/{{ $jewel->id }}">
-        <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
-          <img src="{{ $mediaUrl }}" alt="" class="h-full w-full object-cover object-center lg:h-full lg:w-full">
+<div class="group relative border-2 border-black p-4 hover:bg-black hover:text-white transition duration-200">
+    <a href="/jewels/{{ $jewel->id }}" class="block">
+        <!-- Image container with harsh edges and grayscale background for brutalist feel -->
+        <div class="w-full h-60 overflow-hidden bg-gray-100 border-2 border-black">
+            <img src="{{ $mediaUrl }}" alt="{{ $jewel->name }}" class="w-full h-full object-cover">
         </div>
-        <div class="mt-4 flex justify-between">
-          <div>
-            <h3 class="text-sm text-gray-700">
-                <span aria-hidden="true" class="absolute inset-0"></span>
-                {{ $jewel->name }}
 
+        <!-- Jewel Info -->
+        <div class="mt-4 text-left">
+            <h3 class="text-lg font-bold text-black group-hover:text-white">
+                {{ $jewel->name }}
             </h3>
-            <p class="mt-1 text-sm text-gray-500">{{ $jewel->material }}</p>
-          </div>
-          <p class="text-sm font-medium text-gray-900">{{ $jewel->price }}</p>
+            <p class="text-sm text-gray-700 group-hover:text-gray-300">{{ $jewel->material }}</p>
+            <p class="text-xl font-bold text-black mt-2 group-hover:text-white">
+                ${{ number_format($jewel->price, 2) }}
+            </p>
         </div>
     </a>
-      </div>
+</div>
