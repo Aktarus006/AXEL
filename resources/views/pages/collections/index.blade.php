@@ -1,4 +1,4 @@
 
 <x-layouts.app>
-    COLLEC
+    <livewire:collectionlist />
 </x-layouts.app>

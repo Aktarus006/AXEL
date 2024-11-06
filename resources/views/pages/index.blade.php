@@ -2,9 +2,7 @@
 
 <x-layouts.app>
     <livewire:homeproductboxlist />
-    <section id="about">
 
-    </section>
     <section id="cta" class="flex w-full h-3/5 bg-cyan">
         <div class="w-2/3 transition-all duration-500 grayscale hover:grayscale-0" id="touchArea">
             <img src="https://images.unsplash.com/photo-1606687768105-37e58a241dfb?q=80&w=2428&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
@@ -14,6 +12,12 @@
             <button class="p-8 text-white bg-black border-4 border-white hover:bg-white hover:text-black hover:border-black">Show Collections PUNK !</button>
         </div>
     </section>
+    <section id="about">
+        <h2>Concept</h2>
+        <p>Nous sommes un atelier de fabrication et transformation de bijouterie joaillerie
+
+        où nous procédons à l'art de la création de bijoux avec des techniques traditionnelles et du travail manuel de qualité. Nous sommes passionnés par notre métier et nous sommes heureux de pouvoir offrir un service personnalisé pour créer n'importe quel bijoux.</p>
+    </section>
     <section class="flex items-center justify-center w-full h-1/5 ">
         <span class="relative h-auto transition-opacity duration-1000 ease-in-out transform border-2 border-black before:scale-150 before:absolute before:border-4 hover:before:border-red-200 before:w-full before:h-full before:opacity-0 before:hover:scroll-py-8 before:hover:opacity-100">NOT A BUTTON</span>
     </section>
@@ -21,4 +25,15 @@
     <section id="contact" class="w-full">
         <livewire:contact />
     </section>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.location.hash) {
+                const targetId = window.location.hash;
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        });
+    </script>
 </x-layouts.app>
