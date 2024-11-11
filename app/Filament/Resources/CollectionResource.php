@@ -34,6 +34,10 @@ class CollectionResource extends Resource
                 Tables\Columns\TextColumn::make("creation_date")
                     ->date()
                     ->sortable(),
+                Tables\Columns\TextColumn::make("jewel.name")
+                    ->numeric()
+                    ->sortable(),
+
                 Tables\Columns\TextColumn::make("created_at")
                     ->dateTime()
                     ->sortable()

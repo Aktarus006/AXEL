@@ -41,11 +41,6 @@ class Jewel extends Model implements HasMedia
         return $this->belongsTo(Collection::class);
     }
 
-    public function collaboration(): BelongsTo
-    {
-        return $this->belongsTo(Collaboration::class);
-    }
-
     public static function getForm(): array
     {
         return [
@@ -67,13 +62,6 @@ class Jewel extends Model implements HasMedia
                         ->editOptionForm(Collection::getForm())
                         ->searchable()
                         ->relationship("collection", "name"),
-                    Select::make("collaboration_id")
-                        ->label("Collaboration")
-                        ->preload()
-                        ->createOptionForm(Collaboration::getForm())
-                        ->editOptionForm(Collaboration::getForm())
-                        ->searchable()
-                        ->relationship("collaboration", "name"),
                     Select::make("material")
                         ->label("Matière")
                         ->searchable()

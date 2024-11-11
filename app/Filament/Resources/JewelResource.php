@@ -37,18 +37,12 @@ class JewelResource extends Resource
                     ->listWithLineBreaks()
                     ->limitList(3)
                     ->expandableLimitedList(),
-                Tables\Columns\TextColumn::make("online")
-                    ->badge()
-                    ->sortable()
-                    ->toggleable(),
+                Tables\Columns\IconColumn::make("online")->boolean(),
 
                 Tables\Columns\TextColumn::make("creation_date")
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make("collection.name")
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make("collaboration.name")
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make("created_at")

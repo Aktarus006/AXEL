@@ -22,7 +22,6 @@ return new class extends Migration {
             $table->boolean("online");
             $table->date("creation_date");
             $table->foreignId("collection_id")->nullable();
-            $table->foreignId("collaboration_id")->nullable();
             $table->timestamps();
         });
     }

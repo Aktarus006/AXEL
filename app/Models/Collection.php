@@ -29,11 +29,6 @@ class Collection extends Model
         return $this->hasMany(Jewel::class);
     }
 
-    public function collaborations(): HasMany
-    {
-        return $this->hasMany(Collaboration::class);
-    }
-
     public static function getForm(): array
     {
         return [
