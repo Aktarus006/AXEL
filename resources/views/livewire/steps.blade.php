@@ -14,7 +14,7 @@ mount(function () {
 });
 ?>
 
-<div class="mt-6 grid grid-cols-1 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+<div class="mt-12 grid grid-cols-1 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
     @foreach ($steps as $step)
         @php
             // Get the first image associated with this step
@@ -25,7 +25,7 @@ mount(function () {
         <!-- Display each step's details -->
         <div class="p-4 bg-white shadow-md rounded-lg border border-gray-200">
             <h3 class="text-lg font-semibold">{{ $step->position }}. {{ $step->title }}</h3>
-            <p class="text-gray-600 mt-2">{{ $step->description }}</p>
+            <p class="text-gray-600 mt-2">{!! $step->description !!}</p>
 
             <!-- Display image if available -->
             @if($firstMediaUrl)
