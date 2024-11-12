@@ -80,11 +80,13 @@ class Jewel extends Model implements HasMedia
                 FileUpload::make("cover")
                     ->label("Image de couverture")
                     ->directory("jewels/cover")
+                    ->maxSize(40960)
                     ->optimize("webp")
                     ->imageEditor(),
                 SpatieMediaLibraryFileUpload::make("image")
                     ->label("Images")
                     ->collection("jewels/images")
+                    ->maxSize(40960)
                     ->optimize("webp")
                     ->reorderable()
                     ->multiple()
