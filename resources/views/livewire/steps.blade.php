@@ -14,7 +14,7 @@ mount(function () {
 });
 ?>
 
-<div class="mt-16 grid grid-cols-1 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+<div class="mt-32 grid grid-cols-1 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
     @foreach ($steps as $step)
         @php
             // Get the first image associated with this step
