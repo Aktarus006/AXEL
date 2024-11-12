@@ -13,10 +13,7 @@
         </div>
     </section>
     <section id="about">
-        <h2>Concept</h2>
-        <p>Nous sommes un atelier de fabrication et transformation de bijouterie joaillerie
-
-        où nous procédons à l'art de la création de bijoux avec des techniques traditionnelles et du travail manuel de qualité. Nous sommes passionnés par notre métier et nous sommes heureux de pouvoir offrir un service personnalisé pour créer n'importe quel bijoux.</p>
+        <livewire:steps />
     </section>
     <section class="flex items-center justify-center w-full h-1/5 ">
         <span class="relative h-auto transition-opacity duration-1000 ease-in-out transform border-2 border-black before:scale-150 before:absolute before:border-4 hover:before:border-red-200 before:w-full before:h-full before:opacity-0 before:hover:scroll-py-8 before:hover:opacity-100">NOT A BUTTON</span>
