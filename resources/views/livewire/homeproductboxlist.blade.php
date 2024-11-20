@@ -6,8 +6,8 @@ use Illuminate\Support\Facades\Http;
 state(['jewels' => [], 'selectedJewel' => null]);
 
 mount(function () {
-    $response = Http::get('/api/jewels/random');
-    $this->jewels = $response->json();
+    // $response = Http::get('/api/jewels/random');
+    // $this->jewels = $response->json();
     // Fake data
     $this->jewels = collect([
         [
