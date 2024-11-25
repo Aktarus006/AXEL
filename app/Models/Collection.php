@@ -13,10 +13,13 @@ use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\HasMedia;
 
-class Collection extends Model
+class Collection extends Model implements HasMedia
 {
     use HasFactory;
+    use InteractsWithMedia;
 
     protected $casts = [
         "id" => "integer",
@@ -36,15 +39,17 @@ class Collection extends Model
             RichEditor::make("description")->label("Description")->required(),
             SpatieMediaLibraryFileUpload::make("image")
                 ->collection("collections")
-                ->label("Image")
-                ->rules("image")
-                ->required(),
+                ->maxsize(40960)
+                ->optimize("webp")
+                ->reorderable()
+                ->multiple()
+                ->label("Images")
+                ->image(),
             FileUpload::make("cover")
                 ->label("Cover")
                 ->rules("image")
                 ->directory("collections")
-                ->imageEditor()
-                ->required(),
+                ->imageEditor(),
             Radio::make("online")
                 ->options(Status::class)
                 ->inline()
