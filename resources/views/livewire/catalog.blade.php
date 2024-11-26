@@ -2,11 +2,11 @@
 use App\Models\Jewel;
 use App\Enums\Type;
 use App\Enums\Material;
-use function Livewire\Volt\{state, mount};
+use function Livewire\Volt\{state, mount, computed};
 
 state([
     "jewels" => [],
-    "selectedMaterials" => [], // Ensure these are initialized as arrays
+    "selectedMaterials" => [], 
     "selectedTypes" => [],
     "name" => "",
     "materials" => Material::cases(),
@@ -15,32 +15,43 @@ state([
 ]);
 
 mount(function () {
-    $this->jewels = Jewel::with("media")->get();
+    $this->refreshJewels();
 });
 
-$filterJewels = function () {
-    $this->selectedMaterials = (array) $this->selectedMaterials; // Cast to array
-    $this->selectedTypes = (array) $this->selectedTypes; // Cast to array
+$refreshJewels = function () {
+    $query = Jewel::query()->with("media");
 
-    $this->jewels = Jewel::when(count($this->selectedMaterials) > 0, function (
-        $query
-    ) {
-        foreach ($this->selectedMaterials as $material) {
-            $query->whereJsonContains("material", $material);
+    if (!empty($this->selectedMaterials)) {
+        $materials = array_filter($this->selectedMaterials);
+        if (!empty($materials)) {
+            foreach ($materials as $material) {
+                $query->whereJsonContains("material", $material);
+            }
         }
-    })
-        ->when(count($this->selectedTypes) > 0, function ($query) {
-            foreach ($this->selectedTypes as $type) {
+    }
+
+    if (!empty($this->selectedTypes)) {
+        $types = array_filter($this->selectedTypes);
+        if (!empty($types)) {
+            foreach ($types as $type) {
                 $query->whereJsonContains("type", $type);
             }
-        })
-        ->when($this->name, function ($query) {
-            $query->where("name", "like", "%{$this->name}%");
-        })
-        ->when($this->showOnlyPriced, function ($query) {
-            $query->where('price', '>', 0);
-        })
-        ->get();
+        }
+    }
+
+    if (!empty($this->name)) {
+        $query->where("name", "like", "%{$this->name}%");
+    }
+
+    if ($this->showOnlyPriced) {
+        $query->where('price', '>', 0);
+    }
+
+    $this->jewels = $query->get();
+};
+
+$filterJewels = function () {
+    $this->refreshJewels();
 };
 ?>
 
@@ -51,8 +62,7 @@ $filterJewels = function () {
             <h2>Search by Name</h2>
             <input
                 type="text"
-                wire:model="name"
-                wire:input="filterJewels"
+                wire:model.live="name"
                 class="form-input mt-2 p-2 border border-gray-300 rounded w-full"
                 placeholder="Enter jewel name"
             />
@@ -61,7 +71,7 @@ $filterJewels = function () {
         <!-- Price filter toggle -->
         <div class="flex items-center mt-8">
             <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" wire:model="showOnlyPriced" wire:change="filterJewels" class="sr-only peer">
+                <input type="checkbox" wire:model.live="showOnlyPriced" class="sr-only peer">
                 <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                 <span class="ms-3 text-sm font-medium text-gray-900">Show only priced items</span>
             </label>
@@ -71,42 +81,34 @@ $filterJewels = function () {
     <div class="flex flex-wrap gap-4 mt-4">
         <div class="flex-1">
             <h2>Filter by Material</h2>
-            <!-- Material filter combobox -->
-            <input
-                list="materialsList"
-                wire:model="selectedMaterials"
-                wire:change="filterJewels"
+            <!-- Material filter select -->
+            <select
+                wire:model.live="selectedMaterials"
                 class="form-select mt-2 p-2 border border-gray-300 rounded w-full"
-                placeholder="Select or type material"
                 multiple
-            />
-            <datalist id="materialsList">
+            >
                 <option value="">All Materials</option>
                 <option value="">-- None --</option>
                 @foreach ($materials as $material)
                     <option value="{{ $material->value }}">{{ $material->value }}</option>
                 @endforeach
-            </datalist>
+            </select>
         </div>
 
         <div class="flex-1">
             <h2>Filter by Type</h2>
-            <!-- Type filter combobox -->
-            <input
-                list="typesList"
-                wire:model="selectedTypes"
-                wire:change="filterJewels"
+            <!-- Type filter select -->
+            <select
+                wire:model.live="selectedTypes"
                 class="form-select mt-2 p-2 border border-gray-300 rounded w-full"
-                placeholder="Select or type type"
                 multiple
-            />
-            <datalist id="typesList">
+            >
                 <option value="">All Types</option>
                 <option value="">-- None --</option>
                 @foreach ($types as $type)
                     <option value="{{ $type->value }}">{{ $type->value }}</option>
                 @endforeach
-            </datalist>
+            </select>
         </div>
     </div>
 
