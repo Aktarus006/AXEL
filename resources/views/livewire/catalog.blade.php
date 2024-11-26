@@ -6,8 +6,8 @@ use function Livewire\Volt\{state, mount};
 
 state([
     "jewels" => [],
-    "selectedMaterials" => "", 
-    "selectedTypes" => "",
+    "selectedMaterial" => "", 
+    "selectedType" => "",
     "name" => "",
     "materials" => Material::cases(),
     "types" => Type::cases(),
@@ -15,22 +15,22 @@ state([
 ]);
 
 mount(function () {
-    $this->jewels = Jewel::with("media")->get();
+    $this->refreshJewels();
 });
 
-$filterJewels = function () {
-    $query = Jewel::query()->with("media");
+$refreshJewels = function () {
+    $query = Jewel::query()->with(['media', 'collection']);
 
-    if (!empty($this->selectedMaterials)) {
-        $query->whereJsonContains("material", $this->selectedMaterials);
+    if (!empty($this->selectedMaterial)) {
+        $query->whereJsonContains('material', $this->selectedMaterial);
     }
 
-    if (!empty($this->selectedTypes)) {
-        $query->whereJsonContains("type", $this->selectedTypes);
+    if (!empty($this->selectedType)) {
+        $query->whereJsonContains('type', $this->selectedType);
     }
 
     if (!empty($this->name)) {
-        $query->where("name", "like", "%{$this->name}%");
+        $query->where('name', 'like', "%{$this->name}%");
     }
 
     if ($this->showOnlyPriced) {
@@ -38,6 +38,26 @@ $filterJewels = function () {
     }
 
     $this->jewels = $query->get();
+};
+
+$updateName = function($value) {
+    $this->name = $value;
+    $this->refreshJewels();
+};
+
+$updatePriceFilter = function() {
+    $this->showOnlyPriced = !$this->showOnlyPriced;
+    $this->refreshJewels();
+};
+
+$updateMaterial = function($value) {
+    $this->selectedMaterial = $value;
+    $this->refreshJewels();
+};
+
+$updateType = function($value) {
+    $this->selectedType = $value;
+    $this->refreshJewels();
 };
 ?>
 
@@ -48,8 +68,8 @@ $filterJewels = function () {
             <h2>Search by Name</h2>
             <input
                 type="text"
-                wire:model.live="name"
-                wire:change="filterJewels"
+                wire:model="name"
+                wire:change="updateName($event.target.value)"
                 class="form-input mt-2 p-2 border border-gray-300 rounded w-full"
                 placeholder="Enter jewel name"
             />
@@ -61,7 +81,7 @@ $filterJewels = function () {
                 <input 
                     type="checkbox" 
                     wire:model="showOnlyPriced"
-                    wire:click="filterJewels"
+                    wire:change="updatePriceFilter"
                     class="sr-only peer"
                 >
                 <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
@@ -73,38 +93,30 @@ $filterJewels = function () {
     <div class="flex flex-wrap gap-4 mt-4">
         <div class="flex-1">
             <h2>Filter by Material</h2>
-            <!-- Material filter combobox -->
-            <input
-                list="materialsList"
-                wire:model.live="selectedMaterials"
-                wire:change="filterJewels"
+            <select
+                wire:model="selectedMaterial"
+                wire:change="updateMaterial($event.target.value)"
                 class="form-select mt-2 p-2 border border-gray-300 rounded w-full"
-                placeholder="Select or type material"
-            />
-            <datalist id="materialsList">
+            >
                 <option value="">All Materials</option>
                 @foreach ($materials as $material)
                     <option value="{{ $material->value }}">{{ $material->value }}</option>
                 @endforeach
-            </datalist>
+            </select>
         </div>
 
         <div class="flex-1">
             <h2>Filter by Type</h2>
-            <!-- Type filter combobox -->
-            <input
-                list="typesList"
-                wire:model.live="selectedTypes"
-                wire:change="filterJewels"
+            <select
+                wire:model="selectedType"
+                wire:change="updateType($event.target.value)"
                 class="form-select mt-2 p-2 border border-gray-300 rounded w-full"
-                placeholder="Select or type type"
-            />
-            <datalist id="typesList">
+            >
                 <option value="">All Types</option>
                 @foreach ($types as $type)
                     <option value="{{ $type->value }}">{{ $type->value }}</option>
                 @endforeach
-            </datalist>
+            </select>
         </div>
     </div>
 
