@@ -45,32 +45,32 @@ $filterJewels = function () {
 
 <div class="bg-white">
     <!-- Filters Section with Brutalist Style -->
-    <div class="border-b-4 border-black pb-8">
-        <div class="space-y-6">
+    <div class="px-6 md:px-12 lg:px-24">
+        <div class="space-y-0 divide-y-4 divide-black">
             <!-- Name Search -->
-            <div>
-                <label class="font-mono text-2xl uppercase tracking-tight">
+            <div class="bg-black text-white py-8">
+                <label class="font-mono text-2xl uppercase tracking-tight block mb-4">
                     Search
                 </label>
                 <input
                     type="text"
                     wire:model.live="name"
                     wire:input="filterJewels"
-                    class="mt-2 w-full border-4 border-black p-4 text-xl font-bold placeholder-gray-500 focus:outline-none focus:ring-0"
+                    class="w-full border-4 border-white p-4 text-xl font-bold bg-black text-white placeholder-gray-500 focus:outline-none focus:ring-0"
                     placeholder="TYPE JEWEL NAME..."
                 />
             </div>
 
             <!-- Material Filter -->
-            <div>
-                <label class="font-mono text-2xl uppercase tracking-tight">
+            <div class="bg-white py-8">
+                <label class="font-mono text-2xl uppercase tracking-tight block mb-4">
                     Materials
                 </label>
                 <input
                     list="materialsList"
                     wire:model.live="selectedMaterials"
                     wire:change="filterJewels"
-                    class="mt-2 w-full border-4 border-black p-4 text-xl font-bold placeholder-gray-500 focus:outline-none focus:ring-0"
+                    class="w-full border-4 border-black p-4 text-xl font-bold placeholder-gray-500 focus:outline-none focus:ring-0"
                     placeholder="SELECT MATERIALS..."
                     multiple
                 />
@@ -82,15 +82,15 @@ $filterJewels = function () {
             </div>
 
             <!-- Type Filter -->
-            <div>
-                <label class="font-mono text-2xl uppercase tracking-tight">
+            <div class="bg-black text-white py-8">
+                <label class="font-mono text-2xl uppercase tracking-tight block mb-4">
                     Types
                 </label>
                 <input
                     list="typesList"
                     wire:model.live="selectedTypes"
                     wire:change="filterJewels"
-                    class="mt-2 w-full border-4 border-black p-4 text-xl font-bold placeholder-gray-500 focus:outline-none focus:ring-0"
+                    class="w-full border-4 border-white p-4 text-xl font-bold bg-black text-white placeholder-gray-500 focus:outline-none focus:ring-0"
                     placeholder="SELECT TYPES..."
                     multiple
                 />
