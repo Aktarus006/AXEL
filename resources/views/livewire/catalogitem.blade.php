@@ -1,19 +1,12 @@
 <?php
 use App\Models\Jewel;
-use function Livewire\Volt\{state, mount};
+use function Livewire\Volt\{state};
 
 state([
     "key" => "",
     "jewel" => null,
     "mediaUrl" => "",
 ]);
-
-mount(function() {
-    dump([
-        'mounted_jewel_id' => $this->jewel?->id,
-        'mounted_media_url' => $this->mediaUrl,
-    ]);
-});
 ?>
 
 <div class="relative w-full h-full">

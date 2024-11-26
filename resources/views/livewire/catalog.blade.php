@@ -15,7 +15,6 @@ state([
 
 mount(function () {
     $this->jewels = Jewel::with(['media', 'collection'])->get();
-    dump("Initial mount - jewels count: " . $this->jewels->count());
 });
 
 $filterJewels = function () {
@@ -41,7 +40,6 @@ $filterJewels = function () {
     }
 
     $this->jewels = $query->get();
-    dump("After filter - jewels count: " . $this->jewels->count());
 };
 ?>
 
@@ -128,14 +126,6 @@ $filterJewels = function () {
                     @endphp
                     <div class="break-inside-avoid relative group hover:z-10 transform transition-transform duration-200 hover:scale-[1.02]">
                         <div class="relative {{ $sizeClass }} border-4 border-black">
-                            @php
-                                dump([
-                                    'jewel_id' => $jewel->id,
-                                    'jewel_name' => $jewel->name,
-                                    'media_url' => $firstMediaUrl,
-                                    'has_media' => $media->isNotEmpty(),
-                                ]);
-                            @endphp
                             <livewire:catalogitem 
                                 :jewel="$jewel" 
                                 :mediaUrl="$firstMediaUrl" 
