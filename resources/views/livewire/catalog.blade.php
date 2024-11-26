@@ -6,8 +6,8 @@ use function Livewire\Volt\{state, mount};
 
 state([
     "jewels" => [],
-    "selectedMaterials" => [], 
-    "selectedTypes" => [],
+    "selectedMaterials" => "", 
+    "selectedTypes" => "",
     "name" => "",
     "materials" => Material::cases(),
     "types" => Type::cases(),
@@ -22,19 +22,11 @@ $filterJewels = function () {
     $query = Jewel::query()->with("media");
 
     if (!empty($this->selectedMaterials)) {
-        foreach ($this->selectedMaterials as $material) {
-            if (!empty($material)) {
-                $query->whereJsonContains("material", $material);
-            }
-        }
+        $query->whereJsonContains("material", $this->selectedMaterials);
     }
 
     if (!empty($this->selectedTypes)) {
-        foreach ($this->selectedTypes as $type) {
-            if (!empty($type)) {
-                $query->whereJsonContains("type", $type);
-            }
-        }
+        $query->whereJsonContains("type", $this->selectedTypes);
     }
 
     if (!empty($this->name)) {
@@ -66,8 +58,13 @@ $filterJewels = function () {
         <!-- Price filter toggle -->
         <div class="flex items-center mt-8">
             <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" wire:model.live="showOnlyPriced" wire:change="filterJewels" class="sr-only peer">
-                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                <input 
+                    type="checkbox" 
+                    wire:model="showOnlyPriced"
+                    wire:click="filterJewels"
+                    class="sr-only peer"
+                >
+                <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
                 <span class="ms-3 text-sm font-medium text-gray-900">Show only priced items</span>
             </label>
         </div>
@@ -83,11 +80,9 @@ $filterJewels = function () {
                 wire:change="filterJewels"
                 class="form-select mt-2 p-2 border border-gray-300 rounded w-full"
                 placeholder="Select or type material"
-                multiple
             />
             <datalist id="materialsList">
                 <option value="">All Materials</option>
-                <option value="">-- None --</option>
                 @foreach ($materials as $material)
                     <option value="{{ $material->value }}">{{ $material->value }}</option>
                 @endforeach
@@ -103,11 +98,9 @@ $filterJewels = function () {
                 wire:change="filterJewels"
                 class="form-select mt-2 p-2 border border-gray-300 rounded w-full"
                 placeholder="Select or type type"
-                multiple
             />
             <datalist id="typesList">
                 <option value="">All Types</option>
-                <option value="">-- None --</option>
                 @foreach ($types as $type)
                     <option value="{{ $type->value }}">{{ $type->value }}</option>
                 @endforeach
