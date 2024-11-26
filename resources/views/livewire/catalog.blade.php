@@ -3,10 +3,9 @@ use App\Models\Jewel;
 use App\Enums\Type;
 use App\Enums\Material;
 use Illuminate\Support\Facades\Log;
-use function Livewire\Volt\{state, mount};
+use function Livewire\Volt\{state, computed};
 
 state([
-    "jewels" => [],
     "selectedMaterial" => "", 
     "selectedType" => "",
     "name" => "",
@@ -15,11 +14,7 @@ state([
     "showOnlyPriced" => false,
 ]);
 
-mount(function () {
-    $this->refreshJewels();
-});
-
-$refreshJewels = function () {
+$jewels = computed(function () {
     $query = Jewel::query()->with(['media', 'collection']);
 
     if (!empty($this->selectedMaterial)) {
@@ -38,32 +33,27 @@ $refreshJewels = function () {
         $query->where('price', '>', 0);
     }
 
-    $this->jewels = $query->get();
-};
+    return $query->get();
+});
 
 $updateName = function($value) {
     $this->name = $value;
-    $this->refreshJewels();
 };
 
 $updatePriceFilter = function() {
     $this->showOnlyPriced = !$this->showOnlyPriced;
-    $this->refreshJewels();
 };
 
 $updateMaterial = function($value) {
     $this->selectedMaterial = $value;
-    $this->refreshJewels();
 };
 
 $updateType = function($value) {
     $this->selectedType = $value;
-    $this->refreshJewels();
 };
 
 $clearFilters = function() {
     $this->reset('selectedMaterial', 'selectedType', 'name', 'showOnlyPriced');
-    $this->refreshJewels();
 };
 ?>
 
@@ -134,13 +124,13 @@ $clearFilters = function() {
     </div>
 
     <!-- Display filtered jewels -->
-    <div class="columns-1 sm:columns-2 lg:columns-3 gap-0 mt-6">
-        @if($jewels->isEmpty())
+    <div wire:poll class="columns-1 sm:columns-2 lg:columns-3 gap-0 mt-6">
+        @if($this->jewels->isEmpty())
             <div class="col-span-full text-center py-8 text-gray-500">
                 No jewels found matching your filters.
             </div>
         @else
-            @foreach ($jewels as $jewel)
+            @foreach ($this->jewels as $jewel)
                 @php
                     $media = $jewel->getMedia('jewels/images');
                     $firstMediaUrl = $media->isNotEmpty() ? $media->first()->getUrl() : null;
