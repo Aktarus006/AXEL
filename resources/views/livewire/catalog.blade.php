@@ -3,7 +3,7 @@ use App\Models\Jewel;
 use App\Enums\Type;
 use App\Enums\Material;
 use Illuminate\Support\Facades\Log;
-use function Livewire\Volt\{state, mount};
+use function Livewire\Volt\{state, mount, computed};
 
 state([
     "jewels" => [],
@@ -31,11 +31,11 @@ $refreshJewels = function () {
     ]);
 
     if (!empty($this->selectedMaterial)) {
-        $query->whereJsonContains('material->value', $this->selectedMaterial);
+        $query->whereJsonContains("material", ["value" => $this->selectedMaterial]);
     }
 
     if (!empty($this->selectedType)) {
-        $query->whereJsonContains('type->value', $this->selectedType);
+        $query->whereJsonContains("type", ["value" => $this->selectedType]);
     }
 
     if (!empty($this->name)) {
@@ -57,31 +57,8 @@ $refreshJewels = function () {
     Log::info('Results count: ' . $this->jewels->count());
 };
 
-$updateName = function($value) {
-    $this->name = $value;
-    $this->refreshJewels();
-};
-
-$updatePriceFilter = function() {
-    $this->showOnlyPriced = !$this->showOnlyPriced;
-    $this->refreshJewels();
-};
-
-$updateMaterial = function($value) {
-    $this->selectedMaterial = $value;
-    $this->refreshJewels();
-};
-
-$updateType = function($value) {
-    $this->selectedType = $value;
-    $this->refreshJewels();
-};
-
 $clearFilters = function() {
-    $this->selectedMaterial = "";
-    $this->selectedType = "";
-    $this->name = "";
-    $this->showOnlyPriced = false;
+    $this->reset('selectedMaterial', 'selectedType', 'name', 'showOnlyPriced');
     $this->refreshJewels();
 };
 ?>
@@ -93,8 +70,7 @@ $clearFilters = function() {
             <h2>Search by Name</h2>
             <input
                 type="text"
-                wire:model="name"
-                wire:change="updateName($event.target.value)"
+                wire:model.live.debounce.300ms="name"
                 class="form-input mt-2 p-2 border border-gray-300 rounded w-full"
                 placeholder="Enter jewel name"
             />
@@ -105,8 +81,7 @@ $clearFilters = function() {
             <label class="relative inline-flex items-center cursor-pointer">
                 <input 
                     type="checkbox" 
-                    wire:model="showOnlyPriced"
-                    wire:change="updatePriceFilter"
+                    wire:model.live="showOnlyPriced"
                     class="sr-only peer"
                 >
                 <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
@@ -127,8 +102,7 @@ $clearFilters = function() {
         <div class="flex-1">
             <h2>Filter by Material</h2>
             <select
-                wire:model="selectedMaterial"
-                wire:change="updateMaterial($event.target.value)"
+                wire:model.live="selectedMaterial"
                 class="form-select mt-2 p-2 border border-gray-300 rounded w-full"
             >
                 <option value="">All Materials</option>
@@ -141,8 +115,7 @@ $clearFilters = function() {
         <div class="flex-1">
             <h2>Filter by Type</h2>
             <select
-                wire:model="selectedType"
-                wire:change="updateType($event.target.value)"
+                wire:model.live="selectedType"
                 class="form-select mt-2 p-2 border border-gray-300 rounded w-full"
             >
                 <option value="">All Types</option>
