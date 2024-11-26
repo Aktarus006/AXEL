@@ -5,22 +5,47 @@ use function Livewire\Volt\{state};
 
 state(["key", "jewel", "mediaUrl"]);
 ?>
-<div class="group relative border-2 border-black p-4 hover:bg-black hover:text-white transition duration-200">
-    <a href="/jewels/{{ $jewel->id }}" class="block">
-        <!-- Image container with harsh edges and grayscale background for brutalist feel -->
-        <div class="w-full h-60 overflow-hidden bg-gray-100 border-2 border-black">
-            <img src="{{ $mediaUrl }}" alt="{{ $jewel->name }}" class="w-full h-full object-cover">
-        </div>
 
-        <!-- Jewel Info -->
-        <div class="mt-4 text-left">
-            <h3 class="text-lg font-bold text-black group-hover:text-white">
-                {{ $jewel->name }}
-            </h3>
-            <p class="text-sm text-gray-700 group-hover:text-gray-300">{{ $jewel->material }}</p>
-            <p class="text-xl font-bold text-black mt-2 group-hover:text-white">
-                ${{ number_format($jewel->price, 2) }}
-            </p>
+<div class="relative w-full h-full">
+    <a href="/jewels/{{ $jewel->id }}" class="block w-full h-full">
+        <!-- Main Image with Brutalist Treatment -->
+        <div class="relative w-full h-full overflow-hidden">
+            <img 
+                src="{{ $mediaUrl }}" 
+                alt="{{ $jewel->name }}" 
+                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110 group-hover:grayscale"
+            >
+            
+            <!-- Brutalist Overlay Elements -->
+            <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <!-- Price Tag - Top Right -->
+                @if($jewel->price > 0)
+                    <div class="absolute top-0 right-0 bg-black text-white p-4 font-mono text-xl">
+                        ${{ number_format($jewel->price, 2) }}
+                    </div>
+                @endif
+
+                <!-- Material Tag - Top Left -->
+                <div class="absolute top-0 left-0 bg-white text-black p-4 font-mono text-sm uppercase">
+                    {{ $jewel->material }}
+                </div>
+
+                <!-- Name and Details - Bottom -->
+                <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-90 p-6">
+                    <h3 class="font-mono text-2xl text-white uppercase mb-2 tracking-tight">
+                        {{ $jewel->name }}
+                    </h3>
+                    
+                    <!-- Type Tags -->
+                    <div class="flex flex-wrap gap-2">
+                        @foreach($jewel->type as $type)
+                            <span class="bg-white text-black px-3 py-1 text-xs font-mono uppercase">
+                                {{ $type }}
+                            </span>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
         </div>
     </a>
 </div>

@@ -2,149 +2,140 @@
 use App\Models\Jewel;
 use App\Enums\Type;
 use App\Enums\Material;
-use Illuminate\Support\Facades\Log;
-use function Livewire\Volt\{state, computed};
+use function Livewire\Volt\{state, mount};
 
 state([
-    "selectedMaterial" => "", 
-    "selectedType" => "",
+    "jewels" => [],
+    "selectedMaterials" => [], // Ensure these are initialized as arrays
+    "selectedTypes" => [],
     "name" => "",
     "materials" => Material::cases(),
     "types" => Type::cases(),
-    "showOnlyPriced" => false,
 ]);
 
-$jewels = computed(function () {
-    $query = Jewel::query()->with(['media', 'collection']);
-
-    if (!empty($this->selectedMaterial)) {
-        $query->whereJsonContains('material', $this->selectedMaterial);
-    }
-
-    if (!empty($this->selectedType)) {
-        $query->whereJsonContains('type', $this->selectedType);
-    }
-
-    if (!empty($this->name)) {
-        $query->where('name', 'like', "%{$this->name}%");
-    }
-
-    if ($this->showOnlyPriced) {
-        $query->where('price', '>', 0);
-    }
-
-    return $query->get();
+mount(function () {
+    $this->jewels = Jewel::with("media")->get();
 });
 
-$updateName = function($value) {
-    $this->name = $value;
-};
+$filterJewels = function () {
+    $this->selectedMaterials = (array) $this->selectedMaterials;
+    $this->selectedTypes = (array) $this->selectedTypes;
 
-$updatePriceFilter = function() {
-    $this->showOnlyPriced = !$this->showOnlyPriced;
-};
-
-$updateMaterial = function($value) {
-    $this->selectedMaterial = $value;
-};
-
-$updateType = function($value) {
-    $this->selectedType = $value;
-};
-
-$clearFilters = function() {
-    $this->reset('selectedMaterial', 'selectedType', 'name', 'showOnlyPriced');
+    $this->jewels = Jewel::when(count($this->selectedMaterials) > 0, function ($query) {
+        foreach ($this->selectedMaterials as $material) {
+            $query->whereJsonContains("material", $material);
+        }
+    })
+    ->when(count($this->selectedTypes) > 0, function ($query) {
+        foreach ($this->selectedTypes as $type) {
+            $query->whereJsonContains("type", $type);
+        }
+    })
+    ->when($this->name, function ($query) {
+        $query->where("name", "like", "%{$this->name}%");
+    })
+    ->get();
 };
 ?>
 
-<div>
-    <div class="flex flex-wrap gap-4 items-center">
-        <!-- Name filter input field -->
-        <div class="flex-1">
-            <h2>Search by Name</h2>
-            <input
-                type="text"
-                wire:model.debounce.300ms="name"
-                class="form-input mt-2 p-2 border border-gray-300 rounded w-full"
-                placeholder="Enter jewel name"
-            />
-        </div>
+<div class="bg-white">
+    <!-- Filters Section with Brutalist Style -->
+    <div class="border-b-4 border-black pb-8">
+        <div class="space-y-6">
+            <!-- Name Search -->
+            <div>
+                <label class="font-mono text-2xl uppercase tracking-tight">
+                    Search
+                </label>
+                <input
+                    type="text"
+                    wire:model="name"
+                    wire:input="filterJewels"
+                    class="mt-2 w-full border-4 border-black p-4 text-xl font-bold placeholder-gray-500 focus:outline-none focus:ring-0"
+                    placeholder="TYPE JEWEL NAME..."
+                />
+            </div>
 
-        <!-- Price filter toggle -->
-        <div class="flex items-center mt-8">
-            <label class="relative inline-flex items-center cursor-pointer">
-                <input 
-                    type="checkbox" 
-                    wire:model="showOnlyPriced"
-                    wire:change="updatePriceFilter"
-                    class="sr-only peer"
-                >
-                <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
-                <span class="ms-3 text-sm font-medium text-gray-900">Show only priced items</span>
-            </label>
-        </div>
+            <!-- Material Filter -->
+            <div>
+                <label class="font-mono text-2xl uppercase tracking-tight">
+                    Materials
+                </label>
+                <input
+                    list="materialsList"
+                    wire:model="selectedMaterials"
+                    wire:change="filterJewels"
+                    class="mt-2 w-full border-4 border-black p-4 text-xl font-bold placeholder-gray-500 focus:outline-none focus:ring-0"
+                    placeholder="SELECT MATERIALS..."
+                    multiple
+                />
+                <datalist id="materialsList">
+                    @foreach ($materials as $material)
+                        <option value="{{ $material->value }}">{{ $material->value }}</option>
+                    @endforeach
+                </datalist>
+            </div>
 
-        <!-- Clear filters button -->
-        <button 
-            wire:click="clearFilters"
-            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md text-sm font-medium text-gray-700"
-        >
-            Clear Filters
-        </button>
-    </div>
-
-    <div class="flex flex-wrap gap-4 mt-4">
-        <div class="flex-1">
-            <h2>Filter by Material</h2>
-            <select
-                wire:model="selectedMaterial"
-                wire:change="updateMaterial($event.target.value)"
-                class="form-select mt-2 p-2 border border-gray-300 rounded w-full"
-            >
-                <option value="">All Materials</option>
-                @foreach ($materials as $material)
-                    <option value="{{ $material->value }}">{{ $material->value }}</option>
-                @endforeach
-            </select>
-        </div>
-
-        <div class="flex-1">
-            <h2>Filter by Type</h2>
-            <select
-                wire:model="selectedType"
-                wire:change="updateType($event.target.value)"
-                class="form-select mt-2 p-2 border border-gray-300 rounded w-full"
-            >
-                <option value="">All Types</option>
-                @foreach ($types as $type)
-                    <option value="{{ $type->value }}">{{ $type->value }}</option>
-                @endforeach
-            </select>
+            <!-- Type Filter -->
+            <div>
+                <label class="font-mono text-2xl uppercase tracking-tight">
+                    Types
+                </label>
+                <input
+                    list="typesList"
+                    wire:model="selectedTypes"
+                    wire:change="filterJewels"
+                    class="mt-2 w-full border-4 border-black p-4 text-xl font-bold placeholder-gray-500 focus:outline-none focus:ring-0"
+                    placeholder="SELECT TYPES..."
+                    multiple
+                />
+                <datalist id="typesList">
+                    @foreach ($types as $type)
+                        <option value="{{ $type->value }}">{{ $type->value }}</option>
+                    @endforeach
+                </datalist>
+            </div>
         </div>
     </div>
 
-    <!-- Display filtered jewels -->
-    <div wire:poll class="columns-1 sm:columns-2 lg:columns-3 gap-0 mt-6">
-        @if($this->jewels->isEmpty())
-            <div class="col-span-full text-center py-8 text-gray-500">
-                No jewels found matching your filters.
+    <!-- Jewels Grid with Brutalist Layout -->
+    <div class="mt-8">
+        @if($jewels->isEmpty())
+            <div class="font-mono text-3xl uppercase text-center py-12 border-4 border-black">
+                No Jewels Found
             </div>
         @else
-            @foreach ($this->jewels as $jewel)
-                @php
-                    $media = $jewel->getMedia('jewels/images');
-                    $firstMediaUrl = $media->isNotEmpty() ? $media->first()->getUrl() : null;
-                    $randomSize = rand(1, 3);
-                    $sizeClass = match($randomSize) {
-                        1 => '',
-                        2 => 'h-[120%] w-[120%]',
-                        3 => 'h-[150%] w-[150%]'
-                    };
-                @endphp
-                <div class="break-inside-avoid mb-0">
-                    <livewire:catalogitem :jewel="$jewel" :mediaUrl="$firstMediaUrl" :key="$jewel->id" class="{{ $sizeClass }}" />
-                </div>
-            @endforeach
+            <div class="columns-1 md:columns-2 lg:columns-3 gap-0 space-y-0">
+                @foreach ($jewels as $index => $jewel)
+                    @php
+                        $media = $jewel->getMedia('jewels/images');
+                        $firstMediaUrl = $media->isNotEmpty() ? $media->first()->getUrl() : null;
+                        // Randomize sizes for visual interest
+                        $sizeClass = match($index % 5) {
+                            0 => 'h-[600px]', // Extra large
+                            1 => 'h-[400px]', // Large
+                            2 => 'h-[300px]', // Medium
+                            3 => 'h-[500px]', // Large-medium
+                            4 => 'h-[350px]', // Medium-small
+                        };
+                    @endphp
+                    <div class="break-inside-avoid relative group hover:z-10 transform transition-transform duration-200 hover:scale-[1.02]">
+                        <div class="relative {{ $sizeClass }} border-4 border-black">
+                            <livewire:catalogitem 
+                                :jewel="$jewel" 
+                                :mediaUrl="$firstMediaUrl" 
+                                :key="$jewel->id"
+                            />
+                            <!-- Overlay with jewel name -->
+                            <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-80 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                <h3 class="text-white font-mono text-xl uppercase truncate">
+                                    {{ $jewel->name }}
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
         @endif
     </div>
 </div>
