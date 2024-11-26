@@ -14,9 +14,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Creator extends Model
+class Creator extends Model 
 {
     use HasFactory;
+
+    protected $fillable = [
+        'first_name',
+        'last_name',
+        'date_of_birth',
+        'description',
+        'avatar',
+        'avatar_hovered',
+        'website_url',
+        'online',
+        'collection_id'
+    ];
 
     protected $casts = [
         "id" => "integer",
@@ -40,6 +52,7 @@ class Creator extends Model
                 ->required(),
             RichEditor::make("description")->label("Biographie")->required(),
             FileUpload::make("avatar")->image()->avatar()->imageEditor(),
+            FileUpload::make("avatar_hover")->image()->avatar()->imageEditor(),
             TextInput::make("website_url")->label("Site web")->url(),
             Radio::make("online")
                 ->options(Status::class)
