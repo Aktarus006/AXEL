@@ -45,14 +45,14 @@ class Creator extends Model
     public static function getForm(): array
     {
         return [
-            TextInput::make("first_name")->label("Préom")->required(),
+            TextInput::make("first_name")->label("Prénom")->required(),
             TextInput::make("last_name")->label("Nom")->required(),
             DatePicker::make("date_of_birth")
                 ->label("Date de naissance")
                 ->required(),
             RichEditor::make("description")->label("Biographie")->required(),
             FileUpload::make("avatar")->image()->avatar()->imageEditor(),
-            FileUpload::make("avatar_hover")->image()->avatar()->imageEditor(),
+            FileUpload::make("avatar_hovered")->image()->avatar()->imageEditor(),
             TextInput::make("website_url")->label("Site web")->url(),
             Radio::make("online")
                 ->options(Status::class)
