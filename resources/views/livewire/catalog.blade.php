@@ -2,11 +2,11 @@
 use App\Models\Jewel;
 use App\Enums\Type;
 use App\Enums\Material;
-use function Livewire\Volt\{state, mount};
+use function Livewire\Volt\{state, mount, computed};
 
 state([
     "jewels" => [],
-    "selectedMaterials" => [], // Ensure these are initialized as arrays
+    "selectedMaterials" => [], 
     "selectedTypes" => [],
     "name" => "",
     "materials" => Material::cases(),
@@ -14,28 +14,34 @@ state([
 ]);
 
 mount(function () {
-    $this->jewels = Jewel::with('media')->get();
+    $this->jewels = Jewel::with(['media', 'collection'])->get();
+    dump("Initial mount - jewels count: " . $this->jewels->count());
 });
 
 $filterJewels = function () {
     $this->selectedMaterials = (array) $this->selectedMaterials;
     $this->selectedTypes = (array) $this->selectedTypes;
 
-    $this->jewels = Jewel::with('media')  // Make sure to include media relationship
-        ->when(count($this->selectedMaterials) > 0, function ($query) {
-            foreach ($this->selectedMaterials as $material) {
-                $query->whereJsonContains("material", $material);
-            }
-        })
-        ->when(count($this->selectedTypes) > 0, function ($query) {
-            foreach ($this->selectedTypes as $type) {
-                $query->whereJsonContains("type", $type);
-            }
-        })
-        ->when($this->name, function ($query) {
-            $query->where("name", "like", "%{$this->name}%");
-        })
-        ->get();
+    $query = Jewel::with(['media', 'collection']);
+
+    if (count($this->selectedMaterials) > 0) {
+        foreach ($this->selectedMaterials as $material) {
+            $query->whereJsonContains('material', $material);
+        }
+    }
+
+    if (count($this->selectedTypes) > 0) {
+        foreach ($this->selectedTypes as $type) {
+            $query->whereJsonContains('type', $type);
+        }
+    }
+
+    if ($this->name) {
+        $query->where('name', 'like', "%{$this->name}%");
+    }
+
+    $this->jewels = $query->get();
+    dump("After filter - jewels count: " . $this->jewels->count());
 };
 ?>
 
@@ -50,7 +56,7 @@ $filterJewels = function () {
                 </label>
                 <input
                     type="text"
-                    wire:model="name"
+                    wire:model.live="name"
                     wire:input="filterJewels"
                     class="mt-2 w-full border-4 border-black p-4 text-xl font-bold placeholder-gray-500 focus:outline-none focus:ring-0"
                     placeholder="TYPE JEWEL NAME..."
@@ -64,7 +70,7 @@ $filterJewels = function () {
                 </label>
                 <input
                     list="materialsList"
-                    wire:model="selectedMaterials"
+                    wire:model.live="selectedMaterials"
                     wire:change="filterJewels"
                     class="mt-2 w-full border-4 border-black p-4 text-xl font-bold placeholder-gray-500 focus:outline-none focus:ring-0"
                     placeholder="SELECT MATERIALS..."
@@ -84,7 +90,7 @@ $filterJewels = function () {
                 </label>
                 <input
                     list="typesList"
-                    wire:model="selectedTypes"
+                    wire:model.live="selectedTypes"
                     wire:change="filterJewels"
                     class="mt-2 w-full border-4 border-black p-4 text-xl font-bold placeholder-gray-500 focus:outline-none focus:ring-0"
                     placeholder="SELECT TYPES..."
@@ -122,12 +128,19 @@ $filterJewels = function () {
                     @endphp
                     <div class="break-inside-avoid relative group hover:z-10 transform transition-transform duration-200 hover:scale-[1.02]">
                         <div class="relative {{ $sizeClass }} border-4 border-black">
+                            @php
+                                dump([
+                                    'jewel_id' => $jewel->id,
+                                    'jewel_name' => $jewel->name,
+                                    'media_url' => $firstMediaUrl,
+                                    'has_media' => $media->isNotEmpty(),
+                                ]);
+                            @endphp
                             <livewire:catalogitem 
                                 :jewel="$jewel" 
                                 :mediaUrl="$firstMediaUrl" 
-                                :key="$jewel->id"
+                                :key="$jewel->id.$index"
                             />
-                            
                         </div>
                     </div>
                 @endforeach
