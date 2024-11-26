@@ -38,7 +38,7 @@ state([
                     <!-- Materials - Top Left -->
                     @if($jewel->material)
                         <div class="absolute top-0 left-0 flex flex-wrap gap-0">
-                            @foreach((array)$jewel->material as $material)
+                            @foreach($jewel->material as $material)
                                 
                                 <div class="bg-white text-black p-2 border-2 border-black font-mono text-sm uppercase">
                                     {{ $material }}
