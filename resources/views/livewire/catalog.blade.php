@@ -2,7 +2,7 @@
 use App\Models\Jewel;
 use App\Enums\Type;
 use App\Enums\Material;
-use function Livewire\Volt\{state, mount, computed};
+use function Livewire\Volt\{state, mount};
 
 state([
     "jewels" => [],
@@ -15,25 +15,23 @@ state([
 ]);
 
 mount(function () {
-    $this->refreshJewels();
+    $this->jewels = Jewel::with("media")->get();
 });
 
-$refreshJewels = function () {
+$filterJewels = function () {
     $query = Jewel::query()->with("media");
 
     if (!empty($this->selectedMaterials)) {
-        $materials = array_filter($this->selectedMaterials);
-        if (!empty($materials)) {
-            foreach ($materials as $material) {
+        foreach ($this->selectedMaterials as $material) {
+            if (!empty($material)) {
                 $query->whereJsonContains("material", $material);
             }
         }
     }
 
     if (!empty($this->selectedTypes)) {
-        $types = array_filter($this->selectedTypes);
-        if (!empty($types)) {
-            foreach ($types as $type) {
+        foreach ($this->selectedTypes as $type) {
+            if (!empty($type)) {
                 $query->whereJsonContains("type", $type);
             }
         }
@@ -49,10 +47,6 @@ $refreshJewels = function () {
 
     $this->jewels = $query->get();
 };
-
-$filterJewels = function () {
-    $this->refreshJewels();
-};
 ?>
 
 <div>
@@ -63,6 +57,7 @@ $filterJewels = function () {
             <input
                 type="text"
                 wire:model.live="name"
+                wire:change="filterJewels"
                 class="form-input mt-2 p-2 border border-gray-300 rounded w-full"
                 placeholder="Enter jewel name"
             />
@@ -71,7 +66,7 @@ $filterJewels = function () {
         <!-- Price filter toggle -->
         <div class="flex items-center mt-8">
             <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" wire:model.live="showOnlyPriced" class="sr-only peer">
+                <input type="checkbox" wire:model.live="showOnlyPriced" wire:change="filterJewels" class="sr-only peer">
                 <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                 <span class="ms-3 text-sm font-medium text-gray-900">Show only priced items</span>
             </label>
@@ -81,34 +76,42 @@ $filterJewels = function () {
     <div class="flex flex-wrap gap-4 mt-4">
         <div class="flex-1">
             <h2>Filter by Material</h2>
-            <!-- Material filter select -->
-            <select
+            <!-- Material filter combobox -->
+            <input
+                list="materialsList"
                 wire:model.live="selectedMaterials"
+                wire:change="filterJewels"
                 class="form-select mt-2 p-2 border border-gray-300 rounded w-full"
+                placeholder="Select or type material"
                 multiple
-            >
+            />
+            <datalist id="materialsList">
                 <option value="">All Materials</option>
                 <option value="">-- None --</option>
                 @foreach ($materials as $material)
                     <option value="{{ $material->value }}">{{ $material->value }}</option>
                 @endforeach
-            </select>
+            </datalist>
         </div>
 
         <div class="flex-1">
             <h2>Filter by Type</h2>
-            <!-- Type filter select -->
-            <select
+            <!-- Type filter combobox -->
+            <input
+                list="typesList"
                 wire:model.live="selectedTypes"
+                wire:change="filterJewels"
                 class="form-select mt-2 p-2 border border-gray-300 rounded w-full"
+                placeholder="Select or type type"
                 multiple
-            >
+            />
+            <datalist id="typesList">
                 <option value="">All Types</option>
                 <option value="">-- None --</option>
                 @foreach ($types as $type)
                     <option value="{{ $type->value }}">{{ $type->value }}</option>
                 @endforeach
-            </select>
+            </datalist>
         </div>
     </div>
 
