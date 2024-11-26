@@ -3,7 +3,7 @@ use App\Models\Jewel;
 use App\Enums\Type;
 use App\Enums\Material;
 use Illuminate\Support\Facades\Log;
-use function Livewire\Volt\{state, mount, computed};
+use function Livewire\Volt\{state, mount};
 
 state([
     "jewels" => [],
@@ -31,11 +31,15 @@ $refreshJewels = function () {
     ]);
 
     if (!empty($this->selectedMaterial)) {
-        $query->whereJsonContains("material", ["value" => $this->selectedMaterial]);
+        $query->where(function($q) {
+            $q->whereJsonContains('material', $this->selectedMaterial);
+        });
     }
 
     if (!empty($this->selectedType)) {
-        $query->whereJsonContains("type", ["value" => $this->selectedType]);
+        $query->where(function($q) {
+            $q->whereJsonContains('type', $this->selectedType);
+        });
     }
 
     if (!empty($this->name)) {
