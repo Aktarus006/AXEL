@@ -2,6 +2,7 @@
 use App\Models\Jewel;
 use App\Enums\Type;
 use App\Enums\Material;
+use Illuminate\Support\Facades\Log;
 use function Livewire\Volt\{state, mount};
 
 state([
@@ -21,12 +22,20 @@ mount(function () {
 $refreshJewels = function () {
     $query = Jewel::query()->with(['media', 'collection']);
 
+    // Log current filter states
+    Log::info('Current filters:', [
+        'material' => $this->selectedMaterial,
+        'type' => $this->selectedType,
+        'name' => $this->name,
+        'showOnlyPriced' => $this->showOnlyPriced
+    ]);
+
     if (!empty($this->selectedMaterial)) {
-        $query->whereJsonContains('material', $this->selectedMaterial);
+        $query->whereJsonContains('material->value', $this->selectedMaterial);
     }
 
     if (!empty($this->selectedType)) {
-        $query->whereJsonContains('type', $this->selectedType);
+        $query->whereJsonContains('type->value', $this->selectedType);
     }
 
     if (!empty($this->name)) {
@@ -37,7 +46,15 @@ $refreshJewels = function () {
         $query->where('price', '>', 0);
     }
 
+    // Get the SQL query for debugging
+    $sql = $query->toSql();
+    $bindings = $query->getBindings();
+    Log::info('Query:', ['sql' => $sql, 'bindings' => $bindings]);
+
     $this->jewels = $query->get();
+    
+    // Log results count
+    Log::info('Results count: ' . $this->jewels->count());
 };
 
 $updateName = function($value) {
@@ -57,6 +74,14 @@ $updateMaterial = function($value) {
 
 $updateType = function($value) {
     $this->selectedType = $value;
+    $this->refreshJewels();
+};
+
+$clearFilters = function() {
+    $this->selectedMaterial = "";
+    $this->selectedType = "";
+    $this->name = "";
+    $this->showOnlyPriced = false;
     $this->refreshJewels();
 };
 ?>
@@ -88,6 +113,14 @@ $updateType = function($value) {
                 <span class="ms-3 text-sm font-medium text-gray-900">Show only priced items</span>
             </label>
         </div>
+
+        <!-- Clear filters button -->
+        <button 
+            wire:click="clearFilters"
+            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md text-sm font-medium text-gray-700"
+        >
+            Clear Filters
+        </button>
     </div>
 
     <div class="flex flex-wrap gap-4 mt-4">
@@ -122,20 +155,26 @@ $updateType = function($value) {
 
     <!-- Display filtered jewels -->
     <div class="columns-1 sm:columns-2 lg:columns-3 gap-0 mt-6">
-        @foreach ($jewels as $jewel)
-            @php
-                $media = $jewel->getMedia('jewels/images');
-                $firstMediaUrl = $media->isNotEmpty() ? $media->first()->getUrl() : null;
-                $randomSize = rand(1, 3);
-                $sizeClass = match($randomSize) {
-                    1 => '',
-                    2 => 'h-[120%] w-[120%]',
-                    3 => 'h-[150%] w-[150%]'
-                };
-            @endphp
-            <div class="break-inside-avoid mb-0">
-                <livewire:catalogitem :jewel="$jewel" :mediaUrl="$firstMediaUrl" :key="$jewel->id" class="{{ $sizeClass }}" />
+        @if($jewels->isEmpty())
+            <div class="col-span-full text-center py-8 text-gray-500">
+                No jewels found matching your filters.
             </div>
-        @endforeach
+        @else
+            @foreach ($jewels as $jewel)
+                @php
+                    $media = $jewel->getMedia('jewels/images');
+                    $firstMediaUrl = $media->isNotEmpty() ? $media->first()->getUrl() : null;
+                    $randomSize = rand(1, 3);
+                    $sizeClass = match($randomSize) {
+                        1 => '',
+                        2 => 'h-[120%] w-[120%]',
+                        3 => 'h-[150%] w-[150%]'
+                    };
+                @endphp
+                <div class="break-inside-avoid mb-0">
+                    <livewire:catalogitem :jewel="$jewel" :mediaUrl="$firstMediaUrl" :key="$jewel->id" class="{{ $sizeClass }}" />
+                </div>
+            @endforeach
+        @endif
     </div>
 </div>
