@@ -14,27 +14,28 @@ state([
 ]);
 
 mount(function () {
-    $this->jewels = Jewel::with("media")->get();
+    $this->jewels = Jewel::with('media')->get();
 });
 
 $filterJewels = function () {
     $this->selectedMaterials = (array) $this->selectedMaterials;
     $this->selectedTypes = (array) $this->selectedTypes;
 
-    $this->jewels = Jewel::when(count($this->selectedMaterials) > 0, function ($query) {
-        foreach ($this->selectedMaterials as $material) {
-            $query->whereJsonContains("material", $material);
-        }
-    })
-    ->when(count($this->selectedTypes) > 0, function ($query) {
-        foreach ($this->selectedTypes as $type) {
-            $query->whereJsonContains("type", $type);
-        }
-    })
-    ->when($this->name, function ($query) {
-        $query->where("name", "like", "%{$this->name}%");
-    })
-    ->get();
+    $this->jewels = Jewel::with('media')  // Make sure to include media relationship
+        ->when(count($this->selectedMaterials) > 0, function ($query) {
+            foreach ($this->selectedMaterials as $material) {
+                $query->whereJsonContains("material", $material);
+            }
+        })
+        ->when(count($this->selectedTypes) > 0, function ($query) {
+            foreach ($this->selectedTypes as $type) {
+                $query->whereJsonContains("type", $type);
+            }
+        })
+        ->when($this->name, function ($query) {
+            $query->where("name", "like", "%{$this->name}%");
+        })
+        ->get();
 };
 ?>
 
@@ -126,12 +127,7 @@ $filterJewels = function () {
                                 :mediaUrl="$firstMediaUrl" 
                                 :key="$jewel->id"
                             />
-                            <!-- Overlay with jewel name -->
-                            <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-80 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                <h3 class="text-white font-mono text-xl uppercase truncate">
-                                    {{ $jewel->name }}
-                                </h3>
-                            </div>
+                            
                         </div>
                     </div>
                 @endforeach
