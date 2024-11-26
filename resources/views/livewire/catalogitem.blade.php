@@ -1,70 +1,99 @@
+
 <?php
 use App\Models\Jewel;
-use function Livewire\Volt\{state};
+use App\Enums\Type;
+use App\Enums\Material;
+use function Livewire\Volt\{state, mount};
 
 state([
-    "key" => "",
-    "jewel" => null,
-    "mediaUrl" => "",
+    "jewels" => [],
+    "selectedMaterials" => [], // Ensure these are initialized as arrays
+    "selectedTypes" => [],
+    "name" => "",
+    "materials" => Material::cases(),
+    "types" => Type::cases(),
 ]);
+
+mount(function () {
+    $this->jewels = Jewel::with("media")->get();
+});
+
+$filterJewels = function () {
+    $this->selectedMaterials = (array) $this->selectedMaterials; // Cast to array
+    $this->selectedTypes = (array) $this->selectedTypes; // Cast to array
+
+    $this->jewels = Jewel::when(count($this->selectedMaterials) > 0, function (
+        $query
+    ) {
+        foreach ($this->selectedMaterials as $material) {
+            $query->whereJsonContains("material", $material);
+        }
+    })
+        ->when(count($this->selectedTypes) > 0, function ($query) {
+            foreach ($this->selectedTypes as $type) {
+                $query->whereJsonContains("type", $type);
+            }
+        })
+        ->when($this->name, function ($query) {
+            $query->where("name", "like", "%{$this->name}%");
+        })
+        ->get();
+};
 ?>
 
-<div class="relative w-full h-full">
-    @if($jewel)
-        <a href="/jewels/{{ $jewel->id }}" class="block w-full h-full">
-            <!-- Main Image with Brutalist Treatment -->
-            <div class="relative w-full h-full overflow-hidden">
-                @if($mediaUrl)
-                    <img 
-                        src="{{ $mediaUrl }}" 
-                        alt="{{ $jewel->name }}" 
-                        class="w-full h-full object-cover grayscale transition-all duration-300 group-hover:grayscale-0 group-hover:scale-105"
-                    >
-                @else
-                    <div class="w-full h-full bg-gray-200 flex items-center justify-center">
-                        <span class="text-gray-400 font-mono text-lg">NO IMAGE</span>
-                    </div>
-                @endif
-                
-                <!-- Brutalist Overlay Elements -->
-                <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                    <!-- Price Tag - Top Right -->
-                    @if($jewel->price > 0)
-                        <div class="absolute top-0 right-0 bg-black text-white p-4 font-mono text-xl">
-                            ${{ number_format($jewel->price, 2) }}
-                        </div>
-                    @endif
+<div>
+    <!-- Name filter input field -->
+    <h2>Search by Name</h2>
+    <input
+        type="text"
+        wire:model="name"
+        wire:input="filterJewels"
+        class="form-input mt-2 p-2 border border-gray-300 rounded"
+        placeholder="Enter jewel name"
+    />
 
-                    <!-- Material Tag - Top Left -->
-                    @if($jewel->material)
-                        <div class="absolute top-0 left-0 bg-white text-black p-4 font-mono text-sm uppercase">
-                            {{ $jewel->material }}
-                        </div>
-                    @endif
+    <h2 class="mt-4">Filter by Material</h2>
+    <!-- Material filter combobox -->
+    <input
+        list="materialsList"
+        wire:model="selectedMaterials"
+        wire:change="filterJewels"
+        class="form-select mt-2 p-2 border border-gray-300 rounded"
+        placeholder="Select or type material"
+        multiple
+    />
+    <datalist id="materialsList">
+        <option value="">All Materials</option>
+        @foreach ($materials as $material)
+            <option value="{{ $material->value }}">{{ $material->value }}</option>
+        @endforeach
+    </datalist>
 
-                    <!-- Name and Details - Bottom -->
-                    <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-90 p-6 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                        <h3 class="font-mono text-2xl text-white uppercase mb-2 tracking-tight">
-                            {{ $jewel->name }}
-                        </h3>
-                        
-                        <!-- Type Tags -->
-                        @if($jewel->type)
-                            <div class="flex flex-wrap gap-2">
-                                @foreach($jewel->type as $type)
-                                    <span class="bg-white text-black px-3 py-1 text-xs font-mono uppercase">
-                                        {{ $type }}
-                                    </span>
-                                @endforeach
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </a>
-    @else
-        <div class="w-full h-full bg-gray-100 flex items-center justify-center">
-            <span class="text-gray-400 font-mono">JEWEL NOT FOUND</span>
-        </div>
-    @endif
+    <h2 class="mt-4">Filter by Type</h2>
+    <!-- Type filter combobox -->
+    <input
+        list="typesList"
+        wire:model="selectedTypes"
+        wire:change="filterJewels"
+        class="form-select mt-2 p-2 border border-gray-300 rounded"
+        placeholder="Select or type type"
+        multiple
+    />
+    <datalist id="typesList">
+        <option value="">All Types</option>
+        @foreach ($types as $type)
+            <option value="{{ $type->value }}">{{ $type->value }}</option>
+        @endforeach
+    </datalist>
+
+    <!-- Display filtered jewels -->
+    <div class="max-w-screen mt-6 grid grid-cols-1 gap-y-10 sm:grid-cols-3 lg:grid-cols-3">
+        @foreach ($jewels as $jewel)
+            @php
+                $media = $jewel->getMedia('jewels/images');
+                $firstMediaUrl = $media->isNotEmpty() ? $media->first()->getUrl() : null;
+            @endphp
+            <livewire:catalogitem :jewel="$jewel" :mediaUrl="$firstMediaUrl" :key="$jewel->id" />
+        @endforeach
+    </div>
 </div>
