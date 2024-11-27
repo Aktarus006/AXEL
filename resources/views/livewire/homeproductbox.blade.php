@@ -2,7 +2,7 @@
     @volt
     <?php
 
-    use function Livewire\Volt\{state, computed, on};
+    use function Livewire\Volt\{state, computed};
     use App\Models\Jewel;
 
     state('jewelId');
@@ -12,16 +12,8 @@
         return Jewel::with('media')->find($this->jewelId);
     });
 
-    $hasValidImage = computed(function () {
-        return $this->jewel && $this->jewel->hasMedia('jewels/images');
-    });
-
-    on(['jewels-refreshed' => function() {
-        $this->isHovered = false;
-    }]);
-
     $hover = function () {
-        if ($this->hasValidImage) {
+        if ($this->jewel) {
             $this->isHovered = true;
             $this->dispatch('jewel-hovered', jewel: [
                 'id' => $this->jewel->id,
@@ -40,7 +32,7 @@
     };
 
     $getImageUrl = function () {
-        if ($this->hasValidImage) {
+        if ($this->jewel && $this->jewel->hasMedia('jewels/images')) {
             return $this->jewel->getFirstMediaUrl('jewels/images', 'thumb');
         }
         return null;
@@ -48,20 +40,18 @@
 
     ?>
 
-    @if($hasValidImage)
-        <div
-            wire:key="jewel-box-{{ $jewelId }}"
-            class="w-full h-full flex justify-center items-center cursor-pointer"
-            wire:mouseover="hover"
-            wire:mouseout="unhover"
+    <div
+        wire:key="jewel-box-{{ $jewelId }}"
+        class="w-full h-full flex justify-center items-center cursor-pointer"
+        wire:mouseover="hover"
+        wire:mouseout="unhover"
+    >
+        <img 
+            src="{{ $getImageUrl() }}" 
+            alt="{{ $jewel->name ?? 'Jewel' }}" 
+            class="w-full h-full object-cover transition-all duration-500
+                {{ !$isHovered ? 'grayscale' : 'grayscale-0 saturate-150' }}"
         >
-            <img 
-                src="{{ $getImageUrl() }}" 
-                alt="{{ $jewel->name ?? 'Jewel' }}" 
-                class="w-full h-full object-cover transition-all duration-500
-                    {{ !$isHovered ? 'grayscale' : 'grayscale-0 saturate-150' }}"
-            >
-        </div>
-    @endif
+    </div>
     @endvolt
 </div>

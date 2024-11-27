@@ -5,22 +5,14 @@ use App\Models\Jewel;
 
 state(['jewels' => [], 'selectedJewel' => null]);
 
-$refreshJewels = function() {
-    $this->selectedJewel = null;
-    
-    // Get jewels with images only
-    $jewelsWithImages = Jewel::with('media')
+mount(function () {
+    $this->jewels = Jewel::with('media')
         ->whereHas('media', function($query) {
             $query->where('collection_name', 'jewels/images');
         })
         ->inRandomOrder()
-        ->take(16) // Take more to ensure we have enough after filtering
+        ->take(8)
         ->get()
-        ->filter(function($jewel) {
-            return $jewel->hasMedia('jewels/images');
-        })
-        ->take(8) // Take exactly 8 after filtering
-        ->values()
         ->map(function($jewel) {
             return [
                 'id' => $jewel->id,
@@ -31,19 +23,6 @@ $refreshJewels = function() {
                 ]
             ];
         });
-
-    // If we don't have enough jewels with images, get more
-    if ($jewelsWithImages->count() < 8) {
-        $this->refreshJewels(); // Recursively try again
-        return;
-    }
-
-    $this->jewels = $jewelsWithImages;
-    $this->dispatch('jewels-refreshed');
-};
-
-mount(function () {
-    $this->refreshJewels();
 });
 
 on(['jewel-hovered' => function ($jewel) {
@@ -56,15 +35,11 @@ on(['jewel-unhovered' => function () {
 
 ?>
 
-<div 
-    x-data
-    class="flex w-full h-1/2 bg-black"
-    wire:poll.20s="refreshJewels"
->
+<div class="flex w-full h-1/2 bg-black">
     <!-- Left Jewels -->
     <div class="flex flex-wrap w-1/3 border-r-4 border-white">
         @foreach ($jewels->take(4) as $index => $jewel)
-            <div class="w-1/2 h-1/2 relative" wire:key="left-jewel-{{ $jewel['id'] }}">
+            <div class="w-1/2 h-1/2 relative">
                 <div class="absolute inset-0 border-b-4 border-r-4 border-white {{ $index >= 2 ? 'border-b-0' : '' }}">
                     <livewire:homeproductbox :wire:key="'box-'.$jewel['id']" :jewelId="$jewel['id']" />
                 </div>
@@ -102,7 +77,7 @@ on(['jewel-unhovered' => function () {
     <!-- Right Jewels -->
     <div class="flex flex-wrap w-1/3">
         @foreach ($jewels->skip(4) as $index => $jewel)
-            <div class="w-1/2 h-1/2 relative" wire:key="right-jewel-{{ $jewel['id'] }}">
+            <div class="w-1/2 h-1/2 relative">
                 <div class="absolute inset-0 border-b-4 border-r-4 border-white {{ $index >= 2 ? 'border-b-0' : '' }}">
                     <livewire:homeproductbox :wire:key="'box-'.$jewel['id']" :jewelId="$jewel['id']" />
                 </div>
