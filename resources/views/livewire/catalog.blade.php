@@ -102,25 +102,25 @@ $filterJewels = function () {
     </div>
 
     <!-- Jewels Grid with Enhanced Brutalist Layout -->
-<div class="mt-8 bg-black min-h-screen p-4">
+<div class="mt-8 bg-black min-h-screen p-2">
     @if($jewels->isEmpty())
         <div class="font-mono text-3xl uppercase text-center py-12 border-4 border-white bg-black text-white">
             No Jewels Found
         </div>
     @else
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2">
             @foreach ($jewels as $index => $jewel)
                 @php
                     $media = $jewel->getMedia('jewels/images');
                     $firstMediaUrl = $media->isNotEmpty() ? $media->first()->getUrl() : null;
                     
-                    // Create different size variations
+                    // Create different size variations with smaller heights
                     $sizes = [
-                        ['h-[600px] md:col-span-2 lg:col-span-1', 'w-full'], // Extra large
-                        ['h-[400px]', 'w-[90%]'], // Large
-                        ['h-[300px]', 'w-[95%]'], // Medium
-                        ['h-[500px] md:col-span-2 lg:col-span-1', 'w-full'], // Large-medium
-                        ['h-[350px]', 'w-[85%]'], // Medium-small
+                        ['h-[400px] md:col-span-2', 'w-[98%]'], // Extra large
+                        ['h-[300px]', 'w-[95%]'], // Large
+                        ['h-[250px]', 'w-[97%]'], // Medium
+                        ['h-[350px] md:col-span-2', 'w-[98%]'], // Large-medium
+                        ['h-[280px]', 'w-[93%]'], // Medium-small
                     ];
                     
                     $sizeClass = $sizes[$index % 5][0];
@@ -128,7 +128,7 @@ $filterJewels = function () {
                 @endphp
                 <div class="flex items-center justify-center">
                     <div class="relative {{ $sizeClass }} {{ $widthClass }} group hover:z-10 transform transition-transform duration-200 hover:scale-[1.02]">
-                        <div class="h-full border-4 border-white bg-black">
+                        <div class="h-full border-2 border-white bg-black">
                             <livewire:catalogitem 
                                 :jewel="$jewel" 
                                 :mediaUrl="$firstMediaUrl" 
