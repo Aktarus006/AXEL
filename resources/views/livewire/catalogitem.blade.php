@@ -38,14 +38,18 @@ state([
                     <h3 class="font-mono text-white text-xl mb-4 tracking-tight">{{ strtoupper($jewel->name) }}</h3>
                     <div class="flex flex-wrap gap-2 justify-center">
                         @if($jewel->material)
-                            <span class="font-mono text-sm bg-white text-black px-3 py-1 border-2 border-white hover:bg-black hover:text-white transition-colors duration-300">
-                                {{ strtoupper($jewel->material) }}
-                            </span>
+                            @foreach(explode(',', str_replace(['"', '[', ']'], '', $jewel->material)) as $material)
+                                <span class="font-mono text-sm bg-white text-black px-3 py-1 border-2 border-white hover:bg-black hover:text-white transition-colors duration-300">
+                                    {{ strtoupper(trim($material)) }}
+                                </span>
+                            @endforeach
                         @endif
                         @if($jewel->type)
-                            <span class="font-mono text-sm bg-black text-white px-3 py-1 border-2 border-white hover:bg-white hover:text-black transition-colors duration-300">
-                                {{ strtoupper($jewel->type) }}
-                            </span>
+                            @foreach(explode(',', str_replace(['"', '[', ']'], '', $jewel->type)) as $type)
+                                <span class="font-mono text-sm bg-black text-white px-3 py-1 border-2 border-white hover:bg-white hover:text-black transition-colors duration-300">
+                                    {{ strtoupper(trim($type)) }}
+                                </span>
+                            @endforeach
                         @endif
                     </div>
                 </div>
