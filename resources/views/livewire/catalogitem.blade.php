@@ -2,47 +2,38 @@
 use App\Models\Jewel;
 use function Livewire\Volt\{state};
 
-state(['jewel', 'mediaUrl', 'key']);
+state([
+    "key" => "",
+    "jewel" => null,
+    "mediaUrl" => "",
+]);
 ?>
 
 <div class="relative w-full h-full">
     @if($jewel)
-        <a href="{{ route('jewels.show', $jewel) }}" class="block w-full h-full relative group">
-            <!-- Image Container with Grayscale Effect -->
-            <div class="absolute inset-0 w-full h-full overflow-hidden">
+        <a href="/jewels/{{ $jewel->id }}" class="block w-full h-full relative group">
+            <div class="w-full h-full overflow-hidden">
                 @if($mediaUrl)
                     <img 
                         src="{{ $mediaUrl }}" 
                         alt="{{ $jewel->name }}" 
-                        class="w-full h-full object-cover transition-all duration-300 filter grayscale group-hover:grayscale-0"
+                        class="w-full h-full object-cover grayscale transition-all duration-300 group-hover:grayscale-0 group-hover:scale-105"
                         loading="lazy"
-                    />
+                    >
                 @else
-                    <div class="w-full h-full bg-gray-900 flex items-center justify-center">
-                        <span class="text-white font-mono text-sm">No Image</span>
+                    <div class="w-full h-full bg-black flex items-center justify-center border-2 border-white">
+                        <span class="text-white font-mono text-lg">NO IMAGE</span>
                     </div>
                 @endif
             </div>
-
-            <!-- Hover Overlay -->
-            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-80 transition-all duration-300">
-                <div class="absolute inset-0 flex flex-col justify-end p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <!-- Title -->
-                    <h3 class="font-mono text-white text-xl mb-2 truncate">
-                        {{ $jewel->name }}
-                    </h3>
-
-                    <!-- Collection -->
-                    @if($jewel->collection)
-                        <p class="font-mono text-white text-sm truncate">
-                            {{ $jewel->collection->name }}
-                        </p>
+            
+            <!-- Overlay with text -->
+            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-80 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                <div class="text-center p-4">
+                    <h3 class="font-mono text-white text-xl mb-2 tracking-tight">{{ $jewel->name }}</h3>
+                    @if($jewel->creator)
+                        <p class="font-mono text-white text-sm tracking-wider">BY {{ strtoupper($jewel->creator->first_name . ' ' . $jewel->creator->last_name) }}</p>
                     @endif
-
-                    <!-- Price -->
-                    <p class="font-mono text-white text-sm mt-2">
-                        €{{ number_format($jewel->price, 2) }}
-                    </p>
                 </div>
             </div>
         </a>
