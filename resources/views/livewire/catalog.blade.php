@@ -102,31 +102,31 @@ $filterJewels = function () {
     </div>
 
     <!-- Jewels Grid with Enhanced Brutalist Layout -->
-    <div class="w-full min-h-screen bg-black p-4">
+    <div class="w-full min-h-screen bg-black p-[1px]">
         @if($jewels->isEmpty())
             <div class="font-mono text-3xl uppercase text-center py-12 border-4 border-white bg-black text-white">
                 No Jewels Found
             </div>
         @else
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-[2px]">
+            <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[1px]">
                 @foreach ($jewels as $index => $jewel)
                     @php
                         $media = $jewel->getMedia('jewels/images');
                         $firstMediaUrl = $media->isNotEmpty() ? 
                             $media->first()->getUrl('thumbnail') : null;
                         
-                        // Random height selection
+                        // Random height selection with slightly larger ranges
                         $heights = [
-                            'h-[200px]', // Small
-                            'h-[250px]', // Medium-small
+                            'h-[250px]', // Small
                             'h-[300px]', // Medium
                             'h-[350px]', // Medium-large
+                            'h-[400px]', // Large
                         ];
                         $randomHeight = $heights[array_rand($heights)];
                     @endphp
-                    <div class="flex items-center justify-center">
-                        <div class="relative {{ $randomHeight }} w-full group hover:z-10 transform transition-transform duration-200 hover:scale-[1.02]">
-                            <div class="h-full border-2 border-white bg-black">
+                    <div class="w-full">
+                        <div class="relative {{ $randomHeight }} w-full group hover:z-10">
+                            <div class="absolute inset-0 border border-white">
                                 <livewire:catalogitem 
                                     :jewel="$jewel" 
                                     :mediaUrl="$firstMediaUrl" 
