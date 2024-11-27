@@ -2,19 +2,21 @@
 use App\Models\Jewel;
 use App\Enums\Type;
 use App\Enums\Material;
-use function Livewire\Volt\{state, computed};
+use function Livewire\Volt\{state, computed, mount};
 
-state(['search' => '']);
-state(['selectedMaterials' => []]);
-state(['selectedTypes' => []]);
-state(['jewels' => []]);
+state([
+    'search' => '',
+    'selectedMaterials' => [],
+    'selectedTypes' => [],
+    'jewels' => [],
+    'availableMaterials' => [],
+    'availableTypes' => []
+]);
 
-$materials = computed(function () {
-    return Jewel::all()->pluck('material')->flatten()->unique()->sort()->values();
-});
-
-$types = computed(function () {
-    return Jewel::all()->pluck('type')->flatten()->unique()->sort()->values();
+mount(function () {
+    $this->jewels = Jewel::all();
+    $this->availableMaterials = Jewel::all()->pluck('material')->flatten()->unique()->sort()->values();
+    $this->availableTypes = Jewel::all()->pluck('type')->flatten()->unique()->sort()->values();
 });
 
 $filterJewels = function () {
@@ -42,9 +44,6 @@ $filterJewels = function () {
 
     $this->jewels = $query->get();
 };
-
-// Initial load
-$this->jewels = Jewel::all();
 ?>
 
 <div class="bg-black">
@@ -78,7 +77,7 @@ $this->jewels = Jewel::all();
                 multiple
             />
             <datalist id="materialsList">
-                @foreach ($this->materials as $material)
+                @foreach ($availableMaterials as $material)
                     <option value="{{ $material }}">{{ $material }}</option>
                 @endforeach
             </datalist>
@@ -98,7 +97,7 @@ $this->jewels = Jewel::all();
                 multiple
             />
             <datalist id="typesList">
-                @foreach ($this->types as $type)
+                @foreach ($availableTypes as $type)
                     <option value="{{ $type }}">{{ $type }}</option>
                 @endforeach
             </datalist>
