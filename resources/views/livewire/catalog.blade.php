@@ -9,12 +9,13 @@ state(['selectedMaterials' => []]);
 state(['selectedTypes' => []]);
 state(['jewels' => []]);
 
+// Get all available materials and types from enums
 $materials = computed(function () {
-    return Jewel::all()->pluck('material')->flatten()->unique()->sort()->values();
+    return collect(Material::cases())->map->value;
 });
 
 $types = computed(function () {
-    return Jewel::all()->pluck('type')->flatten()->unique()->sort()->values();
+    return collect(Type::cases())->map->value;
 });
 
 $filterJewels = function () {
@@ -27,7 +28,7 @@ $filterJewels = function () {
     if (!empty($this->selectedMaterials)) {
         $query->where(function ($q) {
             foreach ($this->selectedMaterials as $material) {
-                $q->orWhere('material', 'like', '%' . $material . '%');
+                $q->orWhereJsonContains('material', $material);
             }
         });
     }
@@ -35,12 +36,17 @@ $filterJewels = function () {
     if (!empty($this->selectedTypes)) {
         $query->where(function ($q) {
             foreach ($this->selectedTypes as $type) {
-                $q->orWhere('type', 'like', '%' . $type . '%');
+                $q->orWhereJsonContains('type', $type);
             }
         });
     }
 
-    $this->jewels = $query->get();
+    $this->jewels = $query->with(['creator', 'collection', 'media'])->get();
+};
+
+// Initial load
+$mount = function () {
+    $this->jewels = Jewel::with(['creator', 'collection', 'media'])->get();
 };
 ?>
 
@@ -66,19 +72,16 @@ $filterJewels = function () {
             <label class="font-mono text-2xl uppercase tracking-tight ml-4 mb-2 block">
                 Materials
             </label>
-            <input
-                list="materialsList"
+            <select
                 wire:model.live="selectedMaterials"
                 wire:change="filterJewels"
                 class="w-full border-2 border-white p-3 text-xl font-mono bg-black text-white placeholder-gray-500 focus:outline-none focus:ring-0"
-                placeholder="SELECT MATERIALS..."
                 multiple
-            />
-            <datalist id="materialsList">
-                @foreach ($materials as $material)
+            >
+                @foreach ($this->materials as $material)
                     <option value="{{ $material }}">{{ $material }}</option>
                 @endforeach
-            </datalist>
+            </select>
         </div>
 
         <!-- Type Filter -->
@@ -86,19 +89,16 @@ $filterJewels = function () {
             <label class="font-mono text-2xl uppercase tracking-tight ml-4 mb-2 block">
                 Types
             </label>
-            <input
-                list="typesList"
+            <select
                 wire:model.live="selectedTypes"
                 wire:change="filterJewels"
                 class="w-full border-2 border-white p-3 text-xl font-mono bg-black text-white placeholder-gray-500 focus:outline-none focus:ring-0"
-                placeholder="SELECT TYPES..."
                 multiple
-            />
-            <datalist id="typesList">
-                @foreach ($types as $type)
+            >
+                @foreach ($this->types as $type)
                     <option value="{{ $type }}">{{ $type }}</option>
                 @endforeach
-            </datalist>
+            </select>
         </div>
     </div>
 
