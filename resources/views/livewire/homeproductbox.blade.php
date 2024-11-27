@@ -2,10 +2,9 @@
     @volt
     <?php
 
-    use function Livewire\Volt\{state, computed};
+    use function Livewire\Volt\{state, computed, on};
     use App\Models\Jewel;
 
-    state('showLargeImage', false);
     state('jewelId');
     state('isHovered', false);
 
@@ -13,8 +12,16 @@
         return Jewel::with('media')->find($this->jewelId);
     });
 
+    $hasValidImage = computed(function () {
+        return $this->jewel && $this->jewel->hasMedia('jewels/images');
+    });
+
+    on(['jewels-refreshed' => function() {
+        $this->isHovered = false;
+    }]);
+
     $hover = function () {
-        if ($this->jewel) {
+        if ($this->hasValidImage) {
             $this->isHovered = true;
             $this->dispatch('jewel-hovered', jewel: [
                 'id' => $this->jewel->id,
@@ -33,25 +40,28 @@
     };
 
     $getImageUrl = function () {
-        if ($this->jewel && $this->jewel->hasMedia('jewels/images')) {
+        if ($this->hasValidImage) {
             return $this->jewel->getFirstMediaUrl('jewels/images', 'thumb');
         }
-        return asset('path/to/default/image.jpg');
+        return null;
     };
 
     ?>
 
-    <div
-        class="w-full h-full flex justify-center items-center cursor-pointer group"
-        wire:mouseover="hover"
-        wire:mouseout="unhover"
-    >
-        <img 
-            src="{{ $getImageUrl() }}" 
-            alt="{{ $jewel->name ?? 'Jewel' }}" 
-            class="w-full h-full object-cover transition-all duration-500
-                {{ !$isHovered ? 'grayscale' : 'grayscale-0 saturate-150' }}"
+    @if($hasValidImage)
+        <div
+            wire:key="jewel-box-{{ $jewelId }}"
+            class="w-full h-full flex justify-center items-center cursor-pointer"
+            wire:mouseover="hover"
+            wire:mouseout="unhover"
         >
-    </div>
+            <img 
+                src="{{ $getImageUrl() }}" 
+                alt="{{ $jewel->name ?? 'Jewel' }}" 
+                class="w-full h-full object-cover transition-all duration-500
+                    {{ !$isHovered ? 'grayscale' : 'grayscale-0 saturate-150' }}"
+            >
+        </div>
+    @endif
     @endvolt
 </div>
