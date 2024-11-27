@@ -13,7 +13,16 @@
     });
 
     $hover = function () {
-        $this->dispatch('jewel-hovered', jewel: $this->jewel);
+        if ($this->jewel) {
+            $this->dispatch('jewel-hovered', jewel: [
+                'id' => $this->jewel->id,
+                'name' => $this->jewel->name,
+                'price' => $this->jewel->price,
+                'media' => $this->jewel->media->map(function($media) {
+                    return ['original_url' => $media->getUrl()];
+                })->toArray()
+            ]);
+        }
     };
 
     $getImageUrl = function () {
@@ -26,7 +35,7 @@
     ?>
 
     <div
-        class="w-full h-full flex justify-center items-center border-r-4 border-white cursor-pointer group"
+        class="w-full h-full flex justify-center items-center cursor-pointer group"
         wire:mouseover="hover"
     >
         <img 
