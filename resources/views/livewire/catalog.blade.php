@@ -75,8 +75,7 @@ $togglePriceFilter = function () {
             <div class="border-r border-white">
                 <input
                     wire:model.live="name"
-                    wire:debounce.500ms="filterJewels"
-                    wire:change="filterJewels"
+                    wire:input="filterJewels"
                     class="w-full h-12 px-4 text-sm font-mono bg-black text-white border-0 focus:outline-none focus:ring-0 placeholder-gray-500"
                     placeholder="SEARCH..."
                 />
@@ -118,14 +117,14 @@ $togglePriceFilter = function () {
         </div>
 
         <!-- Toggle and Clear Section -->
-        <div class="w-full flex">
-            <!-- Toggle -->
+        <div class="w-full flex border-t border-white">
+            <!-- Toggle Price Filter -->
             <div class="w-1/2 border-r border-white">
                 <button 
-                    wire:click="togglerFilters"
+                    wire:click="togglePriceFilter"
                     class="w-full h-12 px-4 font-mono text-sm text-white hover:bg-white hover:text-black transition-colors duration-200 focus:outline-none"
                 >
-                    {{ $showFilters ? '[ HIDE FILTERS ]' : '[ SHOW FILTERS ]' }}
+                    {{ $hideNoPrice ? '[ SHOW ALL JEWELS ]' : '[ SHOW ONLY FOR SALE ]' }}
                 </button>
             </div>
 
@@ -136,19 +135,6 @@ $togglePriceFilter = function () {
                     class="w-full h-12 px-4 font-mono text-sm text-white hover:bg-white hover:text-black transition-colors duration-200 focus:outline-none"
                 >
                     [ CLEAR FILTERS ]
-                </button>
-            </div>
-        </div>
-
-        <!-- Price Filter -->
-        <div class="w-full flex">
-            <!-- Price Filter Toggle -->
-            <div class="w-full">
-                <button 
-                    wire:click="togglePriceFilter"
-                    class="w-full h-12 px-4 font-mono text-sm text-white hover:bg-white hover:text-black transition-colors duration-200 focus:outline-none"
-                >
-                    {{ $hideNoPrice ? '[ SHOW ALL PRICES ]' : '[ HIDE NO PRICE ]' }}
                 </button>
             </div>
         </div>
