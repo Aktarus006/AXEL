@@ -42,6 +42,9 @@ $filterJewels = function () {
 
     $this->jewels = $query->get();
 };
+
+// Initial load
+$this->jewels = Jewel::all();
 ?>
 
 <div class="bg-black">
@@ -75,7 +78,7 @@ $filterJewels = function () {
                 multiple
             />
             <datalist id="materialsList">
-                @foreach ($materials as $material)
+                @foreach ($this->materials as $material)
                     <option value="{{ $material }}">{{ $material }}</option>
                 @endforeach
             </datalist>
@@ -95,7 +98,7 @@ $filterJewels = function () {
                 multiple
             />
             <datalist id="typesList">
-                @foreach ($types as $type)
+                @foreach ($this->types as $type)
                     <option value="{{ $type }}">{{ $type }}</option>
                 @endforeach
             </datalist>
