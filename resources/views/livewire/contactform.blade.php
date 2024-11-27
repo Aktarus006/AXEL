@@ -1,22 +1,87 @@
 <?php
-
 use function Livewire\Volt\{state};
-//
+
+state([
+    'name' => '',
+    'email' => '',
+    'message' => '',
+    'success' => false
+]);
+
+$submit = function() {
+    $this->success = true;
+    $this->name = '';
+    $this->email = '';
+    $this->message = '';
+};
 ?>
 
-<form class="w-full h-full">
-    <div class="flex justify-between w-full mb-8">
-        <div class="flex flex-col w-1/2">
-            <label for="name" class="w-full uppercase text-2xl text-left p-0 border-4 border-black border-l-0 pl-4">Name</label>
-            <input type="text" id="name" class="border-2" placeholder="Nom"/>
+<form wire:submit.prevent="submit" class="w-full font-mono">
+    <div class="grid grid-cols-2 gap-8 mb-8">
+        <!-- Name Input -->
+        <div class="relative">
+            <label for="name" class="absolute -top-6 left-0 text-sm uppercase tracking-wider">
+                01 | NAME
+            </label>
+            <input 
+                type="text" 
+                id="name"
+                wire:model="name"
+                class="w-full bg-black border-4 border-white px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-gray-300 transition-colors duration-200"
+                placeholder="YOUR NAME"
+            />
         </div>
-        <div class="flex flex-col w-1/2">
-            <label for="email" class="w-full uppercase text-2xl text-left p-0 border-l-0 border-4 border-black pl-4">Email</label>
-            <input type="text" id="email" placeholder="email"/>
+
+        <!-- Email Input -->
+        <div class="relative">
+            <label for="email" class="absolute -top-6 left-0 text-sm uppercase tracking-wider">
+                02 | EMAIL
+            </label>
+            <input 
+                type="email" 
+                id="email"
+                wire:model="email"
+                class="w-full bg-black border-4 border-white px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-gray-300 transition-colors duration-200"
+                placeholder="YOUR EMAIL"
+            />
         </div>
     </div>
-    <div class="flex flex-col w-full h-auto mx-auto">
-        <label for="message" class="-mt-8 text-2xl border-black border-4 border-l-0">Message</label>
-        <textarea name="message" id="message" rows="4" class="w-full"></textarea>
+
+    <!-- Message Input -->
+    <div class="relative mb-8">
+        <label for="message" class="absolute -top-6 left-0 text-sm uppercase tracking-wider">
+            03 | MESSAGE
+        </label>
+        <textarea 
+            id="message"
+            wire:model="message"
+            rows="6"
+            class="w-full bg-black border-4 border-white px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-gray-300 transition-colors duration-200 resize-none"
+            placeholder="YOUR MESSAGE"
+        ></textarea>
     </div>
+
+    <!-- Submit Button -->
+    <div class="flex justify-end">
+        <button 
+            type="submit"
+            class="bg-white text-black px-8 py-4 uppercase font-bold tracking-wider hover:bg-gray-200 transition-colors duration-200 group relative overflow-hidden"
+        >
+            <span class="relative z-10">SEND MESSAGE</span>
+            <div class="absolute inset-0 bg-black transform -translate-x-full group-hover:translate-x-0 transition-transform duration-200"></div>
+        </button>
+    </div>
+
+    <!-- Success Message -->
+    @if($success)
+        <div 
+            class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50"
+            x-data
+            x-init="setTimeout(() => { $el.remove(); }, 3000)"
+        >
+            <div class="text-white text-2xl font-mono uppercase">
+                Message Sent Successfully
+            </div>
+        </div>
+    @endif
 </form>

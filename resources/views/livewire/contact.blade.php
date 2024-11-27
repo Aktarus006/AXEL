@@ -1,21 +1,32 @@
 <?php
-
 use function Livewire\Volt\{state};
 //
 ?>
 
-<div class="w-full h-1/3 flex">
-    <div class="w-1/4 flex flex-col bg-fuschia items-center">
-        <div class="bg-purple-300 w-full h-1/2 hover:bg-purple-800 flex items-center justify-center">Facebook</div>
-        <div class="bg-purple-300 w-full h-1/2 hover:bg-purple-800 flex items-center justify-center">Instagram</div>
-    </div>
-
-    <div class="w-3/4 bg-white text-black flex">
-        <div class="bg-black [writing-mode:vertical-rl] flex items-center justify-center hover:bg-white px-4 h-full">
-            CONTACT
+<div class="w-full min-h-[600px] border-t-4 border-white">
+    <!-- Social Links -->
+    <div class="flex w-full">
+        <!-- Social Links Column -->
+        <div class="w-1/4 flex flex-col border-r-4 border-white">
+            <a href="#" class="h-32 bg-black hover:bg-white hover:text-black text-white font-mono flex items-center justify-center text-xl uppercase border-b-4 border-white transition-colors duration-300">
+                Facebook
+            </a>
+            <a href="#" class="h-32 bg-black hover:bg-white hover:text-black text-white font-mono flex items-center justify-center text-xl uppercase transition-colors duration-300">
+                Instagram
+            </a>
         </div>
-        <div class="w-full">
-        <livewire:contactform />
+
+        <!-- Contact Form Section -->
+        <div class="w-3/4 bg-black text-white flex">
+            <!-- Vertical Text -->
+            <div class="bg-black border-r-4 border-white [writing-mode:vertical-rl] flex items-center justify-center px-8 font-mono text-2xl tracking-widest">
+                CONTACT
+            </div>
+
+            <!-- Form Container -->
+            <div class="w-full p-8">
+                <livewire:contactform />
+            </div>
         </div>
     </div>
 </div>
