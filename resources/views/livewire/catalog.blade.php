@@ -74,7 +74,8 @@ $togglePriceFilter = function () {
             <!-- Search -->
             <div class="border-r border-white">
                 <input
-                    wire:model.live.debounce.300ms="name"
+                    wire:model.live="name"
+                    wire:live.debounce.500ms="filterJewels"
                     class="w-full h-12 px-4 text-sm font-mono bg-black text-white border-0 focus:outline-none focus:ring-0 placeholder-gray-500"
                     placeholder="SEARCH..."
                 />
