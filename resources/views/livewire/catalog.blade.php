@@ -114,20 +114,36 @@ $filterJewels = function () {
                     $media = $jewel->getMedia('jewels/images');
                     $firstMediaUrl = $media->isNotEmpty() ? $media->first()->getUrl() : null;
                     
-                    // Create different size variations with smaller heights
-                    $sizes = [
-                        ['h-[400px] md:col-span-2', 'w-full'], // Extra large
-                        ['h-[300px]', 'w-full'], // Large
-                        ['h-[250px]', 'w-full'], // Medium
-                        ['h-[350px] md:col-span-2', 'w-full'], // Large-medium
-                        ['h-[280px]', 'w-full'], // Medium-small
+                    // Create array of possible heights
+                    $heights = [
+                        '200px', '250px', '300px', '350px', '400px', '450px'
                     ];
                     
-                    $sizeClass = $sizes[$index % 5][0];
-                    $widthClass = $sizes[$index % 5][1];
-
-                    // Add a small black rectangle for gap filling
-                    $gapFiller = $index % 5 < 2 ? 'after:content-[""] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-black' : '';
+                    // Create array of possible column spans (weighted towards single column)
+                    $colSpans = [
+                        '', '', '', 'md:col-span-2', '' // 20% chance of double column
+                    ];
+                    
+                    // Randomly select height and column span
+                    $randomHeight = $heights[array_rand($heights)];
+                    $randomColSpan = $colSpans[array_rand($colSpans)];
+                    
+                    // Create the size class
+                    $sizeClass = "h-[{$randomHeight}] {$randomColSpan}";
+                    
+                    // Random width variations for single column items
+                    $widthVariations = ['w-full', 'w-[95%]', 'w-[90%]'];
+                    $widthClass = empty($randomColSpan) ? $widthVariations[array_rand($widthVariations)] : 'w-full';
+                    
+                    // Random gap fillers (30% chance)
+                    $hasGapFiller = rand(1, 100) <= 30;
+                    $gapPosition = rand(1, 4); // Random position for gap
+                    $gapFiller = $hasGapFiller ? match($gapPosition) {
+                        1 => 'after:content-[""] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-black',
+                        2 => 'after:content-[""] after:absolute after:top-0 after:left-0 after:right-0 after:h-[2px] after:bg-black',
+                        3 => 'after:content-[""] after:absolute after:top-0 after:bottom-0 after:left-0 after:w-[2px] after:bg-black',
+                        4 => 'after:content-[""] after:absolute after:top-0 after:bottom-0 after:right-0 after:w-[2px] after:bg-black',
+                    } : '';
                 @endphp
                 <div class="flex items-center justify-center relative {{ $gapFiller }}">
                     <div class="relative {{ $sizeClass }} {{ $widthClass }} group hover:z-10 transform transition-transform duration-200 hover:scale-[1.02]">
