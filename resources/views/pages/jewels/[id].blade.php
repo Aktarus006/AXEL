@@ -17,16 +17,16 @@ $jewel = Jewel::with(['media', 'collection'])->find(request()->route('id'));
             </div>
         @else
             <!-- Back Button -->
-            <div class="fixed top-4 left-4 z-50">
-                <a href="/jewels" class="font-mono text-white hover:text-gray-300 border-2 border-white px-4 py-2">
+            <div class="absolute top-8 left-8">
+                <a href="/jewels" class="font-mono text-white hover:text-gray-300 border-2 border-white px-4 py-2 bg-black">
                     ← BACK
                 </a>
             </div>
 
             <!-- Main Content -->
-            <div class="container mx-auto px-4 py-8">
+            <div class="w-full">
                 <!-- Title Section -->
-                <div class="mb-12 pt-16">
+                <div class="container mx-auto px-4 mb-12 pt-24">
                     <h1 class="text-5xl font-mono mb-4">{{ strtoupper($jewel->name) }}</h1>
                     <div class="flex flex-wrap gap-2 mt-4">
                         @if($jewel->material)
@@ -43,20 +43,21 @@ $jewel = Jewel::with(['media', 'collection'])->find(request()->route('id'));
                 </div>
 
                 <!-- Image Gallery -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="w-full space-y-4">
                     @foreach($jewel->getMedia('jewels/images') as $media)
-                        <div class="aspect-square overflow-hidden border-2 border-white">
+                        <div class="w-full border-y-2 border-white">
                             <img 
-                                src="{{ $media->getUrl('thumbnail') }}" 
+                                src="{{ $media->getUrl() }}" 
                                 alt="{{ $jewel->name }}" 
-                                class="w-full h-full object-cover"
+                                class="w-full h-auto object-cover"
+                                loading="lazy"
                             >
                         </div>
                     @endforeach
                 </div>
 
                 <!-- Details Section -->
-                <div class="mt-12">
+                <div class="container mx-auto px-4 py-12">
                     @if($jewel->description)
                         <div class="mb-8">
                             <h2 class="text-2xl font-mono mb-4">DESCRIPTION</h2>
