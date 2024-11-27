@@ -48,7 +48,7 @@ on(['jewel-unhovered' => function () {
     </div>
 
     <!-- Center Display -->
-    <div class="w-1/3 border-r-4 border-white">
+    <div class="w-1/3 border-r-4 border-white border-b-4">
         <div class="flex items-center justify-center w-full h-full relative">
             <!-- Default State -->
             <div class="absolute inset-0 flex items-center justify-center transition-opacity duration-300 {{ $selectedJewel ? 'opacity-0 pointer-events-none' : 'opacity-100' }}">
@@ -61,7 +61,7 @@ on(['jewel-unhovered' => function () {
                     <img 
                         src="{{ $selectedJewel['media'][0]['original_url'] }}" 
                         alt="{{ $selectedJewel['name'] }}" 
-                        class="w-full h-full object-contain"
+                        class="w-full h-full object-cover"
                     >
                     <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-80 transition-opacity duration-300 flex items-end justify-start p-8">
                         <div class="text-white font-mono opacity-0 hover:opacity-100 transition-opacity duration-300">
