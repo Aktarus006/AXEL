@@ -1,8 +1,9 @@
 <?php
+
 use App\Models\Jewel;
 use App\Enums\Type;
 use App\Enums\Material;
-use function Livewire\Volt\{state, computed};
+use function Livewire\Volt\{state, computed, mount};
 
 state(['search' => '']);
 state(['selectedMaterials' => []]);
@@ -44,10 +45,10 @@ $filterJewels = function () {
     $this->jewels = $query->with(['creator', 'collection', 'media'])->get();
 };
 
-// Initial load
-$mount = function () {
+// Initial data load
+mount(function () {
     $this->jewels = Jewel::with(['creator', 'collection', 'media'])->get();
-};
+});
 ?>
 
 <div class="bg-black">
