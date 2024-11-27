@@ -67,9 +67,6 @@
             </div>
         @endif
     </form>
-    
-    <!-- Footer -->
-    <livewire:footer />
 </div>
 
 <?php

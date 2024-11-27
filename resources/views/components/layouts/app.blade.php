@@ -4,11 +4,11 @@
         @vite('resources/css/app.css')
     </head>
     <body data-barba="wrapper">
-        <div class="flex flex-col min-h-screen">
+        <div class="w-full h-full" data-barba="container">
             <livewire:header />
-            <main class="flex-1">
+            <div data-barba="container">
                 {{ $slot }}
-            </main>
+            </div>
             <livewire:footer />
         </div>
         @vite('resources/js/app.js')
