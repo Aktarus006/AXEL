@@ -12,6 +12,7 @@ state([
     "materials" => Material::cases(),
     "types" => Type::cases(),
     "showFilters" => true,
+    "hideNoPrice" => false,
 ]);
 
 mount(function () {
@@ -40,6 +41,10 @@ $filterJewels = function () {
         $query->where('name', 'like', "%{$this->name}%");
     }
 
+    if ($this->hideNoPrice) {
+        $query->whereNotNull('price')->where('price', '>', 0);
+    }
+
     $this->jewels = $query->get();
 };
 
@@ -47,11 +52,17 @@ $clearFilters = function () {
     $this->selectedMaterials = [];
     $this->selectedTypes = [];
     $this->name = "";
+    $this->hideNoPrice = false;
     $this->filterJewels();
 };
 
 $togglerFilters = function () {
     $this->showFilters = !$this->showFilters;
+};
+
+$togglePriceFilter = function () {
+    $this->hideNoPrice = !$this->hideNoPrice;
+    $this->filterJewels();
 };
 
 ?>
@@ -124,6 +135,19 @@ $togglerFilters = function () {
                     class="w-full h-12 px-4 font-mono text-sm text-white hover:bg-white hover:text-black transition-colors duration-200 focus:outline-none"
                 >
                     [ CLEAR FILTERS ]
+                </button>
+            </div>
+        </div>
+
+        <!-- Price Filter -->
+        <div class="w-full flex">
+            <!-- Price Filter Toggle -->
+            <div class="w-full">
+                <button 
+                    wire:click="togglePriceFilter"
+                    class="w-full h-12 px-4 font-mono text-sm text-white hover:bg-white hover:text-black transition-colors duration-200 focus:outline-none"
+                >
+                    {{ $hideNoPrice ? '[ SHOW ALL PRICES ]' : '[ HIDE NO PRICE ]' }}
                 </button>
             </div>
         </div>
