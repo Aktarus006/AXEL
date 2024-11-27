@@ -108,7 +108,7 @@ $filterJewels = function () {
             No Jewels Found
         </div>
     @else
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-0">
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-[2px]">
             @foreach ($jewels as $index => $jewel)
                 @php
                     $media = $jewel->getMedia('jewels/images');
@@ -125,8 +125,11 @@ $filterJewels = function () {
                     
                     $sizeClass = $sizes[$index % 5][0];
                     $widthClass = $sizes[$index % 5][1];
+
+                    // Add a small black rectangle for gap filling
+                    $gapFiller = $index % 5 < 2 ? 'after:content-[""] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-black' : '';
                 @endphp
-                <div class="flex items-center justify-center">
+                <div class="flex items-center justify-center relative {{ $gapFiller }}">
                     <div class="relative {{ $sizeClass }} {{ $widthClass }} group hover:z-10 transform transition-transform duration-200 hover:scale-[1.02]">
                         <div class="h-full border-2 border-white bg-black">
                             <livewire:catalogitem 
