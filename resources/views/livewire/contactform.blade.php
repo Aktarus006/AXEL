@@ -65,10 +65,9 @@ $submit = function() {
     <div class="flex justify-end">
         <button 
             type="submit"
-            class="bg-white text-black px-8 py-4 uppercase font-bold tracking-wider hover:bg-gray-200 transition-colors duration-200 group relative overflow-hidden"
+            class="bg-white text-black px-8 py-4 uppercase font-bold tracking-wider hover:bg-black hover:text-white transition-colors duration-200"
         >
-            <span class="relative z-10">SEND MESSAGE</span>
-            <div class="absolute inset-0 bg-black transform -translate-x-full group-hover:translate-x-0 transition-transform duration-200"></div>
+            SEND MESSAGE
         </button>
     </div>
 
