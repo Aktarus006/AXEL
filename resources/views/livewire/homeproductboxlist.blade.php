@@ -5,7 +5,6 @@ use App\Models\Jewel;
 
 state(['jewels' => [], 'selectedJewel' => null]);
 
-// Add a polling function to refresh jewels
 $refreshJewels = function() {
     $this->jewels = Jewel::with('media')
         ->inRandomOrder()
@@ -46,7 +45,7 @@ on(['jewel-unhovered' => function () {
         @foreach ($jewels->take(4) as $index => $jewel)
             <div class="w-1/2 h-1/2 relative">
                 <div class="absolute inset-0 border-b-4 border-r-4 border-white {{ $index >= 2 ? 'border-b-0' : '' }}">
-                    <livewire:homeproductbox :jewelId="$jewel['id']" />
+                    <livewire:homeproductbox :key="'jewel-'.$jewel['id']" :jewelId="$jewel['id']" />
                 </div>
             </div>
         @endforeach
@@ -84,7 +83,7 @@ on(['jewel-unhovered' => function () {
         @foreach ($jewels->skip(4) as $index => $jewel)
             <div class="w-1/2 h-1/2 relative">
                 <div class="absolute inset-0 border-b-4 border-r-4 border-white {{ $index >= 2 ? 'border-b-0' : '' }}">
-                    <livewire:homeproductbox :jewelId="$jewel['id']" />
+                    <livewire:homeproductbox :key="'jewel-'.$jewel['id']" :jewelId="$jewel['id']" />
                 </div>
             </div>
         @endforeach
