@@ -112,41 +112,20 @@ $filterJewels = function () {
             @foreach ($jewels as $index => $jewel)
                 @php
                     $media = $jewel->getMedia('jewels/images');
-                    $firstMediaUrl = $media->isNotEmpty() ? $media->first()->getUrl() : null;
+                    $firstMediaUrl = $media->isNotEmpty() ? 
+                        $media->first()->getUrl('thumbnail') : null;
                     
-                    // Create array of possible heights
+                    // Random height selection
                     $heights = [
-                        '200px', '250px', '300px', '350px', '400px', '450px'
+                        'h-[200px]', // Small
+                        'h-[250px]', // Medium-small
+                        'h-[300px]', // Medium
+                        'h-[350px]', // Medium-large
                     ];
-                    
-                    // Create array of possible column spans (weighted towards single column)
-                    $colSpans = [
-                        '', '', '', 'md:col-span-2', '' // 20% chance of double column
-                    ];
-                    
-                    // Randomly select height and column span
                     $randomHeight = $heights[array_rand($heights)];
-                    $randomColSpan = $colSpans[array_rand($colSpans)];
-                    
-                    // Create the size class
-                    $sizeClass = "h-[{$randomHeight}] {$randomColSpan}";
-                    
-                    // Random width variations for single column items
-                    $widthVariations = ['w-full', 'w-[95%]', 'w-[90%]'];
-                    $widthClass = empty($randomColSpan) ? $widthVariations[array_rand($widthVariations)] : 'w-full';
-                    
-                    // Random gap fillers (30% chance)
-                    $hasGapFiller = rand(1, 100) <= 30;
-                    $gapPosition = rand(1, 4); // Random position for gap
-                    $gapFiller = $hasGapFiller ? match($gapPosition) {
-                        1 => 'after:content-[""] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-black',
-                        2 => 'after:content-[""] after:absolute after:top-0 after:left-0 after:right-0 after:h-[2px] after:bg-black',
-                        3 => 'after:content-[""] after:absolute after:top-0 after:bottom-0 after:left-0 after:w-[2px] after:bg-black',
-                        4 => 'after:content-[""] after:absolute after:top-0 after:bottom-0 after:right-0 after:w-[2px] after:bg-black',
-                    } : '';
                 @endphp
-                <div class="flex items-center justify-center relative {{ $gapFiller }}">
-                    <div class="relative {{ $sizeClass }} {{ $widthClass }} group hover:z-10 transform transition-transform duration-200 hover:scale-[1.02]">
+                <div class="flex items-center justify-center">
+                    <div class="relative {{ $randomHeight }} w-full group hover:z-10 transform transition-transform duration-200 hover:scale-[1.02]">
                         <div class="h-full border-2 border-white bg-black">
                             <livewire:catalogitem 
                                 :jewel="$jewel" 

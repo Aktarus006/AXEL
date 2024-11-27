@@ -19,6 +19,7 @@ state([
                         src="{{ $mediaUrl }}" 
                         alt="{{ $jewel->name }}" 
                         class="w-full h-full object-cover grayscale transition-all duration-300 group-hover:grayscale-0 group-hover:scale-105"
+                        loading="lazy"
                     >
                 @else
                     <div class="w-full h-full bg-gray-200 flex items-center justify-center">
