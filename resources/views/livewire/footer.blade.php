@@ -13,7 +13,7 @@ use function Livewire\Volt\{state};
             x-data="{ isHovered: false }"
             @mouseenter="isHovered = true"
             @mouseleave="isHovered = false"
-            class="flex items-center justify-center h-16 relative overflow-hidden"
+            class="flex items-center justify-center h-12 relative overflow-hidden"
         >
             <!-- Static text -->
             <div 

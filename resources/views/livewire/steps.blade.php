@@ -41,8 +41,8 @@ mount(function () {
                 @endif
 
                 <!-- Content -->
-                <div class="p-6">
-                    <h3 class="text-2xl uppercase mb-4 pr-16">{{ $step->title }}</h3>
+                <div class="p-6 pt-16">
+                    <h3 class="text-2xl uppercase mb-4">{{ $step->title }}</h3>
                     <div class="text-sm leading-relaxed opacity-80">
                         {!! $step->description !!}
                     </div>

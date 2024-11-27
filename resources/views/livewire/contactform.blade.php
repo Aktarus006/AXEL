@@ -1,5 +1,5 @@
 <div class="w-full bg-black mt-auto">
-    <form wire:submit.prevent="submit" class="w-full font-mono max-w-4xl mx-auto p-8">
+    <form wire:submit.prevent="submit" class="w-full font-mono max-w-4xl mx-auto p-8 pb-0">
         <div class="grid grid-cols-2 gap-8 mb-8">
             <!-- Name Input -->
             <div class="relative">
