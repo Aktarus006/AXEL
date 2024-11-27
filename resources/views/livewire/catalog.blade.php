@@ -143,37 +143,34 @@ $togglePriceFilter = function () {
     <!-- Jewels Display -->
     <div class="w-full bg-black px-[1px]">
         @if($jewels->isEmpty())
-            <div class="font-mono text-3xl uppercase text-center py-12 border-4 border-white bg-black text-white mx-[1px] mt-[1px]">
-                No Jewels Found
+            <div class="w-full h-96 flex items-center justify-center">
+                <span class="font-mono text-white text-xl">NO JEWELS FOUND</span>
             </div>
         @else
-            <div class="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-[1px] space-y-[1px]">
-                @foreach ($jewels as $index => $jewel)
-                    @php
-                        $media = $jewel->getMedia('jewels/images');
-                        $firstMediaUrl = $media->isNotEmpty() ? 
-                            $media->first()->getUrl('thumbnail') : null;
-                        
-                        // Create more height variations and make them depend on the index
-                        // This helps prevent adjacent items from having the same height
-                        $baseHeights = [
-                            'h-[250px]', 'h-[280px]', 'h-[300px]', 'h-[320px]', 
-                            'h-[350px]', 'h-[380px]', 'h-[400px]', 'h-[420px]'
-                        ];
-                        
-                        // Use modulo to create a pattern that varies by column position
-                        $heightIndex = ($index + floor($index / count($baseHeights))) % count($baseHeights);
-                        $height = $baseHeights[$heightIndex];
-                    @endphp
-                    
-                    <div class="break-inside-avoid">
-                        <div class="relative {{ $height }} group hover:z-10">
-                            <livewire:catalogitem 
-                                :jewel="$jewel" 
-                                :mediaUrl="$firstMediaUrl" 
-                                :key="$jewel->id.$index"
-                            />
-                        </div>
+            <div 
+                x-data="{ show: false }" 
+                x-init="
+                    $nextTick(() => { show = true });
+                    $watch('show', value => {
+                        if (!value) setTimeout(() => show = true, 100);
+                    })
+                "
+                class="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-[2px] space-y-[2px]"
+                wire:loading.class="opacity-50"
+                wire:target="filterJewels"
+            >
+                @foreach($jewels as $jewel)
+                    <div 
+                        x-show="show"
+                        x-transition:enter="transition ease-out duration-500"
+                        x-transition:enter-start="opacity-0 transform translate-y-4"
+                        x-transition:enter-end="opacity-100 transform translate-y-0"
+                        x-transition:leave="transition ease-in duration-300"
+                        x-transition:leave-start="opacity-100 transform translate-y-0"
+                        x-transition:leave-end="opacity-0 transform translate-y-4"
+                        class="break-inside-avoid"
+                    >
+                        <livewire:catalogitem :jewel="$jewel" :key="$jewel->id" />
                     </div>
                 @endforeach
             </div>
