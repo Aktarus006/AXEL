@@ -31,33 +31,38 @@ state([
             @endif
         </div>
         
-        <!-- Semi-transparent overlay with text -->
+        <!-- Subtle overlay with text -->
         @if($jewel)
-            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-500 flex items-center justify-center">
-                <div class="text-center p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform group-hover:translate-y-0 translate-y-4">
-                    <h3 class="font-mono text-white text-xl mb-4 tracking-tight">{{ strtoupper($jewel->name) }}</h3>
-                    <div class="flex flex-wrap gap-2 justify-center">
-                        @if($jewel->material)
-                            @foreach(explode(',', str_replace(['"', '[', ']'], '', $jewel->material)) as $material)
-                                @php
-                                    $decodedMaterial = json_decode('"' . trim($material) . '"');
-                                @endphp
-                                <span class="font-mono text-sm bg-white text-black px-3 py-1 border-2 border-white hover:bg-black hover:text-white transition-colors duration-300">
-                                    {{ strtoupper($decodedMaterial) }}
-                                </span>
-                            @endforeach
-                        @endif
-                        @if($jewel->type)
-                            @foreach(explode(',', str_replace(['"', '[', ']'], '', $jewel->type)) as $type)
-                                @php
-                                    $decodedType = json_decode('"' . trim($type) . '"');
-                                @endphp
-                                <span class="font-mono text-sm bg-black text-white px-3 py-1 border-2 border-white hover:bg-white hover:text-black transition-colors duration-300">
-                                    {{ strtoupper($decodedType) }}
-                                </span>
-                            @endforeach
-                        @endif
-                    </div>
+            <!-- Title bar at top -->
+            <div class="absolute top-0 left-0 right-0 p-3 bg-black bg-opacity-0 group-hover:bg-opacity-70 transition-all duration-500">
+                <h3 class="font-mono text-white text-lg tracking-tight opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    {{ strtoupper($jewel->name) }}
+                </h3>
+            </div>
+
+            <!-- Badges at bottom -->
+            <div class="absolute bottom-0 left-0 right-0 p-3 bg-black bg-opacity-0 group-hover:bg-opacity-70 transition-all duration-500">
+                <div class="flex flex-wrap gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    @if($jewel->material)
+                        @foreach(explode(',', str_replace(['"', '[', ']'], '', $jewel->material)) as $material)
+                            @php
+                                $decodedMaterial = json_decode('"' . trim($material) . '"');
+                            @endphp
+                            <span class="font-mono text-xs bg-white text-black px-2 py-0.5 border border-white hover:bg-black hover:text-white transition-colors duration-300">
+                                {{ strtoupper($decodedMaterial) }}
+                            </span>
+                        @endforeach
+                    @endif
+                    @if($jewel->type)
+                        @foreach(explode(',', str_replace(['"', '[', ']'], '', $jewel->type)) as $type)
+                            @php
+                                $decodedType = json_decode('"' . trim($type) . '"');
+                            @endphp
+                            <span class="font-mono text-xs bg-black text-white px-2 py-0.5 border border-white hover:bg-white hover:text-black transition-colors duration-300">
+                                {{ strtoupper($decodedType) }}
+                            </span>
+                        @endforeach
+                    @endif
                 </div>
             </div>
         @endif
