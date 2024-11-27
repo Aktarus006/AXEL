@@ -37,13 +37,6 @@ state([
                     <h3 class="font-mono text-white text-xl mb-2 truncate">
                         {{ $jewel->name }}
                     </h3>
-                    
-                    <!-- Creator -->
-                    @if($jewel->creator)
-                        <p class="font-mono text-white text-sm truncate">
-                            {{ $jewel->creator->name }}
-                        </p>
-                    @endif
 
                     <!-- Collection -->
                     @if($jewel->collection)
