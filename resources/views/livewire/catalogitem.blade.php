@@ -39,15 +39,21 @@ state([
                     <div class="flex flex-wrap gap-2 justify-center">
                         @if($jewel->material)
                             @foreach(explode(',', str_replace(['"', '[', ']'], '', $jewel->material)) as $material)
+                                @php
+                                    $decodedMaterial = json_decode('"' . trim($material) . '"');
+                                @endphp
                                 <span class="font-mono text-sm bg-white text-black px-3 py-1 border-2 border-white hover:bg-black hover:text-white transition-colors duration-300">
-                                    {{ strtoupper(trim($material)) }}
+                                    {{ strtoupper($decodedMaterial) }}
                                 </span>
                             @endforeach
                         @endif
                         @if($jewel->type)
                             @foreach(explode(',', str_replace(['"', '[', ']'], '', $jewel->type)) as $type)
+                                @php
+                                    $decodedType = json_decode('"' . trim($type) . '"');
+                                @endphp
                                 <span class="font-mono text-sm bg-black text-white px-3 py-1 border-2 border-white hover:bg-white hover:text-black transition-colors duration-300">
-                                    {{ strtoupper(trim($type)) }}
+                                    {{ strtoupper($decodedType) }}
                                 </span>
                             @endforeach
                         @endif
