@@ -1,14 +1,8 @@
 <?php
 use App\Models\Jewel;
-use function Livewire\Volt\{props};
+use function Livewire\Volt\{state};
 
-props(['jewel', 'mediaUrl']);
-
-state([
-    "key" => "",
-    "jewel" => null,
-    "mediaUrl" => "",
-]);
+state(['jewel', 'mediaUrl', 'key']);
 ?>
 
 <div class="relative w-full h-full">

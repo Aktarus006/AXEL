@@ -2,7 +2,7 @@
 use App\Models\Jewel;
 use App\Enums\Type;
 use App\Enums\Material;
-use function Livewire\Volt\{state, computed, mount};
+use function Livewire\Volt\{state, mount};
 
 state([
     'search' => '',
@@ -130,9 +130,7 @@ $filterJewels = function () {
                         <div class="relative {{ $randomHeight }} w-full group">
                             <div class="absolute inset-0 border border-white bg-black">
                                 <livewire:catalogitem 
-                                    :jewel="$jewel" 
-                                    :mediaUrl="$firstMediaUrl" 
-                                    :key="$jewel->id.$index"
+                                    wire:state.defer="{ jewel: '{{ $jewel }}', mediaUrl: '{{ $firstMediaUrl }}', key: '{{ $jewel->id.$index }}' }"
                                 />
                             </div>
                         </div>
