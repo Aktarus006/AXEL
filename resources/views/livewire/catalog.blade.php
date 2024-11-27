@@ -106,12 +106,20 @@ $filterJewels = function () {
                         $firstMediaUrl = $media->isNotEmpty() ? 
                             $media->first()->getUrl('thumbnail') : null;
                         
-                        $heights = ['h-[250px]', 'h-[300px]', 'h-[350px]', 'h-[400px]'];
-                        $randomHeight = $heights[array_rand($heights)];
+                        // Create more height variations and make them depend on the index
+                        // This helps prevent adjacent items from having the same height
+                        $baseHeights = [
+                            'h-[250px]', 'h-[280px]', 'h-[300px]', 'h-[320px]', 
+                            'h-[350px]', 'h-[380px]', 'h-[400px]', 'h-[420px]'
+                        ];
+                        
+                        // Use modulo to create a pattern that varies by column position
+                        $heightIndex = ($index + floor($index / count($baseHeights))) % count($baseHeights);
+                        $height = $baseHeights[$heightIndex];
                     @endphp
                     
                     <div class="break-inside-avoid">
-                        <div class="relative {{ $randomHeight }} group hover:z-10">
+                        <div class="relative {{ $height }} group hover:z-10">
                             <livewire:catalogitem 
                                 :jewel="$jewel" 
                                 :mediaUrl="$firstMediaUrl" 
