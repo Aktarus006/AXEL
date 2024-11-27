@@ -1,6 +1,7 @@
-@php
+@volt
+<?php
+
 use App\Models\Jewel;
-use function Livewire\Volt\{state};
 
 $jewel = Jewel::with(['media', 'collection'])->find(request()->route('id'));
 
@@ -8,7 +9,8 @@ state([
     'jewel' => fn() => $jewel,
     'currentImageIndex' => 0,
 ]);
-@endphp
+
+?>
 
 <x-layouts.app>
     <div class="min-h-screen bg-black text-white">
