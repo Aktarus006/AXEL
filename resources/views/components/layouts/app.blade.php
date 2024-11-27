@@ -1,17 +1,16 @@
 <html class="bg-white text-gray-600">
     <head>
-    <title>{{ config('app.name') }}</title>
-
-    @vite('resources/css/app.css')
+        <title>{{ config('app.name') }}</title>
+        @vite('resources/css/app.css')
     </head>
-    <body data-barba="wrapper">
-    <div class="w-full h-full" data-barba="container">
-
-        <livewire:header />
-        <div data-barba="container">
-        {{ $slot }}
+    <body data-barba="wrapper" class="min-h-screen flex flex-col">
+        <div class="w-full flex-1" data-barba="container">
+            <livewire:header />
+            <div data-barba="container" class="mb-auto">
+                {{ $slot }}
+            </div>
+            <livewire:footer />
         </div>
-    </div>
-    @vite('resources/js/app.js')
+        @vite('resources/js/app.js')
     </body>
 </html>
