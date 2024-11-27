@@ -1,18 +1,14 @@
 @volt
 <?php
-use function Livewire\Volt\{state, mount};
+use function Livewire\Volt\{state, computed};
 use App\Models\Jewel;
 
-state(['jewel' => null]);
-
-mount(function ($id) {
-    $this->jewel = Jewel::with(['media', 'collection'])->find($id);
-});
+$jewel = state(Jewel::with(['media', 'collection'])->find(request()->route('id')));
 ?>
 
 <x-layouts.app>
     <div class="min-h-screen bg-black text-white">
-        @if(!$this->jewel)
+        @if(!$jewel)
             <div class="flex items-center justify-center h-screen">
                 <div class="text-center">
                     <h1 class="text-4xl font-mono mb-4">JEWEL NOT FOUND</h1>
@@ -33,16 +29,16 @@ mount(function ($id) {
             <div class="container mx-auto px-4 py-8">
                 <!-- Title Section -->
                 <div class="mb-12 pt-16">
-                    <h1 class="text-5xl font-mono mb-4">{{ strtoupper($this->jewel->name) }}</h1>
+                    <h1 class="text-5xl font-mono mb-4">{{ strtoupper($jewel->name) }}</h1>
                     <div class="flex flex-wrap gap-2 mt-4">
-                        @if($this->jewel->material)
+                        @if($jewel->material)
                             <span class="font-mono text-sm bg-white text-black px-3 py-1 border-2 border-white hover:bg-black hover:text-white transition-colors duration-300">
-                                {{ strtoupper($this->jewel->material) }}
+                                {{ strtoupper($jewel->material) }}
                             </span>
                         @endif
-                        @if($this->jewel->type)
+                        @if($jewel->type)
                             <span class="font-mono text-sm bg-black text-white px-3 py-1 border-2 border-white hover:bg-white hover:text-black transition-colors duration-300">
-                                {{ strtoupper($this->jewel->type) }}
+                                {{ strtoupper($jewel->type) }}
                             </span>
                         @endif
                     </div>
@@ -50,11 +46,11 @@ mount(function ($id) {
 
                 <!-- Image Gallery -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    @foreach($this->jewel->getMedia('jewels/images') as $media)
+                    @foreach($jewel->getMedia('jewels/images') as $media)
                         <div class="aspect-square overflow-hidden border-2 border-white">
                             <img 
                                 src="{{ $media->getUrl('thumbnail') }}" 
-                                alt="{{ $this->jewel->name }}" 
+                                alt="{{ $jewel->name }}" 
                                 class="w-full h-full object-cover"
                             >
                         </div>
@@ -63,23 +59,23 @@ mount(function ($id) {
 
                 <!-- Details Section -->
                 <div class="mt-12">
-                    @if($this->jewel->description)
+                    @if($jewel->description)
                         <div class="mb-8">
                             <h2 class="text-2xl font-mono mb-4">DESCRIPTION</h2>
-                            <p class="font-mono leading-relaxed">{{ $this->jewel->description }}</p>
+                            <p class="font-mono leading-relaxed">{{ $jewel->description }}</p>
                         </div>
                     @endif
 
-                    @if($this->jewel->collection)
+                    @if($jewel->collection)
                         <div class="mb-8">
                             <h2 class="text-2xl font-mono mb-4">COLLECTION</h2>
-                            <p class="font-mono">{{ strtoupper($this->jewel->collection->name) }}</p>
+                            <p class="font-mono">{{ strtoupper($jewel->collection->name) }}</p>
                         </div>
                     @endif
 
                     <div class="mb-8">
                         <h2 class="text-2xl font-mono mb-4">PRICE</h2>
-                        <p class="font-mono text-2xl">€{{ number_format($this->jewel->price, 2) }}</p>
+                        <p class="font-mono text-2xl">€{{ number_format($jewel->price, 2) }}</p>
                     </div>
                 </div>
             </div>
