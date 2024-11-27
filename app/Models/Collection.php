@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Collection extends Model implements HasMedia
 {
@@ -58,5 +59,72 @@ class Collection extends Model implements HasMedia
                 ->label("Date de création")
                 ->required(),
         ];
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('thumbnail')
+            ->width(400)
+            ->height(400)
+            ->format('webp')
+            ->quality(90)
+            ->sharpen(10)
+            ->optimize()
+            ->performOnCollections('collections/images');
+
+        $this->addMediaConversion('small')
+            ->width(800)
+            ->height(800)
+            ->format('webp')
+            ->quality(90)
+            ->sharpen(10)
+            ->optimize()
+            ->performOnCollections('collections/images');
+
+        $this->addMediaConversion('medium')
+            ->width(1200)
+            ->height(1200)
+            ->format('webp')
+            ->quality(85)
+            ->sharpen(10)
+            ->optimize()
+            ->performOnCollections('collections/images');
+
+        $this->addMediaConversion('large')
+            ->width(1600)
+            ->height(1600)
+            ->format('webp')
+            ->quality(85)
+            ->sharpen(10)
+            ->optimize()
+            ->performOnCollections('collections/images');
+
+        // Banner-specific conversions with different aspect ratios
+        $this->addMediaConversion('banner-small')
+            ->width(800)
+            ->height(400)
+            ->format('webp')
+            ->quality(90)
+            ->sharpen(10)
+            ->optimize()
+            ->performOnCollections('collections/banners');
+
+        $this->addMediaConversion('banner-medium')
+            ->width(1200)
+            ->height(600)
+            ->format('webp')
+            ->quality(85)
+            ->sharpen(10)
+            ->optimize()
+            ->performOnCollections('collections/banners');
+
+        $this->addMediaConversion('banner-large')
+            ->width(1920)
+            ->height(960)
+            ->format('webp')
+            ->quality(80)
+            ->sharpen(10)
+            ->optimize()
+            ->performOnCollections('collections/banners');
     }
 }

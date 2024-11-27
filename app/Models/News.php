@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class News extends Model implements HasMedia
 {
@@ -55,5 +56,58 @@ class News extends Model implements HasMedia
                 ->label("Date de création")
                 ->required(),
         ];
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        // Thumbnail for news list
+        $this->addMediaConversion('thumbnail')
+            ->width(400)
+            ->height(300)
+            ->format('webp')
+            ->quality(90)
+            ->sharpen(10)
+            ->optimize()
+            ->performOnCollections('news/images');
+
+        // Small size for cards
+        $this->addMediaConversion('small')
+            ->width(800)
+            ->height(600)
+            ->format('webp')
+            ->quality(90)
+            ->sharpen(10)
+            ->optimize()
+            ->performOnCollections('news/images');
+
+        // Medium size for article preview
+        $this->addMediaConversion('medium')
+            ->width(1200)
+            ->height(900)
+            ->format('webp')
+            ->quality(85)
+            ->sharpen(10)
+            ->optimize()
+            ->performOnCollections('news/images');
+
+        // Large size for article header
+        $this->addMediaConversion('large')
+            ->width(1600)
+            ->height(1200)
+            ->format('webp')
+            ->quality(80)
+            ->sharpen(10)
+            ->optimize()
+            ->performOnCollections('news/images');
+
+        // Full width banner
+        $this->addMediaConversion('banner')
+            ->width(1920)
+            ->height(1080)
+            ->format('webp')
+            ->quality(80)
+            ->sharpen(10)
+            ->optimize()
+            ->performOnCollections('news/banners');
     }
 }

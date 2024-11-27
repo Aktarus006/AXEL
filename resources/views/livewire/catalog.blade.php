@@ -43,7 +43,7 @@ $filterJewels = function () {
 };
 ?>
 
-<div class="bg-white">
+<div class="bg-black">
     <!-- Filters Section with Brutalist Style -->
     <div class="divide-y-4 divide-black">
         <!-- Name Search -->
@@ -61,7 +61,7 @@ $filterJewels = function () {
         </div>
 
         <!-- Material Filter -->
-        <div class="bg-white py-4">
+        <div class="bg-black text-white py-4">
             <label class="font-mono text-2xl uppercase tracking-tight ml-4 mb-2 block">
                 Materials
             </label>
@@ -69,7 +69,7 @@ $filterJewels = function () {
                 list="materialsList"
                 wire:model.live="selectedMaterials"
                 wire:change="filterJewels"
-                class="w-full border-4 border-black p-3 text-xl font-bold placeholder-gray-500 focus:outline-none focus:ring-0"
+                class="w-full border-4 border-white p-3 text-xl font-bold bg-black text-white placeholder-gray-500 focus:outline-none focus:ring-0"
                 placeholder="SELECT MATERIALS..."
                 multiple
             />
@@ -102,41 +102,41 @@ $filterJewels = function () {
     </div>
 
     <!-- Jewels Grid with Enhanced Brutalist Layout -->
-<div class="mt-8 bg-black min-h-screen">
-    @if($jewels->isEmpty())
-        <div class="font-mono text-3xl uppercase text-center py-12 border-4 border-white bg-black text-white">
-            No Jewels Found
-        </div>
-    @else
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-[2px]">
-            @foreach ($jewels as $index => $jewel)
-                @php
-                    $media = $jewel->getMedia('jewels/images');
-                    $firstMediaUrl = $media->isNotEmpty() ? 
-                        $media->first()->getUrl('thumbnail') : null;
-                    
-                    // Random height selection
-                    $heights = [
-                        'h-[200px]', // Small
-                        'h-[250px]', // Medium-small
-                        'h-[300px]', // Medium
-                        'h-[350px]', // Medium-large
-                    ];
-                    $randomHeight = $heights[array_rand($heights)];
-                @endphp
-                <div class="flex items-center justify-center">
-                    <div class="relative {{ $randomHeight }} w-full group hover:z-10 transform transition-transform duration-200 hover:scale-[1.02]">
-                        <div class="h-full border-2 border-white bg-black">
-                            <livewire:catalogitem 
-                                :jewel="$jewel" 
-                                :mediaUrl="$firstMediaUrl" 
-                                :key="$jewel->id.$index"
-                            />
+    <div class="w-full min-h-screen bg-black p-4">
+        @if($jewels->isEmpty())
+            <div class="font-mono text-3xl uppercase text-center py-12 border-4 border-white bg-black text-white">
+                No Jewels Found
+            </div>
+        @else
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-[2px]">
+                @foreach ($jewels as $index => $jewel)
+                    @php
+                        $media = $jewel->getMedia('jewels/images');
+                        $firstMediaUrl = $media->isNotEmpty() ? 
+                            $media->first()->getUrl('thumbnail') : null;
+                        
+                        // Random height selection
+                        $heights = [
+                            'h-[200px]', // Small
+                            'h-[250px]', // Medium-small
+                            'h-[300px]', // Medium
+                            'h-[350px]', // Medium-large
+                        ];
+                        $randomHeight = $heights[array_rand($heights)];
+                    @endphp
+                    <div class="flex items-center justify-center">
+                        <div class="relative {{ $randomHeight }} w-full group hover:z-10 transform transition-transform duration-200 hover:scale-[1.02]">
+                            <div class="h-full border-2 border-white bg-black">
+                                <livewire:catalogitem 
+                                    :jewel="$jewel" 
+                                    :mediaUrl="$firstMediaUrl" 
+                                    :key="$jewel->id.$index"
+                                />
+                            </div>
                         </div>
                     </div>
-                </div>
-            @endforeach
-        </div>
-    @endif
-</div>
+                @endforeach
+            </div>
+        @endif
+    </div>
 </div>

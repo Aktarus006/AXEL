@@ -13,10 +13,13 @@ use Filament\Forms\Components\Toggle;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Creator extends Model 
+class Creator extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
         'first_name',
@@ -62,5 +65,64 @@ class Creator extends Model
                 ->label("Collection")
                 ->options(Collection::all()->pluck("name", "id")->toArray())
         ];
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        // Avatar conversions
+        $this->addMediaConversion('avatar-thumbnail')
+            ->width(100)
+            ->height(100)
+            ->format('webp')
+            ->quality(90)
+            ->sharpen(10)
+            ->optimize()
+            ->performOnCollections('creators/avatars');
+
+        $this->addMediaConversion('avatar-small')
+            ->width(200)
+            ->height(200)
+            ->format('webp')
+            ->quality(90)
+            ->sharpen(10)
+            ->optimize()
+            ->performOnCollections('creators/avatars');
+
+        $this->addMediaConversion('avatar-medium')
+            ->width(400)
+            ->height(400)
+            ->format('webp')
+            ->quality(85)
+            ->sharpen(10)
+            ->optimize()
+            ->performOnCollections('creators/avatars');
+
+        // Profile/Banner images
+        $this->addMediaConversion('profile-small')
+            ->width(800)
+            ->height(600)
+            ->format('webp')
+            ->quality(90)
+            ->sharpen(10)
+            ->optimize()
+            ->performOnCollections('creators/profile');
+
+        $this->addMediaConversion('profile-medium')
+            ->width(1200)
+            ->height(900)
+            ->format('webp')
+            ->quality(85)
+            ->sharpen(10)
+            ->optimize()
+            ->performOnCollections('creators/profile');
+
+        $this->addMediaConversion('profile-large')
+            ->width(1600)
+            ->height(1200)
+            ->format('webp')
+            ->quality(80)
+            ->sharpen(10)
+            ->optimize()
+            ->performOnCollections('creators/profile');
     }
 }

@@ -4,17 +4,45 @@ use function Livewire\Volt\{state};
 //
 ?>
 
-<div class="w-full h-1/5 bg-white text-slate-900 flex">
-    <a class="w-3/5 h-full hover:bg-slate-900 hover:text-white text-7xl items-center justify-center flex border border-3 border-slate-900" href="/">
-        AXEL JEWELRY
-    </a>
-    <div class="w-1/5 flex flex-col justify-between">
-        <a class="border border-x-0 border-b-0 border-1 border-slate-900 hover:underline flex h-1/3 items-center justify-center" href="/jewels">BIJOUX</a>
-        <a class="border border-x-0 border-b-0 border-1 border-slate-900 hover:underline flex h-1/3 items-center justify-center" href="/collections">COLLECTIONS</a>
-        <div class="border border-x-0 border-1 border-slate-900 hover:underline flex h-1/3 items-center justify-center" href="/news">BLOG</div>
+<nav class="fixed top-0 left-0 w-full bg-white z-50">
+    <div class="w-full flex flex-col">
+        <!-- Main Header -->
+        <div class="w-full flex border-b-2 border-black">
+            <!-- Logo -->
+            <a href="/" class="w-1/2 py-4 px-6 hover:bg-black hover:text-white border-r-2 border-black transition-colors duration-200">
+                <span class="font-mono text-5xl tracking-tighter">AXEL JEWELRY</span>
+            </a>
+            
+            <!-- Primary Navigation -->
+            <div class="w-1/2 flex">
+                <a href="/jewels" class="flex-1 flex items-center justify-center font-mono text-xl hover:bg-black hover:text-white border-r-2 border-black transition-colors duration-200">
+                    BIJOUX
+                </a>
+                <a href="/collections" class="flex-1 flex items-center justify-center font-mono text-xl hover:bg-black hover:text-white border-r-2 border-black transition-colors duration-200">
+                    COLLECTIONS
+                </a>
+                <a href="/news" class="flex-1 flex items-center justify-center font-mono text-xl hover:bg-black hover:text-white transition-colors duration-200">
+                    BLOG
+                </a>
+            </div>
+        </div>
+
+        <!-- Secondary Navigation -->
+        <div class="w-full flex border-b-2 border-black">
+            <div class="w-1/2 flex">
+                <a href="{{ url('/') }}#about" class="flex-1 py-2 px-4 font-mono hover:bg-black hover:text-white border-r-2 border-black transition-colors duration-200">
+                    ABOUT
+                </a>
+                <a href="#contact" class="flex-1 py-2 px-4 font-mono hover:bg-black hover:text-white border-r-2 border-black transition-colors duration-200">
+                    CONTACT
+                </a>
+            </div>
+            <div class="w-1/2 flex justify-end items-center px-4 font-mono">
+                <span class="text-sm tracking-widest">BRUTALIST JEWELRY DESIGN</span>
+            </div>
+        </div>
     </div>
-    <div class="w-1/5 flex flex-col justify-between">
-        <a class="flex items-center justify-center hover:bg-slate-900 hover:text-white h-full border border-1 border-b-0 border-slate-900 cursor-pointer" href="{{ url('/') }}#about">ABOUT</a>
-        <a class="flex items-center justify-center hover:bg-slate-900 hover:text-white h-full border border-1 border-slate-900 cursor-pointer" href="#contact">CONTACT</a>
-    </div>
-</div>
+</nav>
+
+<!-- Spacer to prevent content from hiding under fixed header -->
+<div class="h-32"></div>
