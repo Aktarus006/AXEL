@@ -11,6 +11,7 @@ state([
     "name" => "",
     "materials" => Material::cases(),
     "types" => Type::cases(),
+    "showFilters" => true,
 ]);
 
 mount(function () {
@@ -41,54 +42,90 @@ $filterJewels = function () {
 
     $this->jewels = $query->get();
 };
+
+$clearFilters = function () {
+    $this->selectedMaterials = [];
+    $this->selectedTypes = [];
+    $this->name = "";
+    $this->filterJewels();
+};
+
+$togglerFilters = function () {
+    $this->showFilters = !$this->showFilters;
+};
+
 ?>
 
 <div class="min-h-screen bg-black">
     <!-- Filters Section -->
-    <div class="sticky top-0 z-50 bg-black divide-y-4 divide-black border-b-4 border-white">
-        <!-- Name Search -->
-        <div class="bg-black text-white py-4">
-            <input
-                type="text"
-                wire:model.live="name"
-                wire:input="filterJewels"
-                class="w-full border-4 border-white p-3 text-xl font-bold bg-black text-white placeholder-gray-500 focus:outline-none focus:ring-0"
-                placeholder="SEARCH BY NAME..."
-            />
+    <div class="w-full border-b border-white">
+        <div class="w-full grid grid-cols-1 md:grid-cols-3 border-b border-white">
+            <!-- Search -->
+            <div class="border-r border-white">
+                <input
+                    wire:model.live="name"
+                    wire:change="filterJewels"
+                    class="w-full h-12 px-4 text-sm font-mono bg-black text-white border-0 focus:outline-none focus:ring-0 placeholder-gray-500"
+                    placeholder="SEARCH..."
+                />
+            </div>
+
+            <!-- Materials -->
+            <div class="border-r border-white">
+                <input
+                    list="materialsList"
+                    wire:model.live="selectedMaterials"
+                    wire:change="filterJewels"
+                    class="w-full h-12 px-4 text-sm font-mono bg-black text-white border-0 focus:outline-none focus:ring-0 placeholder-gray-500"
+                    placeholder="FILTER BY MATERIAL..."
+                    multiple
+                />
+                <datalist id="materialsList">
+                    @foreach ($materials as $material)
+                        <option value="{{ $material->value }}">{{ $material->value }}</option>
+                    @endforeach
+                </datalist>
+            </div>
+
+            <!-- Types -->
+            <div>
+                <input
+                    list="typesList"
+                    wire:model.live="selectedTypes"
+                    wire:change="filterJewels"
+                    class="w-full h-12 px-4 text-sm font-mono bg-black text-white border-0 focus:outline-none focus:ring-0 placeholder-gray-500"
+                    placeholder="FILTER BY TYPE..."
+                    multiple
+                />
+                <datalist id="typesList">
+                    @foreach ($types as $type)
+                        <option value="{{ $type->value }}">{{ $type->value }}</option>
+                    @endforeach
+                </datalist>
+            </div>
         </div>
 
-        <!-- Material Filter -->
-        <div class="bg-black text-white py-4">
-            <input
-                list="materialsList"
-                wire:model.live="selectedMaterials"
-                wire:change="filterJewels"
-                class="w-full border-4 border-white p-3 text-xl font-bold bg-black text-white placeholder-gray-500 focus:outline-none focus:ring-0"
-                placeholder="FILTER BY MATERIAL..."
-                multiple
-            />
-            <datalist id="materialsList">
-                @foreach ($materials as $material)
-                    <option value="{{ $material->value }}">{{ $material->value }}</option>
-                @endforeach
-            </datalist>
-        </div>
+        <!-- Toggle and Clear Section -->
+        <div class="w-full flex">
+            <!-- Toggle -->
+            <div class="w-1/2 border-r border-white">
+                <button 
+                    wire:click="togglerFilters"
+                    class="w-full h-12 px-4 font-mono text-sm text-white hover:bg-white hover:text-black transition-colors duration-200 focus:outline-none"
+                >
+                    {{ $showFilters ? '[ HIDE FILTERS ]' : '[ SHOW FILTERS ]' }}
+                </button>
+            </div>
 
-        <!-- Type Filter -->
-        <div class="bg-black text-white py-4">
-            <input
-                list="typesList"
-                wire:model.live="selectedTypes"
-                wire:change="filterJewels"
-                class="w-full border-4 border-white p-3 text-xl font-bold bg-black text-white placeholder-gray-500 focus:outline-none focus:ring-0"
-                placeholder="FILTER BY TYPE..."
-                multiple
-            />
-            <datalist id="typesList">
-                @foreach ($types as $type)
-                    <option value="{{ $type->value }}">{{ $type->value }}</option>
-                @endforeach
-            </datalist>
+            <!-- Clear Filters -->
+            <div class="w-1/2">
+                <button 
+                    wire:click="clearFilters"
+                    class="w-full h-12 px-4 font-mono text-sm text-white hover:bg-white hover:text-black transition-colors duration-200 focus:outline-none"
+                >
+                    [ CLEAR FILTERS ]
+                </button>
+            </div>
         </div>
     </div>
 
