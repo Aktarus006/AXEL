@@ -20,16 +20,20 @@
         if ($this->jewel && $this->jewel->hasMedia('jewels/images')) {
             return $this->jewel->getFirstMediaUrl('jewels/images');
         }
-        return asset('path/to/default/image.jpg'); // Provide a default image path
+        return asset('path/to/default/image.jpg');
     };
 
     ?>
 
     <div
-        class="w-full h-full flex justify-center items-center border b-2 border-white hover:bg-white cursor-pointer"
+        class="w-full h-full flex justify-center items-center border-r-4 border-white cursor-pointer group"
         wire:mouseover="hover"
     >
-        <img src="{{ $getImageUrl() }}" alt="{{ $jewel->name ?? 'Jewel' }}" class="w-full h-full object-cover">
+        <img 
+            src="{{ $getImageUrl() }}" 
+            alt="{{ $jewel->name ?? 'Jewel' }}" 
+            class="w-full h-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0 group-hover:saturate-150"
+        >
     </div>
     @endvolt
 </div>
