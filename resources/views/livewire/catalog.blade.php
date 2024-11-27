@@ -101,29 +101,34 @@ $filterJewels = function () {
         </div>
     </div>
 
-    <!-- Jewels Grid with Brutalist Layout -->
-    <div class="mt-8">
-        @if($jewels->isEmpty())
-            <div class="font-mono text-3xl uppercase text-center py-12 border-4 border-black">
-                No Jewels Found
-            </div>
-        @else
-            <div class="columns-1 md:columns-2 lg:columns-3 gap-0 space-y-0">
-                @foreach ($jewels as $index => $jewel)
-                    @php
-                        $media = $jewel->getMedia('jewels/images');
-                        $firstMediaUrl = $media->isNotEmpty() ? $media->first()->getUrl() : null;
-                        // Randomize sizes for visual interest
-                        $sizeClass = match($index % 5) {
-                            0 => 'h-[600px]', // Extra large
-                            1 => 'h-[400px]', // Large
-                            2 => 'h-[300px]', // Medium
-                            3 => 'h-[500px]', // Large-medium
-                            4 => 'h-[350px]', // Medium-small
-                        };
-                    @endphp
-                    <div class="break-inside-avoid relative group hover:z-10 transform transition-transform duration-200 hover:scale-[1.02]">
-                        <div class="relative {{ $sizeClass }} border-4 border-black">
+    <!-- Jewels Grid with Enhanced Brutalist Layout -->
+<div class="mt-8 bg-black min-h-screen p-4">
+    @if($jewels->isEmpty())
+        <div class="font-mono text-3xl uppercase text-center py-12 border-4 border-white bg-black text-white">
+            No Jewels Found
+        </div>
+    @else
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            @foreach ($jewels as $index => $jewel)
+                @php
+                    $media = $jewel->getMedia('jewels/images');
+                    $firstMediaUrl = $media->isNotEmpty() ? $media->first()->getUrl() : null;
+                    
+                    // Create different size variations
+                    $sizes = [
+                        ['h-[600px] md:col-span-2 lg:col-span-1', 'w-full'], // Extra large
+                        ['h-[400px]', 'w-[90%]'], // Large
+                        ['h-[300px]', 'w-[95%]'], // Medium
+                        ['h-[500px] md:col-span-2 lg:col-span-1', 'w-full'], // Large-medium
+                        ['h-[350px]', 'w-[85%]'], // Medium-small
+                    ];
+                    
+                    $sizeClass = $sizes[$index % 5][0];
+                    $widthClass = $sizes[$index % 5][1];
+                @endphp
+                <div class="flex items-center justify-center">
+                    <div class="relative {{ $sizeClass }} {{ $widthClass }} group hover:z-10 transform transition-transform duration-200 hover:scale-[1.02]">
+                        <div class="h-full border-4 border-white bg-black">
                             <livewire:catalogitem 
                                 :jewel="$jewel" 
                                 :mediaUrl="$firstMediaUrl" 
@@ -131,8 +136,9 @@ $filterJewels = function () {
                             />
                         </div>
                     </div>
-                @endforeach
-            </div>
-        @endif
-    </div>
+                </div>
+            @endforeach
+        </div>
+    @endif
+</div>
 </div>
