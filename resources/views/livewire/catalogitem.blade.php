@@ -35,13 +35,19 @@ state([
         @if($jewel)
             <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-500 flex items-center justify-center">
                 <div class="text-center p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform group-hover:translate-y-0 translate-y-4">
-                    <h3 class="font-mono text-white text-xl mb-2 tracking-tight">{{ strtoupper($jewel->name) }}</h3>
-                    @if($jewel->material)
-                        <p class="font-mono text-white text-sm tracking-wider">{{ strtoupper($jewel->material) }}</p>
-                    @endif
-                    @if($jewel->type)
-                        <p class="font-mono text-white text-sm tracking-wider mt-1">{{ strtoupper($jewel->type) }}</p>
-                    @endif
+                    <h3 class="font-mono text-white text-xl mb-4 tracking-tight">{{ strtoupper($jewel->name) }}</h3>
+                    <div class="flex flex-wrap gap-2 justify-center">
+                        @if($jewel->material)
+                            <span class="font-mono text-sm bg-white text-black px-3 py-1 border-2 border-white hover:bg-black hover:text-white transition-colors duration-300">
+                                {{ strtoupper($jewel->material) }}
+                            </span>
+                        @endif
+                        @if($jewel->type)
+                            <span class="font-mono text-sm bg-black text-white px-3 py-1 border-2 border-white hover:bg-white hover:text-black transition-colors duration-300">
+                                {{ strtoupper($jewel->type) }}
+                            </span>
+                        @endif
+                    </div>
                 </div>
             </div>
         @endif
