@@ -9,7 +9,7 @@
     state('jewelId');
 
     $jewel = computed(function () {
-        return Jewel::find($this->jewelId);
+        return Jewel::with('media')->find($this->jewelId);
     });
 
     $hover = function () {
@@ -18,16 +18,16 @@
                 'id' => $this->jewel->id,
                 'name' => $this->jewel->name,
                 'price' => $this->jewel->price,
-                'media' => $this->jewel->media->map(function($media) {
-                    return ['original_url' => $media->getUrl()];
-                })->toArray()
+                'media' => [
+                    ['original_url' => $this->jewel->getFirstMediaUrl('jewels/images', 'large')]
+                ]
             ]);
         }
     };
 
     $getImageUrl = function () {
         if ($this->jewel && $this->jewel->hasMedia('jewels/images')) {
-            return $this->jewel->getFirstMediaUrl('jewels/images');
+            return $this->jewel->getFirstMediaUrl('jewels/images', 'thumb');
         }
         return asset('path/to/default/image.jpg');
     };
@@ -37,6 +37,7 @@
     <div
         class="w-full h-full flex justify-center items-center cursor-pointer group"
         wire:mouseover="hover"
+        wire:mouseout="$dispatch('jewel-unhovered')"
     >
         <img 
             src="{{ $getImageUrl() }}" 
