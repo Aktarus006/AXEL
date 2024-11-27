@@ -5,7 +5,7 @@ $jewel = Jewel::with(['media', 'collection'])->find(request()->route('id'));
 @endphp
 
 <x-layouts.app>
-    <div class="min-h-screen bg-black text-white">
+    <div class="min-h-screen bg-black text-white relative">
         @if(!$jewel)
             <div class="flex items-center justify-center h-screen">
                 <div class="text-center">
@@ -17,8 +17,8 @@ $jewel = Jewel::with(['media', 'collection'])->find(request()->route('id'));
             </div>
         @else
             <!-- Back Button -->
-            <div class="absolute top-8 left-8">
-                <a href="/jewels" class="font-mono text-white hover:text-gray-300 border-2 border-white px-4 py-2 bg-black">
+            <div class="fixed top-8 left-8 z-50">
+                <a href="/jewels" class="font-mono text-white hover:text-gray-300 border-2 border-white px-4 py-2 bg-black/80 backdrop-blur-sm">
                     ← BACK
                 </a>
             </div>
@@ -42,18 +42,49 @@ $jewel = Jewel::with(['media', 'collection'])->find(request()->route('id'));
                     </div>
                 </div>
 
-                <!-- Image Gallery -->
-                <div class="w-full space-y-4">
-                    @foreach($jewel->getMedia('jewels/images') as $media)
-                        <div class="w-full border-y-2 border-white">
-                            <img 
-                                src="{{ $media->getUrl() }}" 
-                                alt="{{ $jewel->name }}" 
-                                class="w-full h-auto object-cover"
-                                loading="lazy"
-                            >
+                <!-- Image Slider -->
+                @php
+                    $images = $jewel->getMedia('jewels/images');
+                @endphp
+                <div x-data="{ 
+                    activeSlide: 0,
+                    totalSlides: {{ count($images) }},
+                    next() { 
+                        this.activeSlide = (this.activeSlide + 1) % this.totalSlides;
+                    },
+                    prev() {
+                        this.activeSlide = (this.activeSlide - 1 + this.totalSlides) % this.totalSlides;
+                    }
+                }" class="relative w-full">
+                    <!-- Images -->
+                    <div class="relative w-full h-[80vh] overflow-hidden">
+                        @foreach($images as $index => $media)
+                            <div x-show="activeSlide === {{ $index }}"
+                                 x-transition:enter="transition ease-out duration-300"
+                                 x-transition:enter-start="opacity-0 transform translate-x-full"
+                                 x-transition:enter-end="opacity-100 transform translate-x-0"
+                                 x-transition:leave="transition ease-in duration-300"
+                                 x-transition:leave-start="opacity-100 transform translate-x-0"
+                                 x-transition:leave-end="opacity-0 transform -translate-x-full"
+                                 class="absolute inset-0">
+                                <img src="{{ $media->getUrl('hd') }}" 
+                                     alt="{{ $jewel->name }}" 
+                                     class="w-full h-full object-contain"
+                                     loading="{{ $index === 0 ? 'eager' : 'lazy' }}">
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <!-- Navigation Arrows -->
+                    @if(count($images) > 1)
+                        <button @click="prev" class="absolute left-4 top-1/2 transform -translate-y-1/2 font-mono text-4xl text-white hover:text-gray-300 bg-black/50 px-4 py-2 backdrop-blur-sm">←</button>
+                        <button @click="next" class="absolute right-4 top-1/2 transform -translate-y-1/2 font-mono text-4xl text-white hover:text-gray-300 bg-black/50 px-4 py-2 backdrop-blur-sm">→</button>
+                        
+                        <!-- Slide Counter -->
+                        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 font-mono text-white bg-black/50 px-4 py-2 backdrop-blur-sm">
+                            <span x-text="activeSlide + 1"></span>/<span x-text="totalSlides"></span>
                         </div>
-                    @endforeach
+                    @endif
                 </div>
 
                 <!-- Details Section -->
