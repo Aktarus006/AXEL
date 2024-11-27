@@ -1,3 +1,4 @@
+@volt
 <?php
 use function Livewire\Volt\{state, computed};
 use App\Models\Jewel;
@@ -35,12 +36,12 @@ $jewel = computed(function () {
                     <h1 class="text-5xl font-mono mb-4">{{ strtoupper($jewel->name) }}</h1>
                     <div class="flex flex-wrap gap-2 mt-4">
                         @if($jewel->material)
-                            <span class="font-mono text-sm bg-white text-black px-2 py-1 border-2 border-white">
+                            <span class="font-mono text-sm bg-white text-black px-3 py-1 border-2 border-white hover:bg-black hover:text-white transition-colors duration-300">
                                 {{ strtoupper($jewel->material) }}
                             </span>
                         @endif
                         @if($jewel->type)
-                            <span class="font-mono text-sm bg-black text-white px-2 py-1 border-2 border-white">
+                            <span class="font-mono text-sm bg-black text-white px-3 py-1 border-2 border-white hover:bg-white hover:text-black transition-colors duration-300">
                                 {{ strtoupper($jewel->type) }}
                             </span>
                         @endif
