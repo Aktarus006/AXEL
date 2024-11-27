@@ -9,7 +9,7 @@ state([
 ]);
 ?>
 
-<div class="relative w-full h-full">
+<div class="relative w-full h-full border border-white bg-black">
     <a href="/jewels/{{ $jewel?->id }}" @class([
         "block w-full h-full relative group",
         "pointer-events-none" => !$jewel
@@ -19,11 +19,11 @@ state([
                 <img 
                     src="{{ $mediaUrl }}" 
                     alt="{{ $jewel->name }}" 
-                    class="w-full h-full object-cover grayscale transition-all duration-300 group-hover:grayscale-0 group-hover:scale-105"
+                    class="w-full h-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0 group-hover:scale-105"
                     loading="lazy"
                 >
             @else
-                <div class="w-full h-full bg-black flex items-center justify-center border-2 border-white">
+                <div class="w-full h-full bg-black flex items-center justify-center">
                     <span class="text-white font-mono text-lg">
                         {{ $jewel ? 'NO IMAGE' : 'JEWEL NOT FOUND' }}
                     </span>
@@ -31,15 +31,17 @@ state([
             @endif
         </div>
         
-        <!-- Overlay with text -->
+        <!-- Semi-transparent overlay with text -->
         @if($jewel)
-            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-80 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                <div class="text-center p-4">
-                    <h3 class="font-mono text-white text-xl mb-2 tracking-tight">{{ $jewel->name }}</h3>
-                    @if($jewel->collection)
-                        <p class="font-mono text-white text-sm tracking-wider">{{ strtoupper($jewel->collection->name) }}</p>
+            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-500 flex items-center justify-center">
+                <div class="text-center p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform group-hover:translate-y-0 translate-y-4">
+                    <h3 class="font-mono text-white text-xl mb-2 tracking-tight">{{ strtoupper($jewel->name) }}</h3>
+                    @if($jewel->material)
+                        <p class="font-mono text-white text-sm tracking-wider">{{ strtoupper($jewel->material) }}</p>
                     @endif
-                    <p class="font-mono text-white text-sm mt-2">€{{ number_format($jewel->price, 2) }}</p>
+                    @if($jewel->type)
+                        <p class="font-mono text-white text-sm tracking-wider mt-1">{{ strtoupper($jewel->type) }}</p>
+                    @endif
                 </div>
             </div>
         @endif

@@ -43,34 +43,28 @@ $filterJewels = function () {
 };
 ?>
 
-<div class="bg-black">
-    <!-- Filters Section with Brutalist Style -->
-    <div class="divide-y-4 divide-black">
+<div class="min-h-screen bg-black">
+    <!-- Filters Section -->
+    <div class="sticky top-0 z-50 bg-black divide-y-4 divide-black border-b-4 border-white">
         <!-- Name Search -->
         <div class="bg-black text-white py-4">
-            <label class="font-mono text-2xl uppercase tracking-tight ml-4 mb-2 block">
-                Search
-            </label>
             <input
                 type="text"
                 wire:model.live="name"
                 wire:input="filterJewels"
                 class="w-full border-4 border-white p-3 text-xl font-bold bg-black text-white placeholder-gray-500 focus:outline-none focus:ring-0"
-                placeholder="TYPE JEWEL NAME..."
+                placeholder="SEARCH BY NAME..."
             />
         </div>
 
         <!-- Material Filter -->
         <div class="bg-black text-white py-4">
-            <label class="font-mono text-2xl uppercase tracking-tight ml-4 mb-2 block">
-                Materials
-            </label>
             <input
                 list="materialsList"
                 wire:model.live="selectedMaterials"
                 wire:change="filterJewels"
                 class="w-full border-4 border-white p-3 text-xl font-bold bg-black text-white placeholder-gray-500 focus:outline-none focus:ring-0"
-                placeholder="SELECT MATERIALS..."
+                placeholder="FILTER BY MATERIAL..."
                 multiple
             />
             <datalist id="materialsList">
@@ -82,15 +76,12 @@ $filterJewels = function () {
 
         <!-- Type Filter -->
         <div class="bg-black text-white py-4">
-            <label class="font-mono text-2xl uppercase tracking-tight ml-4 mb-2 block">
-                Types
-            </label>
             <input
                 list="typesList"
                 wire:model.live="selectedTypes"
                 wire:change="filterJewels"
                 class="w-full border-4 border-white p-3 text-xl font-bold bg-black text-white placeholder-gray-500 focus:outline-none focus:ring-0"
-                placeholder="SELECT TYPES..."
+                placeholder="FILTER BY TYPE..."
                 multiple
             />
             <datalist id="typesList">
@@ -101,38 +92,31 @@ $filterJewels = function () {
         </div>
     </div>
 
-    <!-- Jewels Grid with Enhanced Brutalist Layout -->
-    <div class="w-full min-h-screen bg-black p-4">
+    <!-- Jewels Display -->
+    <div class="w-full bg-black px-[1px]">
         @if($jewels->isEmpty())
-            <div class="font-mono text-3xl uppercase text-center py-12 border-4 border-white bg-black text-white">
+            <div class="font-mono text-3xl uppercase text-center py-12 border-4 border-white bg-black text-white mx-[1px] mt-[1px]">
                 No Jewels Found
             </div>
         @else
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-[2px]">
+            <div class="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-[1px] space-y-[1px]">
                 @foreach ($jewels as $index => $jewel)
                     @php
                         $media = $jewel->getMedia('jewels/images');
                         $firstMediaUrl = $media->isNotEmpty() ? 
                             $media->first()->getUrl('thumbnail') : null;
                         
-                        // Random height selection
-                        $heights = [
-                            'h-[200px]', // Small
-                            'h-[250px]', // Medium-small
-                            'h-[300px]', // Medium
-                            'h-[350px]', // Medium-large
-                        ];
+                        $heights = ['h-[250px]', 'h-[300px]', 'h-[350px]', 'h-[400px]'];
                         $randomHeight = $heights[array_rand($heights)];
                     @endphp
-                    <div class="flex items-center justify-center">
-                        <div class="relative {{ $randomHeight }} w-full group hover:z-10 transform transition-transform duration-200 hover:scale-[1.02]">
-                            <div class="h-full border-2 border-white bg-black">
-                                <livewire:catalogitem 
-                                    :jewel="$jewel" 
-                                    :mediaUrl="$firstMediaUrl" 
-                                    :key="$jewel->id.$index"
-                                />
-                            </div>
+                    
+                    <div class="break-inside-avoid">
+                        <div class="relative {{ $randomHeight }} group hover:z-10">
+                            <livewire:catalogitem 
+                                :jewel="$jewel" 
+                                :mediaUrl="$firstMediaUrl" 
+                                :key="$jewel->id.$index"
+                            />
                         </div>
                     </div>
                 @endforeach
