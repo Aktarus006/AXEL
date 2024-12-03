@@ -10,7 +10,7 @@
                     type="text" 
                     id="name"
                     wire:model="name"
-                    class="w-full bg-black border-4 border-white px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-gray-300 transition-colors duration-200"
+                    class="w-full bg-black border-4 border-white px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black transition-all duration-300"
                     placeholder="YOUR NAME"
                 />
             </div>
@@ -24,7 +24,7 @@
                     type="email" 
                     id="email"
                     wire:model="email"
-                    class="w-full bg-black border-4 border-white px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-gray-300 transition-colors duration-200"
+                    class="w-full bg-black border-4 border-white px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black transition-all duration-300"
                     placeholder="YOUR EMAIL"
                 />
             </div>
@@ -39,7 +39,7 @@
                 id="message"
                 wire:model="message"
                 rows="6"
-                class="w-full bg-black border-4 border-white px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-gray-300 transition-colors duration-200 resize-none"
+                class="w-full bg-black border-4 border-white px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black transition-all duration-300 resize-none"
                 placeholder="YOUR MESSAGE"
             ></textarea>
         </div>
@@ -48,7 +48,7 @@
         <div class="flex justify-end">
             <button 
                 type="submit"
-                class="bg-white text-black px-8 py-4 uppercase font-bold tracking-wider border-4 border-transparent hover:bg-black hover:text-white hover:border-white transition-all duration-200"
+                class="bg-white text-black px-8 py-4 uppercase font-bold tracking-wider border-4 border-transparent hover:bg-red-600 hover:text-white hover:border-white transition-all duration-200"
             >
                 SEND MESSAGE
             </button>

@@ -6,9 +6,9 @@ use function Livewire\Volt\{state};
 
 ?>
 
-<div>
+<div class="mt-0">
     @volt
-    <footer class="w-full bg-black border-t-4 border-white">
+    <footer class="w-full bg-black border-t-4 border-white hover:border-red-600 transition-colors duration-300">
         <div 
             x-data="{ isHovered: false }"
             @mouseenter="isHovered = true"
@@ -28,17 +28,17 @@ use function Livewire\Volt\{state};
                 class="absolute inset-0 flex items-center justify-center"
                 :class="isHovered ? 'opacity-100' : 'opacity-0'"
             >
-                <div class="flex space-x-4 font-mono text-lg tracking-widest">
-                    <!-- Each letter with individual animation -->
-                    @foreach (str_split('2024 AKTARUS DESIGN') as $index => $letter)
+                <div class="flex space-x-4 font-mono text-lg tracking-widest"
+                    x-data="{ letters: Array.from('2024 AKTARUS DESIGN') }"
+                >
+                    <template x-for="(letter, index) in letters" :key="index">
                         <span 
-                            class="text-white transition-all duration-500"
+                            class="text-white transition-all duration-500 hover:text-red-600"
                             :class="isHovered ? 'transform translate-y-0 rotate-0 scale-100' : 'transform translate-y-full rotate-180 scale-0'"
-                            :style="{ 'transition-delay': ($index * 50) + 'ms' }"
-                        >
-                            {{ $letter }}
-                        </span>
-                    @endforeach
+                            :style="{ 'transition-delay': (index * 50) + 'ms' }"
+                            x-text="letter"
+                        ></span>
+                    </template>
                 </div>
             </div>
 

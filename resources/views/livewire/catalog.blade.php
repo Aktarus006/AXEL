@@ -72,25 +72,27 @@ $togglePriceFilter = function () {
     <div class="w-full border-b border-white">
         <div class="w-full grid grid-cols-1 md:grid-cols-3 border-b border-white">
             <!-- Search -->
-            <div class="border-r border-white">
+            <div class="border-r border-white relative group">
                 <input
                     wire:model.live="name"
                     wire:input="filterJewels"
-                    class="w-full h-12 px-4 text-sm font-mono bg-black text-white border-0 focus:outline-none focus:ring-0 placeholder-gray-500"
+                    class="w-full h-12 px-4 text-sm font-mono bg-black text-white border-0 focus:outline-none focus:ring-0 placeholder-gray-500 transition-all duration-300 focus:bg-white focus:text-black"
                     placeholder="SEARCH..."
                 />
+                <div class="absolute inset-x-0 bottom-0 h-0.5 bg-red-600 scale-x-0 group-focus-within:scale-x-100 transition-transform duration-300 origin-left"></div>
             </div>
 
             <!-- Materials -->
-            <div class="border-r border-white">
+            <div class="border-r border-white relative group">
                 <input
                     list="materialsList"
                     wire:model.live="selectedMaterials"
                     wire:change="filterJewels"
-                    class="w-full h-12 px-4 text-sm font-mono bg-black text-white border-0 focus:outline-none focus:ring-0 placeholder-gray-500"
+                    class="w-full h-12 px-4 text-sm font-mono bg-black text-white border-0 focus:outline-none focus:ring-0 placeholder-gray-500 transition-all duration-300 focus:bg-white focus:text-black"
                     placeholder="FILTER BY MATERIAL..."
                     multiple
                 />
+                <div class="absolute inset-x-0 bottom-0 h-0.5 bg-red-600 scale-x-0 group-focus-within:scale-x-100 transition-transform duration-300 origin-left"></div>
                 <datalist id="materialsList">
                     @foreach ($materials as $material)
                         <option value="{{ $material->value }}">{{ $material->value }}</option>
@@ -99,15 +101,16 @@ $togglePriceFilter = function () {
             </div>
 
             <!-- Types -->
-            <div>
+            <div class="relative group">
                 <input
                     list="typesList"
                     wire:model.live="selectedTypes"
                     wire:change="filterJewels"
-                    class="w-full h-12 px-4 text-sm font-mono bg-black text-white border-0 focus:outline-none focus:ring-0 placeholder-gray-500"
+                    class="w-full h-12 px-4 text-sm font-mono bg-black text-white border-0 focus:outline-none focus:ring-0 placeholder-gray-500 transition-all duration-300 focus:bg-white focus:text-black"
                     placeholder="FILTER BY TYPE..."
                     multiple
                 />
+                <div class="absolute inset-x-0 bottom-0 h-0.5 bg-red-600 scale-x-0 group-focus-within:scale-x-100 transition-transform duration-300 origin-left"></div>
                 <datalist id="typesList">
                     @foreach ($types as $type)
                         <option value="{{ $type->value }}">{{ $type->value }}</option>
@@ -141,18 +144,18 @@ $togglePriceFilter = function () {
     </div>
 
     <!-- Jewels Display -->
-    <div class="w-full bg-black px-[1px]">
+    <div class="w-full bg-black">
         @if($jewels->isEmpty())
             <div class="font-mono text-3xl uppercase text-center py-12 border-4 border-white bg-black text-white mx-[1px] mt-[1px]">
                 No Jewels Found
             </div>
         @else
-            <div class="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-[1px] space-y-[1px]">
+            <div class="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-[0px] space-y-[0]">
                 @foreach ($jewels as $index => $jewel)
                     @php
                         $media = $jewel->getMedia('jewels/images');
                         $firstMediaUrl = $media->isNotEmpty() ? 
-                            $media->first()->getUrl('thumbnail') : null;
+                            $media->first()->getUrl('medium') : null;
                         
                         // Create more height variations and make them depend on the index
                         // This helps prevent adjacent items from having the same height
