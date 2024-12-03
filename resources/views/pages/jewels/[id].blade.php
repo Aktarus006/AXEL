@@ -116,7 +116,7 @@ $jewel = Jewel::with(['media', 'collection'])->find(request()->route('id'));
                                 <div class="mb-8">
                                     <h2 class="font-mono text-gray-400 mb-2">DESCRIPTION</h2>
                                     <div class="font-mono text-gray-300 space-y-4">
-                                        {!! nl2br(e($jewel->description)) !!}
+                                        {!! nl2br($jewel->description) !!}
                                     </div>
                                 </div>
                             @endif

@@ -1,6 +1,8 @@
 <x-layouts.app>
     <livewire:homeproductboxlist />
 
+    <livewire:marquee />
+
     <section id="cta" class="flex w-full h-3/5 bg-cyan">
     <div class="flex flex-col items-center w-1/3 px-8 text-xl justify-evenly">
             <span class="text-7xl">BOLD <span class="text-white transition duration-100 transform bg-black hover:bg-red-600 hover:skew-y-2">JEWELRY</span> FOR BOLDIER PEOPLE</span>
@@ -49,7 +51,7 @@
     
     <livewire:creators-slider />
 
-    <livewire:marquee />
+    <livewire:separator />
 
     <section id="contact" class="w-full mb-0">
         <livewire:contact />
