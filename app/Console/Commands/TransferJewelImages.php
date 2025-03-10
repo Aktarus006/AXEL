@@ -29,7 +29,15 @@ class TransferJewelImages extends Command
     {
         $this->info('Starting image transfer...');
 
+        // Vérifier si le dossier storage existe
+        if (!Storage::disk('public')->exists('/')) {
+            $this->error('Storage directory does not exist!');
+            $this->info('Current storage path: ' . storage_path('app/public'));
+            return Command::FAILURE;
+        }
+
         $jewels = Jewel::with('media')->get();
+        $this->info("Found {$jewels->count()} jewels to process");
         $bar = $this->output->createProgressBar(count($jewels));
 
         $transferredFiles = 0;
@@ -37,22 +45,29 @@ class TransferJewelImages extends Command
 
         foreach ($jewels as $jewel) {
             $oldMedia = $jewel->getMedia('jewels/images');
+            $this->info("\nProcessing jewel: {$jewel->name} (ID: {$jewel->id})");
+            $this->info("Found {$oldMedia->count()} media items");
 
             foreach ($oldMedia as $media) {
                 try {
+                    $path = $media->getPath();
+                    $this->info("Checking file: {$path}");
+
                     // Vérifier si le fichier existe
-                    if (!Storage::disk('public')->exists($media->getPath())) {
-                        $errors[] = "File not found: {$media->getPath()} for jewel {$jewel->name}";
+                    if (!Storage::disk('public')->exists($path)) {
+                        $this->warn("File not found at: {$path}");
+                        $errors[] = "File not found: {$path} for jewel {$jewel->name}";
                         continue;
                     }
 
                     // Copier vers la collection packshots
-                    $newMedia = $jewel->copyMedia($media->getPath())
+                    $newMedia = $jewel->copyMedia($path)
                         ->toMediaCollection('jewels/packshots', 'public');
 
-                    $this->info("Copied {$media->file_name} to packshots for jewel {$jewel->name}");
+                    $this->info("Successfully copied {$media->file_name} to packshots");
                     $transferredFiles++;
                 } catch (\Exception $e) {
+                    $this->error("Error: " . $e->getMessage());
                     $errors[] = "Error processing {$media->file_name} for jewel {$jewel->name}: " . $e->getMessage();
                 }
             }
