@@ -29,13 +29,6 @@ class TransferJewelImages extends Command
     {
         $this->info('Starting image transfer...');
 
-        // Vérifier si le dossier storage existe
-        if (!Storage::disk('public')->exists('/')) {
-            $this->error('Storage directory does not exist!');
-            $this->info('Current storage path: ' . storage_path('app/public'));
-            return Command::FAILURE;
-        }
-
         $jewels = Jewel::with('media')->get();
         $this->info("Found {$jewels->count()} jewels to process");
         $bar = $this->output->createProgressBar(count($jewels));
@@ -50,18 +43,19 @@ class TransferJewelImages extends Command
 
             foreach ($oldMedia as $media) {
                 try {
-                    $path = $media->getPath();
-                    $this->info("Checking file: {$path}");
+                    // Utiliser le chemin relatif depuis le disque public
+                    $relativePath = str_replace('/var/www/axel/storage/app/public/', '', $media->getPath());
+                    $this->info("Processing file: {$relativePath}");
 
-                    // Vérifier si le fichier existe
-                    if (!Storage::disk('public')->exists($path)) {
-                        $this->warn("File not found at: {$path}");
-                        $errors[] = "File not found: {$path} for jewel {$jewel->name}";
+                    if (!Storage::disk('public')->exists($relativePath)) {
+                        $this->warn("File not found at: {$relativePath}");
+                        $errors[] = "File not found: {$relativePath} for jewel {$jewel->name}";
                         continue;
                     }
 
                     // Copier vers la collection packshots
-                    $newMedia = $jewel->copyMedia($path)
+                    $newMedia = $jewel->addMediaFromDisk($relativePath, 'public')
+                        ->preservingOriginal()
                         ->toMediaCollection('jewels/packshots', 'public');
 
                     $this->info("Successfully copied {$media->file_name} to packshots");
