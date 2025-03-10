@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Laravel\Folio\Folio;
+use Illuminate\Support\Facades\View;
 
 class FolioServiceProvider extends ServiceProvider
 {
@@ -20,10 +21,21 @@ class FolioServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Folio::path(resource_path('views/pages'))->middleware([
-            '*' => [
-                //
-            ],
-        ]);
+        Folio::path(resource_path('views/pages'))
+            ->middleware([
+                '*' => [
+                    \Illuminate\Routing\Middleware\SubstituteBindings::class,
+                ],
+            ]);
+
+        // S'assurer que toutes les vues ont accès aux variables partagées
+        View::composer('*', function ($view) {
+            $variables = View::getShared();
+            foreach ($variables as $key => $value) {
+                if (!$view->offsetExists($key)) {
+                    $view->with($key, $value);
+                }
+            }
+        });
     }
 }

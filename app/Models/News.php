@@ -47,7 +47,11 @@ class News extends Model implements HasMedia
                 ->collection("news")
                 ->label("Image")
                 ->rules("image")
-                ->required(),
+                ->required()
+                ->imageEditor()
+                ->maxSize(40960)
+                ->conversion('thumbnail')
+                ->downloadable(),
             Radio::make("online")
                 ->options(Status::class)
                 ->inline()

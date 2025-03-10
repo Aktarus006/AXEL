@@ -177,7 +177,7 @@ state([
         >
             @foreach($creators as $creator)
             <div class="group relative flex-none w-80">
-                <div class="relative border-8 border-white hover:border-red-600 transition-colors duration-300">
+                <div class="relative border-8 border-white hover:border-red-700 transition-colors duration-300">
                     <div class="relative w-full aspect-square overflow-hidden">
                         <img 
                             src="{{ $creator['image'] }}" 

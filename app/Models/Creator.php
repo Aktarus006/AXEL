@@ -10,9 +10,11 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -26,23 +28,26 @@ class Creator extends Model implements HasMedia
         'last_name',
         'date_of_birth',
         'description',
-        'avatar',
-        'avatar_hovered',
         'website_url',
         'online',
-        'collection_id'
     ];
 
     protected $casts = [
         "id" => "integer",
         "date_of_birth" => "date",
         "online" => "boolean",
-        "collaboration_id" => "integer",
     ];
 
-    public function collaborations(): HasMany
+    protected $appends = ['name'];
+
+    public function getNameAttribute(): string
     {
-        return $this->hasMany(Collection::class);
+        return "{$this->first_name} {$this->last_name}";
+    }
+
+    public function collections(): BelongsToMany
+    {
+        return $this->belongsToMany(Collection::class);
     }
 
     public static function getForm(): array
@@ -54,16 +59,33 @@ class Creator extends Model implements HasMedia
                 ->label("Date de naissance")
                 ->required(),
             RichEditor::make("description")->label("Biographie")->required(),
-            FileUpload::make("avatar")->image()->avatar()->imageEditor(),
-            FileUpload::make("avatar_hovered")->image()->avatar()->imageEditor(),
+            SpatieMediaLibraryFileUpload::make("avatar")
+                ->collection("creators/profile")
+                ->image()
+                ->imageEditor()
+                ->maxSize(40960)
+                ->label("Photo")
+                ->conversion('avatar-thumbnail')
+                ->downloadable(),
+            SpatieMediaLibraryFileUpload::make("avatar_hover")
+                ->collection("creators/profile")
+                ->image()
+                ->imageEditor()
+                ->maxSize(40960)
+                ->label("Photo (hover)")
+                ->conversion('avatar-thumbnail')
+                ->downloadable(),
             TextInput::make("website_url")->label("Site web")->url(),
             Radio::make("online")
                 ->options(Status::class)
                 ->inline()
                 ->default(Status::OFFLINE),
-            Select::make("collection_id")
-                ->label("Collection")
-                ->options(Collection::all()->pluck("name", "id")->toArray())
+            Select::make('collections')
+                ->relationship('collections', 'name')
+                ->multiple()
+                ->preload()
+                ->searchable()
+                ->label('Collections'),
         ];
     }
 

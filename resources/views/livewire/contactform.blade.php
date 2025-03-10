@@ -48,7 +48,7 @@
         <div class="flex justify-end">
             <button 
                 type="submit"
-                class="bg-white text-black px-8 py-4 uppercase font-bold tracking-wider border-4 border-transparent hover:bg-red-600 hover:text-white hover:border-white transition-all duration-200"
+                class="bg-white text-black px-8 py-4 uppercase font-bold tracking-wider border-4 border-transparent hover:bg-red-700 hover:text-white hover:border-white transition-all duration-200"
             >
                 SEND MESSAGE
             </button>

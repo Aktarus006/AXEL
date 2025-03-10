@@ -171,8 +171,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\VoltServiceProvider::class,
         App\Providers\FolioServiceProvider::class,
-	Spatie\MediaLibrary\MediaLibraryServiceProvider::class,
-
+        Spatie\MediaLibrary\MediaLibraryServiceProvider::class,
     ])->toArray(),
 
     /*

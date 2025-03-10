@@ -12,6 +12,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\TagsColumn;
 
 class CollectionResource extends Resource
 {
@@ -28,16 +30,21 @@ class CollectionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make("name")->searchable(),
-                Tables\Columns\TextColumn::make("description")->searchable(),
-                Tables\Columns\IconColumn::make("online")->boolean(),
+                Tables\Columns\TextColumn::make("name")
+                    ->label('Nom')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\IconColumn::make("online")
+                    ->label('En ligne')
+                    ->boolean(),
+                Tables\Columns\TextColumn::make("jewels_count")
+                    ->label('Nombre de bijoux')
+                    ->counts('jewels')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make("creation_date")
+                    ->label('Date de création')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make("jewel.name")
-                    ->numeric()
-                    ->sortable(),
-
                 Tables\Columns\TextColumn::make("created_at")
                     ->dateTime()
                     ->sortable()
@@ -61,8 +68,8 @@ class CollectionResource extends Resource
     public static function getRelations(): array
     {
         return [
-                //
-            ];
+            //
+        ];
     }
 
     public static function getPages(): array

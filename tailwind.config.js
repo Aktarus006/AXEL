@@ -43,8 +43,8 @@ export default {
       animation: {
         typing: "typing 2s steps(20) alternate infinite, blink .7s infinite",
         vanish: "vanish 4s",
-        marquee: "marquee 25s linear infinite",
-        marquee2: "marquee2 25s linear infinite",
+        marquee: "marquee 180s linear infinite",
+        marquee2: "marquee2 180s linear infinite",
       },
     },
     variants: {

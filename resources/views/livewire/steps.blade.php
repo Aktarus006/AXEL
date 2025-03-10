@@ -23,15 +23,15 @@ mount(function () {
                 $firstMediaUrl = $media->isNotEmpty() ? $media->first()->getUrl() : null;
             @endphp
 
-            <div class="border-4 border-white hover:border-red-600 bg-black text-white font-mono relative overflow-hidden transition-all duration-300 hover:-translate-y-2 flex flex-col h-[300px]">
+            <div class="border-4 border-white hover:border-red-700 bg-black text-white font-mono relative overflow-hidden transition-all duration-300 hover:-translate-y-2 flex flex-col h-[300px]">
                 <!-- Position Number -->
-                <div class="absolute top-0 right-0 bg-white text-black text-4xl font-bold p-4 border-l-4 border-b-4 border-white group-hover:border-red-600 group-hover:bg-red-600 group-hover:text-white transition-colors duration-300">
+                <div class="absolute top-0 right-0 bg-white text-black text-4xl font-bold p-4 border-l-4 border-b-4 border-white group-hover:border-red-700 group-hover:bg-red-700 group-hover:text-white transition-colors duration-300">
                     {{ str_pad($step->position, 2, '0', STR_PAD_LEFT) }}
                 </div>
 
                 <!-- Image -->
                 @if($firstMediaUrl)
-                    <div class="h-[300px] border-b-4 border-white group-hover:border-red-600 overflow-hidden flex-shrink-0 transition-colors duration-300">
+                    <div class="h-[300px] border-b-4 border-white group-hover:border-red-700 overflow-hidden flex-shrink-0 transition-colors duration-300">
                         <img 
                             src="{{ $firstMediaUrl }}" 
                             alt="Image for {{ $step->title }}" 
@@ -42,7 +42,7 @@ mount(function () {
 
                 <!-- Content -->
                 <div class="p-6 pt-16 flex-1 overflow-y-auto">
-                    <h3 class="text-2xl uppercase mb-4 group-hover:text-red-600 transition-colors duration-300">{{ $step->title }}</h3>
+                    <h3 class="text-2xl uppercase mb-4 group-hover:text-red-700 transition-colors duration-300">{{ $step->title }}</h3>
                     <div class="text-sm leading-relaxed opacity-80">
                         {!! $step->description !!}
                     </div>

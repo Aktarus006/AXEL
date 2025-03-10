@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('creators', function (Blueprint $table) {
-            $table->text('avatar_hovered')->nullable();
+            if (!Schema::hasColumn('creators', 'avatar_hovered')) {
+                $table->text('avatar_hovered')->nullable();
+            }
         });
     }
 
@@ -22,7 +24,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('creators', function (Blueprint $table) {
-            $table->dropColumn('avatar_hovered');
+            if (Schema::hasColumn('creators', 'avatar_hovered')) {
+                $table->dropColumn('avatar_hovered');
+            }
         });
     }
 };

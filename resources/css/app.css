@@ -2,4 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes marquee-reverse {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%);
+    }
+}
 
+.animate-marquee-reverse {
+    animation: marquee-reverse 30s linear infinite;
+}

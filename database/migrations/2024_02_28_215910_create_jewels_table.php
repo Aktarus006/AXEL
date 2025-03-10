@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->text("image")->nullable();
             $table->string("type");
             $table->string("material");
-            $table->boolean("online");
+            $table->integer("online");
             $table->date("creation_date");
             $table->foreignId("collection_id")->nullable();
             $table->timestamps();

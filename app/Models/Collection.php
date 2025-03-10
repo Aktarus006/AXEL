@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\Status;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Radio;
@@ -12,10 +11,15 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use App\Models\Creator;
+use App\Models\Jewel;
+use App\Enums\Status;
+use Illuminate\Support\Str;
 
 class Collection extends Model implements HasMedia
 {
@@ -28,9 +32,21 @@ class Collection extends Model implements HasMedia
         "creation_date" => "date",
     ];
 
-    public function jewels(): HasMany
+    protected $fillable = [
+        'name',
+        'description',
+        'online',
+        'creation_date',
+    ];
+
+    public function jewels(): BelongsToMany
     {
-        return $this->hasMany(Jewel::class);
+        return $this->belongsToMany(Jewel::class);
+    }
+
+    public function creators(): BelongsToMany
+    {
+        return $this->belongsToMany(Creator::class);
     }
 
     public static function getForm(): array
@@ -40,12 +56,14 @@ class Collection extends Model implements HasMedia
             RichEditor::make("description")->label("Description")->required(),
             SpatieMediaLibraryFileUpload::make("image")
                 ->collection("collections")
-                ->maxsize(40960)
-                ->optimize("webp")
+                ->maxSize(40960)
+                ->imageEditor()
                 ->reorderable()
                 ->multiple()
                 ->label("Images")
-                ->image(),
+                ->image()
+                ->conversion('thumbnail')
+                ->downloadable(),
             FileUpload::make("cover")
                 ->label("Cover")
                 ->rules("image")
@@ -58,6 +76,18 @@ class Collection extends Model implements HasMedia
             DatePicker::make("creation_date")
                 ->label("Date de création")
                 ->required(),
+            Select::make('jewels')
+                ->relationship('jewels', 'name')
+                ->multiple()
+                ->preload()
+                ->searchable(),
+            Select::make('creators')
+                ->relationship('creators', 'name')
+                ->multiple()
+                ->preload()
+                ->searchable()
+                ->label('Créateurs')
+                ->getOptionLabelFromRecordUsing(fn($record) => "{$record->first_name} {$record->last_name}"),
         ];
     }
 

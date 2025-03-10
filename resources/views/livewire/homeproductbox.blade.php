@@ -20,7 +20,7 @@
                 'name' => $this->jewel->name,
                 'price' => $this->jewel->price,
                 'media' => [
-                    ['original_url' => $this->jewel->getFirstMediaUrl('jewels/images', 'large')]
+                    ['original_url' => $this->jewel->getFirstMediaUrl('jewels/packshots', 'large')]
                 ]
             ]);
         }
@@ -32,8 +32,8 @@
     };
 
     $getImageUrl = function () {
-        if ($this->jewel && $this->jewel->hasMedia('jewels/images')) {
-            return $this->jewel->getFirstMediaUrl('jewels/images', 'thumb');
+        if ($this->jewel && $this->jewel->hasMedia('jewels/packshots')) {
+            return $this->jewel->getFirstMediaUrl('jewels/packshots', 'thumb');
         }
         return null;
     };
@@ -42,13 +42,13 @@
 
     <div
         wire:key="jewel-box-{{ $jewelId }}"
-        class="w-full h-full flex justify-center items-center cursor-pointer"
+        class="flex items-center justify-center w-full h-full cursor-pointer"
         wire:mouseover="hover"
         wire:mouseout="unhover"
     >
-        <img 
-            src="{{ $getImageUrl() }}" 
-            alt="{{ $jewel->name ?? 'Jewel' }}" 
+        <img
+            src="{{ $getImageUrl() }}"
+            alt="{{ $jewel->name ?? 'Jewel' }}"
             class="w-full h-full object-cover transition-all duration-500
                 {{ !$isHovered ? 'grayscale' : 'grayscale-0 saturate-150' }}"
         >

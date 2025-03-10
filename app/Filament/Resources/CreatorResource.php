@@ -28,21 +28,37 @@ class CreatorResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make("first_name")->searchable(),
-                Tables\Columns\TextColumn::make("last_name")->searchable(),
+                Tables\Columns\SpatieMediaLibraryImageColumn::make('avatar')
+                    ->label('Photo')
+                    ->collection('creators/profile')
+                    ->conversion('avatar-thumbnail')
+                    ->extraImgAttributes(fn($record) => [
+                        'data-hover-src' => $record->getFirstMediaUrl('creators/profile', 'avatar-thumbnail', 'avatar_hover'),
+                        'onmouseover' => "this.src = this.getAttribute('data-hover-src')",
+                        'onmouseout' => "this.src = '" . $record->getFirstMediaUrl('creators/profile', 'avatar-thumbnail') . "'",
+                    ]),
+                Tables\Columns\TextColumn::make("first_name")
+                    ->label('Prénom')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make("last_name")
+                    ->label('Nom')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make("date_of_birth")
+                    ->label('Date de naissance')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make("description")->searchable(),
-                Tables\Columns\IconColumn::make("online")->boolean(),
-                Tables\Columns\TextColumn::make("collaboration_id")
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\IconColumn::make("online")
+                    ->label('En ligne')
+                    ->boolean(),
                 Tables\Columns\TextColumn::make("created_at")
+                    ->label('Créé le')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make("updated_at")
+                    ->label('Modifié le')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -61,8 +77,8 @@ class CreatorResource extends Resource
     public static function getRelations(): array
     {
         return [
-                //
-            ];
+            //
+        ];
     }
 
     public static function getPages(): array

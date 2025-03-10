@@ -8,7 +8,7 @@ use function Livewire\Volt\{state};
 
 <div class="mt-0">
     @volt
-    <footer class="w-full bg-black border-t-4 border-white hover:border-red-600 transition-colors duration-300">
+    <footer class="w-full bg-black border-t-4 border-white hover:border-red-700 transition-colors duration-300">
         <div 
             x-data="{ isHovered: false }"
             @mouseenter="isHovered = true"
@@ -33,7 +33,7 @@ use function Livewire\Volt\{state};
                 >
                     <template x-for="(letter, index) in letters" :key="index">
                         <span 
-                            class="text-white transition-all duration-500 hover:text-red-600"
+                            class="text-white transition-all duration-500 hover:text-red-700"
                             :class="isHovered ? 'transform translate-y-0 rotate-0 scale-100' : 'transform translate-y-full rotate-180 scale-0'"
                             :style="{ 'transition-delay': (index * 50) + 'ms' }"
                             x-text="letter"
