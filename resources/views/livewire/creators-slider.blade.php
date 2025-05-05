@@ -1,63 +1,17 @@
 <?php
 
 use function Livewire\Volt\{state};
+use App\Models\Creator;
 
 state([
-    'creators' => [
-        [
-            'name' => 'Sarah Miller',
-            'image' => 'https://images.unsplash.com/photo-1494790108377-be9c29b29330',
-            'image2' => 'https://images.unsplash.com/photo-1534528741775-53994a69daeb',
-            'specialty' => 'CONTEMPORARY'
-        ],
-        [
-            'name' => 'James Chen',
-            'image' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d',
-            'image2' => 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e',
-            'specialty' => 'METAL ART'
-        ],
-        [
-            'name' => 'Elena Rodriguez',
-            'image' => 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80',
-            'image2' => 'https://images.unsplash.com/photo-1544005313-94ddf0286df2',
-            'specialty' => 'GEMSTONE'
-        ],
-        [
-            'name' => 'Marcus Black',
-            'image' => 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e',
-            'image2' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d',
-            'specialty' => 'AVANT-GARDE'
-        ],
-        [
-            'name' => 'Yuki Tanaka',
-            'image' => 'https://images.unsplash.com/photo-1534528741775-53994a69daeb',
-            'image2' => 'https://images.unsplash.com/photo-1494790108377-be9c29b29330',
-            'specialty' => 'MINIMALIST'
-        ],
-        [
-            'name' => 'Alex Rivera',
-            'image' => 'https://images.unsplash.com/photo-1544005313-94ddf0286df2',
-            'image2' => 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80',
-            'specialty' => 'PUNK STYLE'
-        ],
-        [
-            'name' => 'Luna Park',
-            'image' => 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04',
-            'image2' => 'https://images.unsplash.com/photo-1517841905240-472988babdf9',
-            'specialty' => 'GOTHIC'
-        ],
-        [
-            'name' => 'Kai Wong',
-            'image' => 'https://images.unsplash.com/photo-1517841905240-472988babdf9',
-            'image2' => 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04',
-            'specialty' => 'STREET ART'
-        ]
-    ]
+    'creators' => Creator::where('online', true)
+        ->with(['media', 'collections'])
+        ->get()
 ]);
 ?>
 
-<div 
-    x-data="{ 
+<div
+    x-data="{
         position: 0,
         maxScroll: 0,
         canScrollLeft: false,
@@ -77,7 +31,7 @@ state([
         smoothScroll(target) {
             if (this.isScrolling) return;
             this.isScrolling = true;
-            
+
             const start = this.position;
             const distance = target - start;
             const duration = 300;
@@ -87,12 +41,12 @@ state([
                 if (!startTime) startTime = currentTime;
                 const timeElapsed = currentTime - startTime;
                 const progress = Math.min(timeElapsed / duration, 1);
-                
+
                 const easing = t => t<.5 ? 2*t*t : -1+(4-2*t)*t;
-                
+
                 this.position = start + (distance * easing(progress));
                 this.$refs.scrollContent.style.transform = `translate3d(-${this.position}px, 0, 0)`;
-                
+
                 if (progress < 1) {
                     requestAnimationFrame(animation);
                 } else {
@@ -101,7 +55,7 @@ state([
                     this.isScrolling = false;
                 }
             };
-            
+
             requestAnimationFrame(animation);
         },
         startAutoScroll() {
@@ -127,76 +81,112 @@ state([
             const target = this.position >= this.maxScroll ? 0 : Math.min(this.maxScroll, this.position + 400);
             this.smoothScroll(target);
         }
-    }" 
-    class="creators-section relative w-full bg-black"
+    }"
+    class="relative w-full bg-black creators-section"
     @mouseenter="startAutoScroll"
     @mouseleave="stopAutoScroll"
 >
     <!-- Title -->
-    <div class="absolute top-0 left-0 w-full border-t-8 border-b-8 border-white bg-black py-4 z-10">
-        <h2 class="text-6xl font-mono text-white text-center transform -skew-x-12">NOS COLLABORATEURS</h2>
+    <div class="absolute top-0 left-0 z-10 w-full py-4 bg-black border-t-8 border-b-8 border-white">
+        <h2 class="font-mono text-6xl text-center text-white transform -skew-x-12">NOS COLLABORATEURS</h2>
     </div>
 
     <!-- Navigation Arrows -->
-    <div 
-        class="absolute left-8 top-1/2 -translate-y-1/2 z-20 transition-opacity duration-300"
+    <div
+        class="absolute z-20 transition-opacity duration-300 -translate-y-1/2 left-8 top-1/2"
         :class="{ 'opacity-0 pointer-events-none': !canScrollLeft }"
     >
-        <button 
+        <button
             @click="scrollLeft"
-            class="text-white text-8xl transform hover:scale-150 transition-all duration-300 cursor-pointer relative group"
+            class="relative text-white transition-all duration-300 transform cursor-pointer text-8xl hover:scale-150 group"
         >
-            <span class="absolute inset-0 border-8 border-white transform scale-90 transition-transform duration-300 group-hover:scale-100"></span>
+            <span class="absolute inset-0 transition-transform duration-300 transform scale-90 border-8 border-white group-hover:scale-100"></span>
             <span class="absolute inset-0 border-4 border-white transform scale-[0.85] transition-transform duration-300 group-hover:scale-95"></span>
             <span class="relative z-10 block px-4 py-2">←</span>
         </button>
     </div>
-    <div 
-        class="absolute right-8 top-1/2 -translate-y-1/2 z-20 transition-opacity duration-300"
+    <div
+        class="absolute z-20 transition-opacity duration-300 -translate-y-1/2 right-8 top-1/2"
         :class="{ 'opacity-0 pointer-events-none': !canScrollRight }"
     >
-        <button 
+        <button
             @click="scrollRight"
-            class="text-white text-8xl transform hover:scale-150 transition-all duration-300 cursor-pointer relative group"
+            class="relative text-white transition-all duration-300 transform cursor-pointer text-8xl hover:scale-150 group"
         >
-            <span class="absolute inset-0 border-8 border-white transform scale-90 transition-transform duration-300 group-hover:scale-100"></span>
+            <span class="absolute inset-0 transition-transform duration-300 transform scale-90 border-8 border-white group-hover:scale-100"></span>
             <span class="absolute inset-0 border-4 border-white transform scale-[0.85] transition-transform duration-300 group-hover:scale-95"></span>
             <span class="relative z-10 block px-4 py-2">→</span>
         </button>
     </div>
 
     <!-- Creators Row -->
-    <div 
+    <div
         x-ref="container"
-        class="relative w-full h-[400px] bg-black border-t-4 border-white overflow-hidden"
+        class="relative w-full h-[650px] bg-black border-t-4 border-white overflow-hidden flex items-center justify-center"
     >
-        <div 
+        @if($creators->isEmpty())
+            <div class="py-10 text-center text-white">No creators found</div>
+        @endif
+
+        <div
             x-ref="scrollContent"
-            class="absolute left-0 top-0 h-full flex items-center gap-4 px-8 transition-transform duration-300 will-change-transform"
+            class="absolute inset-0 flex items-center gap-8 px-8 transition-transform duration-300 will-change-transform"
             style="transform: translate3d(0, 0, 0)"
         >
             @foreach($creators as $creator)
-            <div class="group relative flex-none w-80">
-                <div class="relative border-8 border-white hover:border-red-700 transition-colors duration-300">
-                    <div class="relative w-full aspect-square overflow-hidden">
-                        <img 
-                            src="{{ $creator['image'] }}" 
-                            alt="{{ $creator['name'] }}"
-                            class="w-full h-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0 group-hover:scale-110"
-                        >
-                        <img 
-                            src="{{ $creator['image2'] }}" 
-                            alt="{{ $creator['name'] }}"
-                            class="absolute top-0 left-0 w-full h-full object-cover opacity-0 grayscale-0 transition-opacity duration-500 group-hover:opacity-100"
-                        >
-                        <div class="absolute inset-0 border-4 border-black opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div class="relative flex-none group w-[400px]">
+                <a href="/creators/{{ $creator->id }}" class="block">
+                    <div class="relative transition-colors duration-300 border-8 border-white hover:border-red-700">
+                        <div class="relative w-full overflow-hidden aspect-square">
+                            @if($creator->getFirstMediaUrl('creators/profile'))
+                            <img
+                                srcset="{{ $creator->getFirstMediaUrl('creators/profile', 'small') }} 480w,
+                                        {{ $creator->getFirstMediaUrl('creators/profile', 'medium') }} 768w,
+                                        {{ $creator->getFirstMediaUrl('creators/profile', 'large') }} 1280w,
+                                        {{ $creator->getFirstMediaUrl('creators/profile', 'xl') }} 1920w,
+                                        {{ $creator->getFirstMediaUrl('creators/profile', 'hd') }} 2560w"
+                                sizes="(max-width: 480px) 480px,
+                                       (max-width: 768px) 768px,
+                                       (max-width: 1280px) 1280px,
+                                       (max-width: 1920px) 1920px,
+                                       2560px"
+                                src="{{ $creator->getFirstMediaUrl('creators/profile', 'medium') }}"
+                                alt="{{ $creator->name }}"
+                                class="object-cover w-full h-full transition-all duration-500 grayscale group-hover:grayscale-0 group-hover:scale-110"
+                                loading="lazy"
+                            >
+                            @if($creator->getFirstMediaUrl('creators/profile_hover'))
+                            <img
+                                srcset="{{ $creator->getFirstMediaUrl('creators/profile_hover', 'small') }} 480w,
+                                        {{ $creator->getFirstMediaUrl('creators/profile_hover', 'medium') }} 768w,
+                                        {{ $creator->getFirstMediaUrl('creators/profile_hover', 'large') }} 1280w,
+                                        {{ $creator->getFirstMediaUrl('creators/profile_hover', 'xl') }} 1920w,
+                                        {{ $creator->getFirstMediaUrl('creators/profile_hover', 'hd') }} 2560w"
+                                sizes="(max-width: 480px) 480px,
+                                       (max-width: 768px) 768px,
+                                       (max-width: 1280px) 1280px,
+                                       (max-width: 1920px) 1920px,
+                                       2560px"
+                                src="{{ $creator->getFirstMediaUrl('creators/profile_hover', 'medium') }}"
+                                alt="{{ $creator->name }}"
+                                class="absolute top-0 left-0 object-cover w-full h-full transition-opacity duration-500 opacity-0 grayscale-0 group-hover:opacity-100"
+                                loading="lazy"
+                            >
+                            @endif
+                            @else
+                            <div class="flex items-center justify-center w-full h-full text-white bg-gray-800">
+                                No image available for {{ $creator->name }}
+                            </div>
+                            @endif
+                            <div class="absolute inset-0 transition-opacity duration-300 border-4 border-black opacity-0 group-hover:opacity-100"></div>
+                        </div>
+
+                        <div class="p-4 bg-white border-8 border-black">
+                            <h3 class="font-mono text-xl font-bold text-black">{{ strtoupper($creator->name) }}</h3>
+                            <p class="font-mono text-sm text-black">{{ $creator->collections->first()?->name ?? 'ARTISTE' }}</p>
+                        </div>
                     </div>
-                    
-                    <div class="absolute -bottom-16 left-0 right-0 bg-white border-8 border-black p-4 transform group-hover:-translate-y-16 transition-transform duration-300">
-                        <h3 class="font-mono text-xl font-bold text-black">{{ strtoupper($creator['name']) }}</h3>
-                        <p class="font-mono text-sm text-black">{{ $creator['specialty'] }}</p>
-                    </div>
-                </div>
+                </a>
             </div>
             @endforeach
         </div>

@@ -65,15 +65,23 @@ class Creator extends Model implements HasMedia
                 ->imageEditor()
                 ->maxSize(40960)
                 ->label("Photo")
-                ->conversion('avatar-thumbnail')
+                ->conversion('thumbnail')
+                ->conversion('small')
+                ->conversion('medium')
+                ->conversion('large')
+                ->conversion('hd')
                 ->downloadable(),
             SpatieMediaLibraryFileUpload::make("avatar_hover")
-                ->collection("creators/profile")
+                ->collection("creators/profile_hover")
                 ->image()
                 ->imageEditor()
                 ->maxSize(40960)
                 ->label("Photo (hover)")
-                ->conversion('avatar-thumbnail')
+                ->conversion('thumbnail')
+                ->conversion('small')
+                ->conversion('medium')
+                ->conversion('large')
+                ->conversion('hd')
                 ->downloadable(),
             TextInput::make("website_url")->label("Site web")->url(),
             Radio::make("online")
@@ -89,62 +97,94 @@ class Creator extends Model implements HasMedia
         ];
     }
 
-    public function registerMediaConversions(?Media $media = null): void
+    public function registerMediaCollections(): void
     {
-        // Avatar conversions
-        $this->addMediaConversion('avatar-thumbnail')
-            ->width(100)
-            ->height(100)
-            ->format('webp')
-            ->quality(90)
-            ->sharpen(10)
-            ->optimize()
-            ->performOnCollections('creators/avatars');
+        $this->addMediaCollection('creators/profile')
+            ->useDisk('public')
+            ->registerMediaConversions(function (Media $media) {
+                $this->addMediaConversion('thumbnail')
+                    ->width(150)
+                    ->height(150)
+                    ->format('webp')
+                    ->quality(90)
+                    ->sharpen(10)
+                    ->nonQueued();
 
-        $this->addMediaConversion('avatar-small')
-            ->width(200)
-            ->height(200)
-            ->format('webp')
-            ->quality(90)
-            ->sharpen(10)
-            ->optimize()
-            ->performOnCollections('creators/avatars');
+                $this->addMediaConversion('small')
+                    ->width(400)
+                    ->height(400)
+                    ->format('webp')
+                    ->quality(90)
+                    ->sharpen(10)
+                    ->nonQueued();
 
-        $this->addMediaConversion('avatar-medium')
-            ->width(400)
-            ->height(400)
-            ->format('webp')
-            ->quality(85)
-            ->sharpen(10)
-            ->optimize()
-            ->performOnCollections('creators/avatars');
+                $this->addMediaConversion('medium')
+                    ->width(800)
+                    ->height(800)
+                    ->format('webp')
+                    ->quality(85)
+                    ->sharpen(10)
+                    ->nonQueued();
 
-        // Profile/Banner images
-        $this->addMediaConversion('profile-small')
-            ->width(800)
-            ->height(600)
-            ->format('webp')
-            ->quality(90)
-            ->sharpen(10)
-            ->optimize()
-            ->performOnCollections('creators/profile');
+                $this->addMediaConversion('large')
+                    ->width(1200)
+                    ->height(1200)
+                    ->format('webp')
+                    ->quality(85)
+                    ->sharpen(10)
+                    ->nonQueued();
 
-        $this->addMediaConversion('profile-medium')
-            ->width(1200)
-            ->height(900)
-            ->format('webp')
-            ->quality(85)
-            ->sharpen(10)
-            ->optimize()
-            ->performOnCollections('creators/profile');
+                $this->addMediaConversion('hd')
+                    ->width(2400)
+                    ->height(2400)
+                    ->format('webp')
+                    ->quality(80)
+                    ->sharpen(10)
+                    ->nonQueued();
+            });
 
-        $this->addMediaConversion('profile-large')
-            ->width(1600)
-            ->height(1200)
-            ->format('webp')
-            ->quality(80)
-            ->sharpen(10)
-            ->optimize()
-            ->performOnCollections('creators/profile');
+        $this->addMediaCollection('creators/profile_hover')
+            ->useDisk('public')
+            ->registerMediaConversions(function (Media $media) {
+                $this->addMediaConversion('thumbnail')
+                    ->width(150)
+                    ->height(150)
+                    ->format('webp')
+                    ->quality(90)
+                    ->sharpen(10)
+                    ->nonQueued();
+
+                $this->addMediaConversion('small')
+                    ->width(400)
+                    ->height(400)
+                    ->format('webp')
+                    ->quality(90)
+                    ->sharpen(10)
+                    ->nonQueued();
+
+                $this->addMediaConversion('medium')
+                    ->width(800)
+                    ->height(800)
+                    ->format('webp')
+                    ->quality(85)
+                    ->sharpen(10)
+                    ->nonQueued();
+
+                $this->addMediaConversion('large')
+                    ->width(1200)
+                    ->height(1200)
+                    ->format('webp')
+                    ->quality(85)
+                    ->sharpen(10)
+                    ->nonQueued();
+
+                $this->addMediaConversion('hd')
+                    ->width(2400)
+                    ->height(2400)
+                    ->format('webp')
+                    ->quality(80)
+                    ->sharpen(10)
+                    ->nonQueued();
+            });
     }
 }

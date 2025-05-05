@@ -3,6 +3,16 @@
 
     <livewire:marquee />
 
+    <section id="cta" class="flex w-full h-3/5 bg-cyan">
+    <div class="flex flex-col items-center w-1/3 px-8 text-xl justify-evenly">
+            <span class="text-7xl">BOLD <span class="text-white transition duration-100 transform bg-black hover:bg-red-700 hover:skew-y-2">JEWELRY</span> FOR BOLDIER PEOPLE</span>
+            <button class="p-8 text-white bg-black border-4 border-white hover:bg-white hover:text-black hover:border-black">Show Collections PUNK !</button>
+        </div>
+        <div class="w-2/3 transition-all duration-500 grayscale hover:grayscale-0" id="touchArea">
+            <img src="https://images.unsplash.com/photo-1606687768105-37e58a241dfb?q=80&w=2428&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
+        </div>
+
+    </section>
     <section id="about">
     <div class="relative w-full py-4 mt-24 bg-black border-t-8 border-b-8 border-white group">
     <div class="absolute inset-0 transition-opacity border-t-4 border-b-4 border-black opacity-0 group-hover:opacity-100"></div>
@@ -48,16 +58,6 @@
     </section>
 
     <livewire:separator />
-    <section id="cta" class="flex w-full h-3/5 bg-cyan">
-    <div class="flex flex-col items-center w-1/3 px-8 text-xl justify-evenly">
-            <span class="text-7xl">BOLD <span class="text-white transition duration-100 transform bg-black hover:bg-red-700 hover:skew-y-2">JEWELRY</span> FOR BOLDIER PEOPLE</span>
-            <button class="p-8 text-white bg-black border-4 border-white hover:bg-white hover:text-black hover:border-black">Show Collections PUNK !</button>
-        </div>
-        <div class="w-2/3 transition-all duration-500 grayscale hover:grayscale-0" id="touchArea">
-            <img src="https://images.unsplash.com/photo-1606687768105-37e58a241dfb?q=80&w=2428&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
-        </div>
-
-    </section>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             if (window.location.hash) {
@@ -68,5 +68,5 @@
                 }
             }
         });
-    </section>
+    </script>
 </x-layouts.app>
