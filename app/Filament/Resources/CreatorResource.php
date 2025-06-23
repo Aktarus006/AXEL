@@ -45,6 +45,10 @@ class CreatorResource extends Resource
                     ->label('Nom')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make("job_title")
+                    ->label('Titre du poste')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make("date_of_birth")
                     ->label('Date de naissance')
                     ->date()

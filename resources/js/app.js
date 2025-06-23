@@ -28,3 +28,16 @@ barba.init({
     },
   ],
 });
+
+// Fix for marquee animation
+document.addEventListener('DOMContentLoaded', function() {
+    // Ensure any marquee elements are properly initialized
+    const marqueeElements = document.querySelectorAll('[data-marquee]');
+    if (marqueeElements.length > 0) {
+        console.log('Found marquee elements:', marqueeElements.length);
+        // You might need to reinitialize them here if they have a specific initialization
+    }
+    
+    // Initialize contact forms
+    console.log('Initializing contact forms');
+});

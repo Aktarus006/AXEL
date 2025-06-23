@@ -19,6 +19,6 @@ class JewelInquiry extends Mailable
     public function build()
     {
         return $this->markdown('emails.jewel-inquiry')
-            ->subject("Inquiry about {$this->jewel->name}");
+            ->subject("Demande d'information: {$this->jewel->name} - €" . number_format($this->jewel->price, 2));
     }
 }

@@ -26,6 +26,7 @@ class Creator extends Model implements HasMedia
     protected $fillable = [
         'first_name',
         'last_name',
+        'job_title',
         'date_of_birth',
         'description',
         'website_url',
@@ -55,6 +56,7 @@ class Creator extends Model implements HasMedia
         return [
             TextInput::make("first_name")->label("Prénom")->required(),
             TextInput::make("last_name")->label("Nom")->required(),
+            TextInput::make("job_title")->label("Titre du poste"),
             DatePicker::make("date_of_birth")
                 ->label("Date de naissance")
                 ->required(),
@@ -100,91 +102,57 @@ class Creator extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('creators/profile')
-            ->useDisk('public')
-            ->registerMediaConversions(function (Media $media) {
-                $this->addMediaConversion('thumbnail')
-                    ->width(150)
-                    ->height(150)
-                    ->format('webp')
-                    ->quality(90)
-                    ->sharpen(10)
-                    ->nonQueued();
-
-                $this->addMediaConversion('small')
-                    ->width(400)
-                    ->height(400)
-                    ->format('webp')
-                    ->quality(90)
-                    ->sharpen(10)
-                    ->nonQueued();
-
-                $this->addMediaConversion('medium')
-                    ->width(800)
-                    ->height(800)
-                    ->format('webp')
-                    ->quality(85)
-                    ->sharpen(10)
-                    ->nonQueued();
-
-                $this->addMediaConversion('large')
-                    ->width(1200)
-                    ->height(1200)
-                    ->format('webp')
-                    ->quality(85)
-                    ->sharpen(10)
-                    ->nonQueued();
-
-                $this->addMediaConversion('hd')
-                    ->width(2400)
-                    ->height(2400)
-                    ->format('webp')
-                    ->quality(80)
-                    ->sharpen(10)
-                    ->nonQueued();
-            });
-
+            ->useDisk('public');
+            
         $this->addMediaCollection('creators/profile_hover')
-            ->useDisk('public')
-            ->registerMediaConversions(function (Media $media) {
-                $this->addMediaConversion('thumbnail')
-                    ->width(150)
-                    ->height(150)
-                    ->format('webp')
-                    ->quality(90)
-                    ->sharpen(10)
-                    ->nonQueued();
+            ->useDisk('public');
+    }
+    
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('thumbnail')
+            ->width(150)
+            ->height(150)
+            ->format('webp')
+            ->quality(90)
+            ->sharpen(10)
+            ->nonQueued()
+            ->performOnCollections('creators/profile', 'creators/profile_hover');
 
-                $this->addMediaConversion('small')
-                    ->width(400)
-                    ->height(400)
-                    ->format('webp')
-                    ->quality(90)
-                    ->sharpen(10)
-                    ->nonQueued();
+        $this->addMediaConversion('small')
+            ->width(400)
+            ->height(400)
+            ->format('webp')
+            ->quality(90)
+            ->sharpen(10)
+            ->nonQueued()
+            ->performOnCollections('creators/profile', 'creators/profile_hover');
 
-                $this->addMediaConversion('medium')
-                    ->width(800)
-                    ->height(800)
-                    ->format('webp')
-                    ->quality(85)
-                    ->sharpen(10)
-                    ->nonQueued();
+        $this->addMediaConversion('medium')
+            ->width(800)
+            ->height(800)
+            ->format('webp')
+            ->quality(85)
+            ->sharpen(10)
+            ->nonQueued()
+            ->performOnCollections('creators/profile', 'creators/profile_hover');
 
-                $this->addMediaConversion('large')
-                    ->width(1200)
-                    ->height(1200)
-                    ->format('webp')
-                    ->quality(85)
-                    ->sharpen(10)
-                    ->nonQueued();
+        $this->addMediaConversion('large')
+            ->width(1200)
+            ->height(1200)
+            ->format('webp')
+            ->quality(85)
+            ->sharpen(10)
+            ->nonQueued()
+            ->performOnCollections('creators/profile', 'creators/profile_hover');
 
-                $this->addMediaConversion('hd')
-                    ->width(2400)
-                    ->height(2400)
-                    ->format('webp')
-                    ->quality(80)
-                    ->sharpen(10)
-                    ->nonQueued();
-            });
+        $this->addMediaConversion('hd')
+            ->width(2400)
+            ->height(2400)
+            ->format('webp')
+            ->quality(80)
+            ->sharpen(10)
+            ->nonQueued()
+            ->performOnCollections('creators/profile', 'creators/profile_hover');
     }
 }
