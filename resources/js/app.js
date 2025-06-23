@@ -18,6 +18,8 @@ barba.init({
         });
       },
       enter({ current, next, trigger }) {
+
+        window.scrollTo(0, 0); // force scroll reset immediately
         // Animation for entering the new page
         return gsap.from(next.container, {
           opacity: 0,
@@ -25,11 +27,17 @@ barba.init({
           ease: "power2.inOut",
         });
       },
+      afterEnter(data) {
+        // Scroll to top after the new content is entered
+        window.scrollTo(0, 0);
+      }
     },
   ],
-});
+})
 
-// Fix for marquee animation
+barba.hooks.after(() => {
+  window.scrollTo(0, 0);
+});// Fix for marquee animation
 document.addEventListener('DOMContentLoaded', function() {
     // Ensure any marquee elements are properly initialized
     const marqueeElements = document.querySelectorAll('[data-marquee]');
