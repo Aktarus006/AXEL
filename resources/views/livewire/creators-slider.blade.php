@@ -183,7 +183,7 @@ state([
 
                         <div class="p-4 bg-white border-8 border-black">
                             <h3 class="font-mono text-xl font-bold text-black">{{ strtoupper($creator->name) }}</h3>
-                            <p class="font-mono text-sm text-black">{{ $creator->collections->first()?->name ?? 'ARTISTE' }}</p>
+                            <p class="font-mono text-sm text-black">{{ strtoupper($creator->job_title) ?? 'ARTISTE' }}</p>
                         </div>
                     </div>
                 </a>

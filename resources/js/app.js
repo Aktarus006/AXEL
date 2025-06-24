@@ -1,43 +1,21 @@
 import "./bootstrap";
 
-import barba from "@barba/core";
-import gsap from "gsap";
 
-// Initialize Barba
-barba.init({
-  transitions: [
-    {
-      name: "fade",
-      leave({ current, next, trigger }) {
-        // Animation for leaving the page
-        return gsap.to(current.container, {
-          opacity: 0,
-          duration: 0.5,
-          ease: "power2.inOut",
-          onComplete: () => current.container.remove(),
-        });
-      },
-      enter({ current, next, trigger }) {
 
-        window.scrollTo(0, 0); // force scroll reset immediately
-        // Animation for entering the new page
-        return gsap.from(next.container, {
-          opacity: 0,
-          duration: 0.5,
-          ease: "power2.inOut",
-        });
-      },
-      afterEnter(data) {
-        // Scroll to top after the new content is entered
-        window.scrollTo(0, 0);
-      }
-    },
-  ],
-})
+import Swup from 'swup';
+import gsap from 'gsap';
 
-barba.hooks.after(() => {
-  window.scrollTo(0, 0);
-});// Fix for marquee animation
+const swup = new Swup({
+  containers: ['#swup'],  // explicitly define container to be safe
+});
+swup.hooks.replace('animation:out:await', async () => {
+  await gsap.to('.transition-brutal', { opacity: 0, duration: 0.25 });
+});
+swup.hooks.replace('animation:in:await', async () => {
+  await gsap.fromTo('.transition-brutal', { opacity: 0 }, { opacity: 1, duration: 0.25 });
+});
+
+// Fix for marquee animation
 document.addEventListener('DOMContentLoaded', function() {
     // Ensure any marquee elements are properly initialized
     const marqueeElements = document.querySelectorAll('[data-marquee]');

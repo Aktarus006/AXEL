@@ -8,7 +8,7 @@ use function Livewire\Volt\{state};
     <div class="flex w-full">
         <!-- Social Links Column -->
         <div class="flex w-1/4 border-r-4 border-white">
-            <a href="#" class="relative flex flex-col items-center flex-1 pt-8 font-mono text-3xl text-black uppercase transition-colors duration-300 bg-white border-8 border-r-2 border-white group hover:bg-black hover:text-white">
+            <a href="https://www.facebook.com/axelenglebertbijoutier" target="_blank" rel="noopener noreferrer" data-no-barba @click="window.open($el.href, '_blank', 'noopener,noreferrer'); return false;" class="relative flex flex-col items-center flex-1 pt-8 font-mono text-3xl text-black uppercase transition-colors duration-300 bg-white border-8 border-r-2 border-white group hover:bg-black hover:text-white">
                 <!-- Facebook Logo -->
                 <div class="absolute border-4 border-black opacity-100 inset-1"></div>
                 <svg class="z-10 w-16 h-16 mb-8 fill-current" viewBox="0 0 24 24">
@@ -18,7 +18,7 @@ use function Livewire\Volt\{state};
                 <span class="absolute inset-[8px] border-2 border-black opacity-0 transform scale-90 transition-all duration-300 group-hover:opacity-100 group-hover:scale-100 group-hover:border-white"></span>
                 <span class="absolute inset-[16px] border border-black opacity-0 transform scale-90 transition-all duration-300 group-hover:opacity-100 group-hover:scale-100 group-hover:border-white"></span>
             </a>
-            <a href="#" class="relative flex flex-col items-center flex-1 pt-8 font-mono text-3xl text-black uppercase transition-colors duration-300 bg-white border-8 border-white group hover:bg-black hover:text-white">
+            <a href="https://www.instagram.com/axel.englebert/" target="_blank" rel="noopener noreferrer" data-no-barba @click="window.open($el.href, '_blank', 'noopener,noreferrer'); return false;" class="relative flex flex-col items-center flex-1 pt-8 font-mono text-3xl text-black uppercase transition-colors duration-300 bg-white border-8 border-white group hover:bg-black hover:text-white">
                 <!-- Instagram Logo -->
                 <div class="absolute border-4 border-black opacity-100 inset-1"></div>
                 <svg class="z-10 w-16 h-16 mb-8 fill-current" viewBox="0 0 24 24">

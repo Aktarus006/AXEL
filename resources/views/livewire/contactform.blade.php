@@ -1,5 +1,51 @@
+<?php
+
+use function Livewire\Volt\{state, rules, action};
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ContactFormMail;
+use Illuminate\Support\Facades\Log;
+
+state([
+    'name' => '',
+    'email' => '',
+    'message' => '',
+    'success' => false,
+    'error' => false,
+]);
+
+rules([
+    'name' => 'required|min:2',
+    'email' => 'required|email',
+    'message' => 'required|min:10'
+]);
+
+$submit = function() {  Log::info('Contact form submit function called');
+    $this->validate();
+    $this->success = false;
+    $this->error = false;
+
+    try {
+        Mail::to(config('mail.admin_address', 'contact@axel.com'))->send(new ContactFormMail(
+            $this->name,
+            $this->email,
+            $this->message
+        ));
+
+        Log::info('Contact form submitted successfully');
+        $this->success = true;
+        $this->name = '';
+        $this->email = '';
+        $this->message = '';
+    } catch (\Exception $e) {
+        Log::error('Contact form error: ' . $e->getMessage());
+        $this->error = true;
+        $this->addError('submit', 'Error sending message. Please try again.');
+    }
+};
+?>
+
 <div class="w-full bg-black mt-auto">
-    <form wire:submit="submit" class="w-full font-mono max-w-4xl mx-auto p-8 pb-0 relative">
+    <form wire:submit.prevent="submit" class="w-full font-mono max-w-4xl mx-auto p-8 pb-0 relative" data-no-barba>
         <div class="grid grid-cols-2 gap-8 mb-8">
             <!-- Name Input -->
             <div class="relative">
@@ -92,46 +138,3 @@
         @endif
     </form>
 </div>
-
-<?php
-
-use function Livewire\Volt\{state, rules};
-use Illuminate\Support\Facades\Mail;
-use App\Mail\ContactFormMail;
-use Illuminate\Support\Facades\Log;
-
-state([
-    'name' => '',
-    'email' => '',
-    'message' => '',
-]);
-
-rules([
-    'name' => 'required|min:2',
-    'email' => 'required|email',
-    'message' => 'required|min:10'
-]);
-
-$submit = function() {
-    Log::info('Contact form submit function called');
-    $this->validate();
-    $this->success = false;
-    $this->error = false;
-    try {
-        Mail::to(config('mail.admin_address', 'contact@axel.com'))->send(new ContactFormMail(
-            $this->name,
-            $this->email,
-            $this->message
-        ));
-        Log::info('Contact form submitted successfully');
-        $this->success = true;
-        $this->name = '';
-        $this->email = '';
-        $this->message = '';
-    } catch (\Exception $e) {
-        Log::error('Contact form error: ' . $e->getMessage());
-        $this->error = true;
-        $this->addError('submit', 'Error sending message. Please try again.');
-    }
-};
-?>

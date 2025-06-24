@@ -1,16 +1,21 @@
 <html class="bg-white text-gray-600">
-    <head>
-        <title>{{ config('app.name') }}</title>
-        @vite('resources/css/app.css')
-    </head>
-    <body data-barba="wrapper">
-        <div class="w-full h-full" data-barba="container">
-            <livewire:header />
-            <div data-barba="container">
-                {{ $slot }}
-            </div>
-            <livewire:footer />
+<head>
+    <title>{{ config('app.name') }}</title>
+    @vite('resources/css/app.css')
+</head>
+<body>
+    <!-- Swup wrapper (STATIC) -->
+    <div id="swup-wrapper">
+        <livewire:header />
+
+        <!-- Swup dynamic container (CHANGES) -->
+        <div id="swup" class="transition-brutal">
+            {{ $slot }}
         </div>
-        @vite('resources/js/app.js')
-    </body>
+
+        <livewire:footer />
+    </div>
+
+    @vite('resources/js/app.js')
+</body>
 </html>
