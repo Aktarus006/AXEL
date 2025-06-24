@@ -22,6 +22,7 @@ class Slide extends Model implements HasMedia
         'order',
         'is_active',
         'background_color',
+        'cta_background_color',
     ];
 
     public function registerMediaConversions(Media $media = null): void
@@ -50,10 +51,15 @@ class Slide extends Model implements HasMedia
             Section::make('Informations')
                 ->columns(2)
                 ->schema([
-                    TextInput::make('title')->label('Titre')->required(),
+                    \Filament\Forms\Components\RichEditor::make('title')
+                        ->label('Titre')
+                        ->required()
+                        ->toolbarButtons(['bold'])
+                        ->extraAttributes(['style' => 'min-height: 80px; height: 80px; max-height: 120px;']),
                     TextInput::make('button_text')->label('Texte du bouton'),
                     TextInput::make('button_url')->label('Lien du bouton'),
                     TextInput::make('background_color')->label('Couleur de fond'),
+                    TextInput::make('cta_background_color')->label('Couleur de fond du CTA'),
                     TextInput::make('order')->label('Ordre')->numeric()->default(0),
                     Toggle::make('is_active')->label('Active')->default(true),
                 ]),

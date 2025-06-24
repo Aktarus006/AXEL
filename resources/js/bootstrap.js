@@ -30,3 +30,22 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     forceTLS: (import.meta.env.VITE_PUSHER_SCHEME ?? 'https') === 'https',
 //     enabledTransports: ['ws', 'wss'],
 // });
+
+/**
+ * Alpine.js components - Livewire will handle Alpine.js initialization
+ */
+document.addEventListener('alpine:init', () => {
+    // Register global Alpine data components when Alpine is ready
+    Alpine.data('homepageSlider', () => ({
+        current: 0,
+        slides: [],
+        
+        init() {
+            // Get slides from Livewire component data
+            const slidesElement = this.$el.querySelector('[x-data]');
+            if (slidesElement) {
+                this.slides = Array.from(this.$el.querySelectorAll('[x-show]'));
+            }
+        }
+    }));
+});
