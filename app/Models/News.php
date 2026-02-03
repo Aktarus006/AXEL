@@ -50,7 +50,7 @@ class News extends Model implements HasMedia
                 ->required()
                 ->imageEditor()
                 ->maxSize(40960)
-                ->acceptsMimeTypes([
+                ->acceptedFileTypes([
                     "image/jpeg",
                     "image/png",
                     "image/webp",
