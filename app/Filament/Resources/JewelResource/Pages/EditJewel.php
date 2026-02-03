@@ -16,59 +16,70 @@ class EditJewel extends EditRecord
     protected static string $resource = JewelResource::class;
 
     public $files = [
-        'jewels/packshots' => [],
-        'jewels/lifestyle' => [],
+        "jewels/packshots" => [],
+        "jewels/lifestyle" => [],
     ];
 
     protected function getHeaderActions(): array
     {
-        return [
-            Actions\DeleteAction::make(),
-        ];
+        return [Actions\DeleteAction::make()];
     }
 
     public function updatedFiles($value, $key)
     {
+        // 1. VALIDATION CRUCIALE
+        $this->validate([
+            "files." .
+            $key .
+            ".*" => "image|mimes:jpeg,png,webp,svg+xml|max:10240",
+        ]);
+
+        // 2. Traitement seulement si la validation passe
         foreach ($value as $file) {
-            $this->record->addMedia($file->getRealPath())
+            $this->record
+                ->addMedia($file->getRealPath())
                 ->usingName($file->getClientOriginalName())
+                ->usingFileName($file->hashName()) // Sécurité: on change le nom du fichier sur le disque
                 ->toMediaCollection($key);
         }
 
         $this->files[$key] = [];
+
         Notification::make()
             ->success()
-            ->title('Images ajoutées')
+            ->title("Images ajoutées en toute sécurité")
             ->send();
 
-        $this->dispatch('media-uploaded');
+        $this->dispatch("media-uploaded");
     }
 
     public function moveMedia($mediaId, $toCollection)
     {
+        $allowedCollections = ["jewels/packshots", "jewels/lifestyle"];
+        if (!in_array($toCollection, $allowedCollections)) {
+            throw new \Exception("Collection non autorisée");
+        }
         $media = $this->record->media()->find($mediaId);
         if ($media) {
             $media->move($this->record, $toCollection);
-            Notification::make()
-                ->success()
-                ->title('Image déplacée')
-                ->send();
+            Notification::make()->success()->title("Image déplacée")->send();
 
-            $this->dispatch('media-moved');
+            $this->dispatch("media-moved");
         }
     }
 
     public function deleteMedia($mediaId)
     {
+        $allowedCollections = ["jewels/packshots", "jewels/lifestyle"];
+        if (!in_array($toCollection, $allowedCollections)) {
+            throw new \Exception("Collection non autorisée");
+        }
         $media = $this->record->media()->find($mediaId);
         if ($media) {
             $media->delete();
-            Notification::make()
-                ->success()
-                ->title('Image supprimée')
-                ->send();
+            Notification::make()->success()->title("Image supprimée")->send();
 
-            $this->dispatch('media-deleted');
+            $this->dispatch("media-deleted");
         }
     }
 }
