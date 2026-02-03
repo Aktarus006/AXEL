@@ -38,11 +38,17 @@ class Step extends Model implements HasMedia
                         ->label("Images")
                         ->collection("steps/images")
                         ->maxSize(40960)
+                        ->acceptedFileTypes([
+                            "image/jpeg",
+                            "image/png",
+                            "image/webp",
+                            "image/svg+xml",
+                        ])
                         ->imageEditor()
                         ->reorderable()
                         ->multiple()
                         ->image()
-                        ->conversion('thumbnail')
+                        ->conversion("thumbnail")
                         ->downloadable(),
                 ]),
         ];

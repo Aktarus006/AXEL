@@ -38,58 +38,70 @@ class Jewel extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('jewels/packshots')
-            ->useDisk('public');
-        $this->addMediaCollection('jewels/lifestyle')
-            ->useDisk('public');
+        $this->addMediaCollection("jewels/packshots")
+            ->useDisk("public")
+            ->acceptedFileTypes([
+                "image/jpeg",
+                "image/png",
+                "image/webp",
+                "image/svg+xml",
+            ]);
+        $this->addMediaCollection("jewels/lifestyle")
+            ->useDisk("public")
+            ->acceptedFileTypes([
+                "image/jpeg",
+                "image/png",
+                "image/webp",
+                "image/svg+xml",
+            ]);
     }
 
     public function registerMediaConversions(?Media $media = null): void
     {
-        $this->addMediaConversion('thumbnail')
+        $this->addMediaConversion("thumbnail")
             ->width(150)
             ->height(150)
-            ->format('webp')
+            ->format("webp")
             ->quality(90)
             ->sharpen(10)
             ->nonQueued()
-            ->performOnCollections('jewels/packshots', 'jewels/lifestyle');
+            ->performOnCollections("jewels/packshots", "jewels/lifestyle");
 
-        $this->addMediaConversion('small')
+        $this->addMediaConversion("small")
             ->width(400)
             ->height(400)
-            ->format('webp')
+            ->format("webp")
             ->quality(90)
             ->sharpen(10)
             ->nonQueued()
-            ->performOnCollections('jewels/packshots', 'jewels/lifestyle');
+            ->performOnCollections("jewels/packshots", "jewels/lifestyle");
 
-        $this->addMediaConversion('medium')
+        $this->addMediaConversion("medium")
             ->width(800)
             ->height(800)
-            ->format('webp')
+            ->format("webp")
             ->quality(85)
             ->sharpen(10)
             ->nonQueued()
-            ->performOnCollections('jewels/packshots', 'jewels/lifestyle');
+            ->performOnCollections("jewels/packshots", "jewels/lifestyle");
 
-        $this->addMediaConversion('large')
+        $this->addMediaConversion("large")
             ->width(1200)
             ->height(1200)
-            ->format('webp')
+            ->format("webp")
             ->quality(85)
             ->sharpen(10)
             ->nonQueued()
-            ->performOnCollections('jewels/packshots', 'jewels/lifestyle');
+            ->performOnCollections("jewels/packshots", "jewels/lifestyle");
 
-        $this->addMediaConversion('hd')
+        $this->addMediaConversion("hd")
             ->width(2400)
             ->height(2400)
-            ->format('webp')
+            ->format("webp")
             ->quality(80)
             ->sharpen(10)
             ->nonQueued()
-            ->performOnCollections('jewels/packshots', 'jewels/lifestyle');
+            ->performOnCollections("jewels/packshots", "jewels/lifestyle");
     }
 
     public function collections(): BelongsToMany
@@ -119,7 +131,7 @@ class Jewel extends Model implements HasMedia
                     Select::make("collections")
                         ->label("Collections")
                         ->multiple()
-                        ->relationship('collections', 'name')
+                        ->relationship("collections", "name")
                         ->preload()
                         ->searchable(),
                     Select::make("material")
@@ -137,10 +149,13 @@ class Jewel extends Model implements HasMedia
                         ->default(Status::OFFLINE),
                 ]),
             Section::make("Photos")
-                ->description("Photos professionnelles sur fond blanc et photos de mise en scène")
+                ->description(
+                    "Photos professionnelles sur fond blanc et photos de mise en scène",
+                )
                 ->schema([
-                    \Filament\Forms\Components\View::make('filament.forms.components.media-collections')
-                        ->columnSpan(2),
+                    \Filament\Forms\Components\View::make(
+                        "filament.forms.components.media-collections",
+                    )->columnSpan(2),
                 ]),
         ];
     }

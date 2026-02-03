@@ -32,12 +32,7 @@ class Collection extends Model implements HasMedia
         "creation_date" => "date",
     ];
 
-    protected $fillable = [
-        'name',
-        'description',
-        'online',
-        'creation_date',
-    ];
+    protected $fillable = ["name", "description", "online", "creation_date"];
 
     public function jewels(): BelongsToMany
     {
@@ -57,16 +52,23 @@ class Collection extends Model implements HasMedia
             SpatieMediaLibraryFileUpload::make("image")
                 ->collection("collections")
                 ->maxSize(40960)
+                ->acceptedFileTypes([
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp",
+                    "image/svg+xml",
+                ])
                 ->imageEditor()
                 ->reorderable()
                 ->multiple()
                 ->label("Images")
                 ->image()
-                ->conversion('thumbnail')
+                ->conversion("thumbnail")
                 ->downloadable(),
             FileUpload::make("cover")
                 ->label("Cover")
-                ->rules("image")
+                ->image()
+                ->acceptedFileTypes(["image/jpeg", "image/png", "image/webp"])
                 ->directory("collections")
                 ->imageEditor(),
             Radio::make("online")
@@ -76,85 +78,87 @@ class Collection extends Model implements HasMedia
             DatePicker::make("creation_date")
                 ->label("Date de création")
                 ->required(),
-            Select::make('jewels')
-                ->relationship('jewels', 'name')
+            Select::make("jewels")
+                ->relationship("jewels", "name")
                 ->multiple()
                 ->preload()
                 ->searchable(),
-            Select::make('creators')
-                ->relationship('creators', 'name')
+            Select::make("creators")
+                ->relationship("creators", "name")
                 ->multiple()
                 ->preload()
                 ->searchable()
-                ->label('Créateurs')
-                ->getOptionLabelFromRecordUsing(fn($record) => "{$record->first_name} {$record->last_name}"),
+                ->label("Créateurs")
+                ->getOptionLabelFromRecordUsing(
+                    fn($record) => "{$record->first_name} {$record->last_name}",
+                ),
         ];
     }
 
     public function registerMediaConversions(?Media $media = null): void
     {
-        $this->addMediaConversion('thumbnail')
+        $this->addMediaConversion("thumbnail")
             ->width(400)
             ->height(400)
-            ->format('webp')
+            ->format("webp")
             ->quality(90)
             ->sharpen(10)
             ->optimize()
-            ->performOnCollections('collections/images');
+            ->performOnCollections("collections/images");
 
-        $this->addMediaConversion('small')
+        $this->addMediaConversion("small")
             ->width(800)
             ->height(800)
-            ->format('webp')
+            ->format("webp")
             ->quality(90)
             ->sharpen(10)
             ->optimize()
-            ->performOnCollections('collections/images');
+            ->performOnCollections("collections/images");
 
-        $this->addMediaConversion('medium')
+        $this->addMediaConversion("medium")
             ->width(1200)
             ->height(1200)
-            ->format('webp')
+            ->format("webp")
             ->quality(85)
             ->sharpen(10)
             ->optimize()
-            ->performOnCollections('collections/images');
+            ->performOnCollections("collections/images");
 
-        $this->addMediaConversion('large')
+        $this->addMediaConversion("large")
             ->width(1600)
             ->height(1600)
-            ->format('webp')
+            ->format("webp")
             ->quality(85)
             ->sharpen(10)
             ->optimize()
-            ->performOnCollections('collections/images');
+            ->performOnCollections("collections/images");
 
         // Banner-specific conversions with different aspect ratios
-        $this->addMediaConversion('banner-small')
+        $this->addMediaConversion("banner-small")
             ->width(800)
             ->height(400)
-            ->format('webp')
+            ->format("webp")
             ->quality(90)
             ->sharpen(10)
             ->optimize()
-            ->performOnCollections('collections/banners');
+            ->performOnCollections("collections/banners");
 
-        $this->addMediaConversion('banner-medium')
+        $this->addMediaConversion("banner-medium")
             ->width(1200)
             ->height(600)
-            ->format('webp')
+            ->format("webp")
             ->quality(85)
             ->sharpen(10)
             ->optimize()
-            ->performOnCollections('collections/banners');
+            ->performOnCollections("collections/banners");
 
-        $this->addMediaConversion('banner-large')
+        $this->addMediaConversion("banner-large")
             ->width(1920)
             ->height(960)
-            ->format('webp')
+            ->format("webp")
             ->quality(80)
             ->sharpen(10)
             ->optimize()
-            ->performOnCollections('collections/banners');
+            ->performOnCollections("collections/banners");
     }
 }

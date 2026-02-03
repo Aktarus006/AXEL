@@ -24,13 +24,13 @@ class Creator extends Model implements HasMedia
     use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
-        'first_name',
-        'last_name',
-        'job_title',
-        'date_of_birth',
-        'description',
-        'website_url',
-        'online',
+        "first_name",
+        "last_name",
+        "job_title",
+        "date_of_birth",
+        "description",
+        "website_url",
+        "online",
     ];
 
     protected $casts = [
@@ -39,7 +39,7 @@ class Creator extends Model implements HasMedia
         "online" => "boolean",
     ];
 
-    protected $appends = ['name'];
+    protected $appends = ["name"];
 
     public function getNameAttribute(): string
     {
@@ -66,93 +66,132 @@ class Creator extends Model implements HasMedia
                 ->image()
                 ->imageEditor()
                 ->maxSize(40960)
+                ->acceptedFileTypes([
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp",
+                    "image/svg+xml",
+                ])
                 ->label("Photo")
-                ->conversion('thumbnail')
-                ->conversion('small')
-                ->conversion('medium')
-                ->conversion('large')
-                ->conversion('hd')
+                ->conversion("thumbnail")
+                ->conversion("small")
+                ->conversion("medium")
+                ->conversion("large")
+                ->conversion("hd")
                 ->downloadable(),
             SpatieMediaLibraryFileUpload::make("avatar_hover")
                 ->collection("creators/profile_hover")
                 ->image()
                 ->imageEditor()
                 ->maxSize(40960)
+                ->acceptedFileTypes([
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp",
+                    "image/svg+xml",
+                ])
                 ->label("Photo (hover)")
-                ->conversion('thumbnail')
-                ->conversion('small')
-                ->conversion('medium')
-                ->conversion('large')
-                ->conversion('hd')
+                ->conversion("thumbnail")
+                ->conversion("small")
+                ->conversion("medium")
+                ->conversion("large")
+                ->conversion("hd")
                 ->downloadable(),
             TextInput::make("website_url")->label("Site web")->url(),
             Radio::make("online")
                 ->options(Status::class)
                 ->inline()
                 ->default(Status::OFFLINE),
-            Select::make('collections')
-                ->relationship('collections', 'name')
+            Select::make("collections")
+                ->relationship("collections", "name")
                 ->multiple()
                 ->preload()
                 ->searchable()
-                ->label('Collections'),
+                ->label("Collections"),
         ];
     }
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('creators/profile')
-            ->useDisk('public');
-            
-        $this->addMediaCollection('creators/profile_hover')
-            ->useDisk('public');
+        $this->addMediaCollection("creators/profile")
+            ->useDisk("public")
+            ->acceptsMimeTypes([
+                "image/jpeg",
+                "image/png",
+                "image/webp",
+                "image/svg+xml",
+            ]);
+
+        $this->addMediaCollection("creators/profile_hover")
+            ->useDisk("public")
+            ->acceptsMimeTypes([
+                "image/jpeg",
+                "image/png",
+                "image/webp",
+                "image/svg+xml",
+            ]);
     }
-    
+
     public function registerMediaConversions(?Media $media = null): void
     {
-        $this->addMediaConversion('thumbnail')
+        $this->addMediaConversion("thumbnail")
             ->width(150)
             ->height(150)
-            ->format('webp')
+            ->format("webp")
             ->quality(90)
             ->sharpen(10)
             ->nonQueued()
-            ->performOnCollections('creators/profile', 'creators/profile_hover');
+            ->performOnCollections(
+                "creators/profile",
+                "creators/profile_hover",
+            );
 
-        $this->addMediaConversion('small')
+        $this->addMediaConversion("small")
             ->width(400)
             ->height(400)
-            ->format('webp')
+            ->format("webp")
             ->quality(90)
             ->sharpen(10)
             ->nonQueued()
-            ->performOnCollections('creators/profile', 'creators/profile_hover');
+            ->performOnCollections(
+                "creators/profile",
+                "creators/profile_hover",
+            );
 
-        $this->addMediaConversion('medium')
+        $this->addMediaConversion("medium")
             ->width(800)
             ->height(800)
-            ->format('webp')
+            ->format("webp")
             ->quality(85)
             ->sharpen(10)
             ->nonQueued()
-            ->performOnCollections('creators/profile', 'creators/profile_hover');
+            ->performOnCollections(
+                "creators/profile",
+                "creators/profile_hover",
+            );
 
-        $this->addMediaConversion('large')
+        $this->addMediaConversion("large")
             ->width(1200)
             ->height(1200)
-            ->format('webp')
+            ->format("webp")
             ->quality(85)
             ->sharpen(10)
             ->nonQueued()
-            ->performOnCollections('creators/profile', 'creators/profile_hover');
+            ->performOnCollections(
+                "creators/profile",
+                "creators/profile_hover",
+            );
 
-        $this->addMediaConversion('hd')
+        $this->addMediaConversion("hd")
             ->width(2400)
             ->height(2400)
-            ->format('webp')
+            ->format("webp")
             ->quality(80)
             ->sharpen(10)
             ->nonQueued()
-            ->performOnCollections('creators/profile', 'creators/profile_hover');
+            ->performOnCollections(
+                "creators/profile",
+                "creators/profile_hover",
+            );
     }
 }
