@@ -40,7 +40,7 @@ class Jewel extends Model implements HasMedia
     {
         $this->addMediaCollection("jewels/packshots")
             ->useDisk("public")
-            ->acceptedFileTypes([
+            ->acceptsMimeTypes([
                 "image/jpeg",
                 "image/png",
                 "image/webp",
@@ -48,7 +48,7 @@ class Jewel extends Model implements HasMedia
             ]);
         $this->addMediaCollection("jewels/lifestyle")
             ->useDisk("public")
-            ->acceptedFileTypes([
+            ->acceptsMimeTypes([
                 "image/jpeg",
                 "image/png",
                 "image/webp",
