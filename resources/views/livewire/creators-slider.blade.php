@@ -122,7 +122,7 @@ state([
     <!-- Creators Row -->
     <div
         x-ref="container"
-        class="relative w-full h-[650px] bg-black border-t-4 border-white overflow-hidden flex items-center justify-center"
+        class="relative w-full h-[220px] sm:h-[260px] md:h-[350px] lg:h-[450px] bg-black border-t-4 border-white overflow-hidden flex items-center justify-center"
     >
         @if($creators->isEmpty())
             <div class="py-10 text-center text-white">No creators found</div>
@@ -130,14 +130,14 @@ state([
 
         <div
             x-ref="scrollContent"
-            class="absolute inset-0 flex items-center gap-8 px-8 transition-transform duration-300 will-change-transform"
+            class="absolute inset-0 flex items-center gap-4 sm:gap-6 md:gap-8 px-2 sm:px-4 md:px-8 py-2 transition-transform duration-300 will-change-transform"
             style="transform: translate3d(0, 0, 0)"
         >
             @foreach($creators as $creator)
-            <div class="relative flex-none group w-[400px]">
+            <div class="relative flex-none group w-full max-w-[90vw] sm:w-48 md:w-60 lg:w-72 mt-4 md:mt-16">
                 <a href="/creators/{{ $creator->id }}" class="block">
-                    <div class="relative transition-colors duration-300 border-8 border-white hover:border-red-700">
-                        <div class="relative w-full overflow-hidden aspect-square">
+                    <div class="relative transition-colors duration-300 border-4 sm:border-8 border-white hover:border-red-700">
+                        <div class="relative w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 mx-auto overflow-hidden aspect-square">
                             @if($creator->getFirstMediaUrl('creators/profile'))
                             <img
                                 srcset="{{ $creator->getFirstMediaUrl('creators/profile', 'small') }} 480w,
@@ -145,11 +145,11 @@ state([
                                         {{ $creator->getFirstMediaUrl('creators/profile', 'large') }} 1280w,
                                         {{ $creator->getFirstMediaUrl('creators/profile', 'xl') }} 1920w,
                                         {{ $creator->getFirstMediaUrl('creators/profile', 'hd') }} 2560w"
-                                sizes="(max-width: 480px) 480px,
-                                       (max-width: 768px) 768px,
-                                       (max-width: 1280px) 1280px,
-                                       (max-width: 1920px) 1920px,
-                                       2560px"
+                                sizes="(max-width: 480px) 80vw,
+                                       (max-width: 768px) 40vw,
+                                       (max-width: 1280px) 288px,
+                                       (max-width: 1920px) 288px,
+                                       288px"
                                 src="{{ $creator->getFirstMediaUrl('creators/profile', 'medium') }}"
                                 alt="{{ $creator->name }}"
                                 class="object-cover w-full h-full transition-all duration-500 grayscale group-hover:grayscale-0 group-hover:scale-110"
@@ -162,11 +162,11 @@ state([
                                         {{ $creator->getFirstMediaUrl('creators/profile_hover', 'large') }} 1280w,
                                         {{ $creator->getFirstMediaUrl('creators/profile_hover', 'xl') }} 1920w,
                                         {{ $creator->getFirstMediaUrl('creators/profile_hover', 'hd') }} 2560w"
-                                sizes="(max-width: 480px) 480px,
-                                       (max-width: 768px) 768px,
-                                       (max-width: 1280px) 1280px,
-                                       (max-width: 1920px) 1920px,
-                                       2560px"
+                                sizes="(max-width: 480px) 80vw,
+                                       (max-width: 768px) 40vw,
+                                       (max-width: 1280px) 288px,
+                                       (max-width: 1920px) 288px,
+                                       288px"
                                 src="{{ $creator->getFirstMediaUrl('creators/profile_hover', 'medium') }}"
                                 alt="{{ $creator->name }}"
                                 class="absolute top-0 left-0 object-cover w-full h-full transition-opacity duration-500 opacity-0 grayscale-0 group-hover:opacity-100"
@@ -181,9 +181,9 @@ state([
                             <div class="absolute inset-0 transition-opacity duration-300 border-4 border-black opacity-0 group-hover:opacity-100"></div>
                         </div>
 
-                        <div class="p-4 bg-white border-8 border-black">
-                            <h3 class="font-mono text-xl font-bold text-black">{{ strtoupper($creator->name) }}</h3>
-                            <p class="font-mono text-sm text-black">{{ strtoupper($creator->job_title) ?? 'ARTISTE' }}</p>
+                        <div class="p-2 sm:p-4 bg-white border-4 sm:border-8 border-black opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
+                            <h3 class="font-mono text-base sm:text-lg md:text-xl font-bold text-black">{{ strtoupper($creator->name) }}</h3>
+                            <p class="font-mono text-xs sm:text-sm md:text-base text-black">{{ strtoupper($creator->job_title) ?? 'ARTISTE' }}</p>
                         </div>
                     </div>
                 </a>

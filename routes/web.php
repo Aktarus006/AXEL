@@ -14,3 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Routes are handled by Laravel Folio
+
+// Contact form routes
+Route::post('/send-contact', [\App\Http\Controllers\ContactController::class, 'sendContact']);
+Route::post('/send-jewel-inquiry', [\App\Http\Controllers\ContactController::class, 'sendJewelInquiry']);
