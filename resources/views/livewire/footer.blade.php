@@ -1,53 +1,46 @@
 <?php
-
 use function Livewire\Volt\{state};
-
-//
-
 ?>
 
-<div class="mt-0">
-    @volt
-    <footer class="w-full bg-black border-t-4 border-white hover:border-red-700 transition-colors duration-300">
-        <div 
-            x-data="{ isHovered: false }"
-            @mouseenter="isHovered = true"
-            @mouseleave="isHovered = false"
-            class="flex items-center justify-center h-12 relative overflow-hidden"
-        >
-            <!-- Static text -->
-            <div 
-                class="font-mono text-white text-lg tracking-widest transition-transform duration-500"
-                :class="isHovered ? 'transform -translate-y-full opacity-0' : 'transform translate-y-0 opacity-100'"
-            >
-                2024 AKTARUS DESIGN
-            </div>
-
-            <!-- Animated elements -->
-            <div 
-                class="absolute inset-0 flex items-center justify-center"
-                :class="isHovered ? 'opacity-100' : 'opacity-0'"
-            >
-                <div class="flex space-x-4 font-mono text-lg tracking-widest"
-                    x-data="{ letters: Array.from('2024 AKTARUS DESIGN') }"
-                >
-                    <template x-for="(letter, index) in letters" :key="index">
-                        <span 
-                            class="text-white transition-all duration-500 hover:text-red-700"
-                            :class="isHovered ? 'transform translate-y-0 rotate-0 scale-100' : 'transform translate-y-full rotate-180 scale-0'"
-                            :style="{ 'transition-delay': (index * 50) + 'ms' }"
-                            x-text="letter"
-                        ></span>
-                    </template>
-                </div>
-            </div>
-
-            <!-- Background animation -->
-            <div 
-                class="absolute inset-0 bg-white transition-transform duration-500 origin-bottom"
-                :class="isHovered ? 'transform scale-y-[0.02] opacity-100' : 'transform scale-y-0 opacity-0'"
-            ></div>
+<footer class="w-full bg-black border-t-8 border-white group">
+    <div 
+        x-data="{ isHovered: false }"
+        @mouseenter="isHovered = true"
+        @mouseleave="isHovered = false"
+        class="flex flex-col md:flex-row items-center justify-between px-8 py-12 md:py-20 relative overflow-hidden"
+    >
+        <!-- Logo/Name -->
+        <div class="z-10 mb-8 md:mb-0">
+            <h3 class="font-mono text-4xl md:text-6xl font-black text-white uppercase tracking-tighter transform group-hover:-skew-x-12 transition-transform duration-500">
+                AXEL_JEWELRY
+            </h3>
         </div>
-    </footer>
-    @endvolt
-</div>
+
+        <!-- Copyright & Info -->
+        <div class="z-10 flex flex-col items-center md:items-end text-center md:text-right space-y-4">
+            <div class="font-mono text-sm md:text-xl text-white uppercase tracking-widest font-bold">
+                <span class="bg-white text-black px-2 mr-2">©2026</span> HANDCRAFTED_IN_BELGIUM
+            </div>
+            <div class="font-mono text-xs md:text-sm text-gray-500 uppercase tracking-widest">
+                Surgical Precision // Brutalist Aesthetics // Eternal Materials
+            </div>
+            <div class="pt-4 border-t-4 border-white md:w-full">
+                <a href="#" class="font-mono text-white hover:text-red-600 transition-colors uppercase font-black">Back to Top ↑</a>
+            </div>
+        </div>
+
+        <!-- Animated Background Decoration -->
+        <div class="absolute inset-0 opacity-10 pointer-events-none overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-full font-mono text-[20vw] font-black text-white whitespace-nowrap animate-marquee opacity-20">
+                AXEL AXEL AXEL AXEL AXEL AXEL
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Strip -->
+    <div class="w-full h-8 bg-white flex items-center justify-center overflow-hidden">
+        <div class="font-mono text-[10px] font-black tracking-[1em] text-black animate-marquee whitespace-nowrap">
+            STAY_BRUTAL_STAY_UNIQUE_STAY_BRUTAL_STAY_UNIQUE_STAY_BRUTAL_STAY_UNIQUE_STAY_BRUTAL_STAY_UNIQUE
+        </div>
+    </div>
+</footer>
