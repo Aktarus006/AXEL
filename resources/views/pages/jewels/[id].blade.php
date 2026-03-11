@@ -5,10 +5,10 @@ use Illuminate\Support\Str;
 $id = request()->segment(count(request()->segments()));
 $jewel = Jewel::with(['media', 'collections'])->find($id);
 
-// On s'assure que les variables sont disponibles dans la vue
+// Ensure variables are available
 view()->share('jewel', $jewel);
 
-// Récupérer les autres bijoux de la même collection
+// Get related jewels
 $relatedJewels = collect([]);
 if ($jewel) {
     foreach ($jewel->collections as $collection) {
@@ -24,271 +24,179 @@ if ($jewel) {
 view()->share('relatedJewels', $relatedJewels);
 ?>
 
-@php
-    // On récupère les variables dans la portée de la vue
-    $jewel = $jewel ?? null;
-    $relatedJewels = $relatedJewels ?? collect([]);
-@endphp
-
 <x-layouts.app>
-    <div class="min-h-screen text-white bg-black">
+    <div class="min-h-screen bg-white text-black font-mono">
         @if(!$jewel)
-            <div class="flex items-center justify-center h-screen">
-                <div class="text-center">
-                    <h1 class="mb-4 font-mono text-2xl">JEWEL NOT FOUND</h1>
-                    <a href="/jewels" class="px-4 py-2 font-mono text-white border-2 border-white hover:text-gray-300">
-                        BACK TO CATALOG
+            <div class="flex items-center justify-center h-screen bg-black text-white">
+                <div class="text-center p-12 border-8 border-white">
+                    <h1 class="mb-8 text-4xl font-black uppercase">OBJECT_NOT_FOUND</h1>
+                    <a href="/jewels" class="px-8 py-4 bg-white text-black font-bold uppercase hover:bg-red-700 hover:text-white transition-colors">
+                        RETOUR_A_LA_COLLECTION
                     </a>
                 </div>
             </div>
         @else
-            <!-- Main Content -->
-            <div class="flex flex-col h-screen lg:flex-row">
-                <!-- Image Section -->
-                @php
-                    $packshots = $jewel->getMedia('jewels/packshots');
-                    $lifestyles = $jewel->getMedia('jewels/lifestyle');
-                    $allImages = $packshots->merge($lifestyles);
-                @endphp
-                <div x-data="{
-                    activeSlide: 0,
-                    totalSlides: {{ count($allImages) }},
-                    next() {
-                        this.activeSlide = (this.activeSlide + 1) % this.totalSlides;
-                    },
-                    prev() {
-                        this.activeSlide = (this.activeSlide - 1 + this.totalSlides) % this.totalSlides;
-                    }
-                }" class="relative w-full lg:w-2/3 h-[60vh] lg:h-screen">
-                    <!-- Images -->
-                    <div class="w-full h-full">
+            <!-- Immersive Layout -->
+            <div class="flex flex-col lg:flex-row min-h-screen">
+                
+                <!-- Left: Giant Image Gallery (Scrollable) -->
+                <div class="w-full lg:w-3/5 bg-neutral-100 border-r-4 border-black">
+                    @php
+                        $packshots = $jewel->getMedia('jewels/packshots');
+                        $lifestyles = $jewel->getMedia('jewels/lifestyle');
+                        $allImages = $packshots->merge($lifestyles);
+                    @endphp
+                    
+                    <div class="flex flex-col space-y-4 p-4 lg:p-8">
                         @foreach($allImages as $index => $media)
-                            <div x-show="activeSlide === {{ $index }}"
-                                 x-transition:enter="transition ease-out duration-300"
-                                 x-transition:enter-start="opacity-0"
-                                 x-transition:enter-end="opacity-100"
-                                 x-transition:leave="transition ease-in duration-300"
-                                 x-transition:leave-start="opacity-100"
-                                 x-transition:leave-end="opacity-0"
-                                 class="absolute inset-0">
-                                <img src="{{ $media->getUrl('large') }}"
-                                     alt="{{ $jewel->name }}"
-                                     class="object-cover w-full h-full"
+                            @php
+                                $startsInColor = ($index === 0) || (rand(1, 10) > 7);
+                            @endphp
+                            <div class="relative group overflow-hidden border-4 border-black bg-white shadow-[10px_10px_0px_0px_rgba(185,28,28,1)] mb-8">
+                                <img src="{{ $media->getUrl('large') }}" 
+                                     alt="{{ $jewel->name }}" 
+                                     @class([
+                                         "w-full h-auto object-cover transition-all duration-700 group-hover:grayscale-0 hover:scale-105",
+                                         "grayscale" => !$startsInColor,
+                                         "grayscale-0" => $startsInColor
+                                     ])
                                      loading="{{ $index === 0 ? 'eager' : 'lazy' }}">
+                                <div class="absolute bottom-4 right-4 bg-black text-white px-3 py-1 text-xs font-black">
+                                    IMAGE_{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
+                                </div>
                             </div>
                         @endforeach
                     </div>
-
-                    <!-- Navigation Arrows -->
-                    @if(count($allImages) > 1)
-                        <button @click="prev" class="absolute z-10 font-mono text-4xl text-white transform -translate-y-1/2 left-4 lg:left-8 top-1/2 lg:text-6xl hover:text-gray-300">←</button>
-                        <button @click="next" class="absolute z-10 font-mono text-4xl text-white transform -translate-y-1/2 right-4 lg:right-8 top-1/2 lg:text-6xl hover:text-gray-300">→</button>
-
-                        <!-- Slide Counter -->
-                        <div class="absolute font-mono text-lg text-white bottom-4 lg:bottom-8 left-4 lg:left-8 lg:text-xl">
-                            <span x-text="activeSlide + 1"></span>/<span x-text="totalSlides"></span>
-                        </div>
-                    @endif
                 </div>
 
-                <!-- Content Section -->
-                <div class="w-full overflow-y-auto border-white lg:w-1/3 lg:border-l">
-                    <div class="flex flex-col h-full">
-                        <!-- Back Button -->
-                        <div class="border-t border-b border-white lg:border-t-0">
-                            <a href="/jewels" class="block p-4 font-mono text-white hover:text-gray-300 lg:p-8">
-                                ← BACK
-                            </a>
+                <!-- Right: Content & Specs (Sticky) -->
+                <div class="w-full lg:w-2/5 lg:sticky lg:top-24 lg:h-[calc(100vh-6rem)] overflow-y-auto bg-white p-8 lg:p-16">
+                    <div class="space-y-12">
+                        <!-- Navigation -->
+                        <div class="flex justify-between items-center border-b-4 border-black pb-4">
+                            <a href="/jewels" class="font-black hover:text-red-700 transition-colors">← COLLECTION</a>
+                            <div class="text-[10px] opacity-40">REF: {{ strtoupper(Str::slug($jewel->name)) }}_{{ $jewel->id }}</div>
                         </div>
 
-                        <!-- Jewel Info -->
-                        <div class="flex-grow p-4 lg:p-8">
-                            <h1 class="mb-8 font-mono text-2xl lg:text-3xl">{{ strtoupper($jewel->name) }}</h1>
-
-                            @if($jewel->material)
-                                <div class="mb-8">
-                                    <h2 class="mb-2 font-mono text-gray-400">MATERIAL</h2>
-                                    <div class="flex flex-wrap gap-2">
-                                        @foreach(json_decode($jewel->material) as $material)
-                                            <span class="px-3 py-1 font-mono text-sm text-black transition-colors duration-300 bg-white border-2 border-white hover:bg-black hover:text-white">
-                                                {{ strtoupper($material) }}
-                                            </span>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @endif
-
-                            @if($jewel->type)
-                                <div class="mb-8">
-                                    <h2 class="mb-2 font-mono text-gray-400">TYPE</h2>
-                                    <div class="flex flex-wrap gap-2">
-                                        @foreach(json_decode($jewel->type) as $type)
-                                            <span class="px-3 py-1 font-mono text-sm text-white transition-colors duration-300 bg-black border-2 border-white hover:bg-white hover:text-black">
-                                                {{ strtoupper($type) }}
-                                            </span>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @endif
-
-                            @if($jewel->collections->isNotEmpty())
-                                <div class="mb-8">
-                                    <h2 class="mb-2 font-mono text-gray-400">COLLECTION{{ $jewel->collections->count() > 1 ? 'S' : '' }}</h2>
-                                    <div class="space-y-4">
-                                        @foreach($jewel->collections as $collection)
-                                            <div class="p-4 border-2 border-white">
-                                                <a href="/collections/{{ $collection->id }}" class="block">
-                                                    <h3 class="font-mono text-xl text-white hover:text-gray-300">
-                                                        {{ strtoupper($collection->name) }}
-                                                    </h3>
-                                                    @if($collection->description)
-                                                        <p class="mt-2 font-mono text-sm text-gray-400">
-                                                            {{ Str::limit($collection->description, 100) }}
-                                                        </p>
-                                                    @endif
-                                                    <div class="mt-2 font-mono text-sm text-white hover:text-gray-300">
-                                                        VIEW COLLECTION →
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @endif
-
-                            @if($jewel->description)
-                                <div class="mb-8">
-                                    <h2 class="mb-2 font-mono text-gray-400">DESCRIPTION</h2>
-                                    <div class="space-y-4 font-mono text-gray-300">
-                                        {!! $jewel->description !!}
-                                    </div>
-                                </div>
-                            @endif
-
-                            @if($jewel->price)
-                                <div class="mb-8">
-                                    <h2 class="mb-2 font-mono text-gray-400">PRICE</h2>
-                                    <div class="font-mono text-2xl">
-                                        €{{ number_format($jewel->price, 2) }}
-                                    </div>
-                                </div>
+                        <!-- Header -->
+                        <div class="space-y-4">
+                            <h1 class="text-5xl lg:text-7xl font-black uppercase leading-none tracking-tighter">{{ $jewel->name }}</h1>
+                            @if($jewel->price > 0)
+                            <div class="flex items-center gap-4">
+                                <span class="bg-red-700 text-white px-4 py-2 text-2xl font-black italic">€{{ number_format($jewel->price, 0) }}</span>
+                                <span class="text-xs font-black uppercase tracking-widest bg-black text-white px-2 py-1">Prêt_à_expédier</span>
+                            </div>
+                            @else
+                            <div class="flex items-center gap-4">
+                                <span class="text-xs font-black uppercase tracking-widest bg-black text-white px-4 py-2 border-4 border-black">Pièce_déjà_acquise_ou_en_exposition</span>
+                            </div>
                             @endif
                         </div>
+
+                        <!-- Technical Specs -->
+                        <div class="grid grid-cols-2 gap-8 py-8 border-y-2 border-black/10">
+                            <div>
+                                <h3 class="text-xs font-black opacity-30 mb-2">MATÉRIAUX</h3>
+                                <div class="space-y-1">
+                                    @foreach(json_decode($jewel->material ?? '[]') as $material)
+                                        <div class="font-bold uppercase">{{ $material }}</div>
+                                    @endforeach
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-xs font-black opacity-30 mb-2">TYPE</h3>
+                                <div class="space-y-1">
+                                    @foreach(json_decode($jewel->type ?? '[]') as $type)
+                                        <div class="font-bold uppercase">{{ $type }}</div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="prose prose-sm font-mono leading-relaxed text-black max-w-none">
+                            {!! $jewel->description !!}
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="pt-8">
+                            @if($jewel->price > 0)
+                                <a href="#inquiry" class="block w-full py-6 bg-black text-white text-center font-black text-xl hover:bg-red-700 transition-all transform hover:-translate-y-2 shadow-[8px_8px_0px_0px_rgba(185,28,28,1)] uppercase">
+                                    Demander l'acquisition
+                                </a>
+                            @else
+                                <a href="#custom" class="block w-full py-6 bg-white text-black border-4 border-black text-center font-black text-xl hover:bg-red-700 hover:text-white transition-all transform hover:-translate-y-2 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] uppercase tracking-tighter">
+                                    Une création unique sur-mesure ?
+                                </a>
+                            @endif
+                        </div>
+
+                        <!-- Collections Info -->
+                        @if($jewel->collections->isNotEmpty())
+                            <div class="pt-12 border-t-2 border-black/10">
+                                <h3 class="text-xs font-black opacity-30 mb-6">ARCHIVE_DE_LA_SÉRIE</h3>
+                                @foreach($jewel->collections as $collection)
+                                    <a href="/collections/{{ $collection->id }}" class="group block p-6 border-4 border-black hover:bg-neutral-50 transition-colors">
+                                        <div class="font-black text-xl uppercase group-hover:text-red-700 transition-colors">{{ $collection->name }}</div>
+                                        <div class="mt-2 text-xs opacity-60 uppercase">Explorer toute la série →</div>
+                                    </a>
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
 
-            <!-- Contact Form Section -->
-            @if($jewel->price)
-                <div class="w-full border-t-4 border-white">
-                    <div class="max-w-4xl p-8 mx-auto">
+            <!-- Conditional Form Section -->
+            @if($jewel->price > 0)
+                <section id="inquiry" class="bg-red-700 py-24 px-8 border-y-8 border-black">
+                    <div class="max-w-4xl mx-auto bg-white border-8 border-black p-8 lg:p-16 shadow-[20px_20px_0px_0px_rgba(0,0,0,1)]">
+                        <h2 class="text-4xl font-black uppercase mb-4 border-b-4 border-black pb-4 text-black">Demande d'acquisition</h2>
+                        <p class="font-mono text-sm mb-12 opacity-60 uppercase">Cette pièce est disponible immédiatement. Veuillez remplir le formulaire ci-dessous pour réserver l'objet.</p>
                         <livewire:jewel-contact-form :jewel="$jewel" />
                     </div>
-                </div>
+                </section>
+            @else
+                <section id="custom" class="bg-black py-24 px-8 border-y-8 border-black">
+                    <div class="max-w-4xl mx-auto bg-white border-8 border-black p-8 lg:p-16 shadow-[20px_20px_0px_0px_rgba(185,28,28,1)]">
+                        <h2 class="text-4xl font-black uppercase mb-4 border-b-4 border-black pb-4 text-black">Projet Personnel</h2>
+                        <p class="font-mono text-sm mb-12 opacity-60 uppercase tracking-tighter">
+                            Cette pièce n'est plus disponible, mais l'Atelier Axel peut s'inspirer de cet univers pour réaliser une création originale, unique et sur-mesure.
+                        </p>
+                        <livewire:contactform />
+                    </div>
+                </section>
             @endif
 
-            <!-- Related Jewels Slider -->
+            <!-- Cool Horizontal Related Slider -->
             @if($relatedJewels->isNotEmpty())
-                <div class="w-full border-t-4 border-white">
-                    <div class="p-8">
-                        <h2 class="mb-8 font-mono text-2xl">AUTRES BIJOUX DE LA COLLECTION</h2>
-
-                        <div class="relative" x-data="{
-                            scroll: 0,
-                            maxScroll: 0,
-                            init() {
-                                this.maxScroll = this.$refs.container.scrollWidth - this.$refs.container.clientWidth;
-                                this.checkArrows();
-                            },
-                            scrollLeft() {
-                                this.$refs.container.scrollBy({ left: -300, behavior: 'smooth' });
-                                this.scroll = this.$refs.container.scrollLeft;
-                                this.checkArrows();
-                            },
-                            scrollRight() {
-                                this.$refs.container.scrollBy({ left: 300, behavior: 'smooth' });
-                                this.scroll = this.$refs.container.scrollLeft;
-                                this.checkArrows();
-                            },
-                            checkArrows() {
-                                this.scroll = this.$refs.container.scrollLeft;
-                                this.maxScroll = this.$refs.container.scrollWidth - this.$refs.container.clientWidth;
-                            }
-                        }" @resize.window="init()">
-                            <!-- Navigation Arrows -->
-                            <button
-                                @click="scrollLeft"
-                                class="absolute left-0 z-10 h-full px-4 font-mono text-4xl text-white transition-opacity duration-200 -translate-y-1/2 bg-black bg-opacity-50 top-1/2 hover:text-gray-300"
-                                x-show="scroll > 0"
-                                x-transition
-                            >
-                                ←
-                            </button>
-
-                            <button
-                                @click="scrollRight"
-                                class="absolute right-0 z-10 h-full px-4 font-mono text-4xl text-white transition-opacity duration-200 -translate-y-1/2 bg-black bg-opacity-50 top-1/2 hover:text-gray-300"
-                                x-show="scroll < maxScroll"
-                                x-transition
-                            >
-                                →
-                            </button>
-
-                            <!-- Jewels Container -->
-                            <div
-                                x-ref="container"
-                                class="flex gap-8 pb-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar"
-                                @scroll="checkArrows"
-                            >
-                                @foreach($relatedJewels as $relatedJewel)
-                                    <a
-                                        href="/jewels/{{ $relatedJewel->id }}"
-                                        class="flex-none w-72 snap-start group"
-                                    >
-                                        <div class="relative overflow-hidden border-4 border-white aspect-square">
-                                            @php
-                                                $packshot = $relatedJewel->getFirstMedia('jewels/packshots');
-                                                $lifestyle = $relatedJewel->getFirstMedia('jewels/lifestyle');
-                                            @endphp
-                                            @if($packshot)
-                                                <img
-                                                    src="{{ $packshot->getUrl('medium') }}"
-                                                    alt="{{ $relatedJewel->name }}"
-                                                    class="absolute inset-0 z-10 object-cover w-full h-full transition-all duration-500 grayscale {{ $lifestyle ? 'group-hover:grayscale-0' : '' }}"
-                                                    loading="lazy">
-                                                @if($lifestyle)
-                                                    <img src="{{ $lifestyle->getUrl('medium') }}"
-                                                         alt="{{ $relatedJewel->name }} - Lifestyle"
-                                                         class="absolute inset-0 object-cover w-full h-full transition-all duration-500 opacity-0 group-hover:opacity-100 group-hover:scale-110"
-                                                         loading="lazy">
-                                                @endif
-                                            @endif
-                                        </div>
-                                        <h3 class="mt-4 font-mono text-lg group-hover:text-gray-300">
-                                            {{ strtoupper($relatedJewel->name) }}
-                                        </h3>
-                                        @if($relatedJewel->price)
-                                            <p class="font-mono text-gray-400">
-                                                €{{ number_format($relatedJewel->price, 2) }}
-                                            </p>
-                                        @endif
-                                    </a>
-                                @endforeach
-                            </div>
+                <section class="bg-white py-24 border-t-8 border-black overflow-hidden">
+                    <div class="px-8 mb-12 flex items-end justify-between gap-8 max-w-[1440px] mx-auto w-full">
+                        <h2 class="text-4xl md:text-6xl font-black uppercase tracking-tighter">
+                            OBJETS_PROCHES<span class="text-red-700">.</span>
+                        </h2>
+                        <div class="hidden md:block flex-1 h-2 bg-black mb-4 mx-8"></div>
+                        <div class="flex gap-4 mb-2">
+                            <button @click="$refs.relatedSlider.scrollBy({left: -400, behavior: 'smooth'})" class="w-12 h-12 border-4 border-black flex items-center justify-center hover:bg-red-700 transition-colors">←</button>
+                            <button @click="$refs.relatedSlider.scrollBy({left: 400, behavior: 'smooth'})" class="w-12 h-12 border-4 border-black flex items-center justify-center hover:bg-red-700 transition-colors">→</button>
                         </div>
                     </div>
-                </div>
+                    
+                    <div class="relative w-full overflow-hidden" x-data="{}">
+                        <div x-ref="relatedSlider" class="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-0 border-y-8 border-black" style="scrollbar-width: none; -ms-overflow-style: none;">
+                            @foreach($relatedJewels as $index => $related)
+                                <div class="flex-none w-full md:w-[45vw] lg:w-[25vw] snap-start border-r-8 border-black h-[500px]">
+                                    <livewire:catalogitem :jewel="$related" :wire:key="'related-'.$related->id" />
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </section>
             @endif
         @endif
     </div>
 </x-layouts.app>
 
 <style>
-.hide-scrollbar::-webkit-scrollbar {
-    display: none;
-}
-.hide-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
+.scrollbar-hide::-webkit-scrollbar { display: none; }
 </style>

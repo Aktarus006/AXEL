@@ -1,115 +1,95 @@
 <?php
 use App\Models\News;
 
-$news = News::latest()->get();
+$news = News::where('online', true)->latest()->get();
 view()->share('news', $news);
 ?>
 
-@php
-    // On récupère la variable dans la portée de la vue
-    $news = $news ?? collect([]);
-@endphp
-
 <x-layouts.app>
-    <div class="min-h-screen bg-black text-white font-mono">
-        <!-- Title Section -->
-        <div class="relative w-full border-b-8 border-white overflow-hidden"
-             x-data="{ showContent: false }"
-             x-init="setTimeout(() => showContent = true, 100)">
-
-            <!-- Background Pattern -->
-            <div class="absolute inset-0 bg-black"
-                 x-show="showContent"
-                 x-transition:enter="transition-transform duration-1000"
-                 x-transition:enter-start="translate-y-full"
-                 x-transition:enter-end="translate-y-0">
-                <div class="absolute inset-0 opacity-20">
-                    @for ($i = 0; $i < 50; $i++)
-                        <div class="absolute border border-white"
-                             style="
-                                left: {{ rand(0, 100) }}%;
-                                top: {{ rand(0, 100) }}%;
-                                width: {{ rand(10, 100) }}px;
-                                height: {{ rand(10, 100) }}px;
-                                transform: rotate({{ rand(0, 360) }}deg);
-                             ">
-                        </div>
-                    @endfor
+    <div class="min-h-screen bg-white text-black font-mono">
+        <!-- Editorial Title Section -->
+        <div class="relative w-full border-b-8 border-black overflow-hidden bg-black text-white group">
+            <div class="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity duration-1000">
+                <div class="grid grid-cols-12 h-full w-full">
+                    @foreach(range(1, 48) as $i)
+                        <div class="border-[0.5px] border-white/20 aspect-square"></div>
+                    @endforeach
                 </div>
             </div>
 
-            <!-- Title -->
-            <div class="relative z-10 px-8 py-32">
-                <div class="max-w-screen-xl mx-auto">
-                    <h1 class="text-[8rem] font-black uppercase leading-none tracking-tighter"
-                        x-show="showContent"
-                        x-transition:enter="transition-transform duration-1000 delay-500"
-                        x-transition:enter-start="-translate-x-full"
-                        x-transition:enter-end="translate-x-0">
-                        News & Blog
-                    </h1>
+            <div class="relative z-10 px-8 py-32 md:py-48 max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-end gap-12">
+                <h1 class="text-[12vw] md:text-[10vw] font-black uppercase leading-[0.8] tracking-tighter transform -skew-x-12">
+                    LE<br/><span class="text-red-700">JOURNAL</span>
+                </h1>
+                <div class="text-right max-w-md">
+                    <p class="text-xl uppercase font-bold mb-4">Chroniques de l'établi</p>
+                    <p class="text-sm opacity-60 uppercase leading-relaxed">
+                        Explorations créatives, événements et coulisses de l'Atelier Axel. 
+                        Plongez dans l'univers de la joaillerie contemporaine.
+                    </p>
                 </div>
             </div>
+            
+            <!-- Bottom Accent Bar -->
+            <div class="absolute inset-x-0 bottom-0 h-4 transition-transform duration-500 origin-left scale-x-0 bg-red-700 group-hover:scale-x-100"></div>
         </div>
 
-        <!-- News Grid -->
-        <div class="max-w-screen-xl mx-auto p-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                @forelse ($news as $index => $article)
-                    <div class="group relative border-4 border-white overflow-hidden"
-                         x-data="{ show: false }"
-                         x-intersect="show = true"
-                         x-show="show"
-                         x-transition:enter="transition-transform duration-500"
-                         x-transition:enter-start="translate-y-full"
-                         x-transition:enter-end="translate-y-0"
-                         style="transition-delay: {{ $index * 100 }}ms">
-
-                        <!-- Article Number -->
-                        <div class="absolute top-0 left-0 bg-white text-black text-xl font-bold p-2 border-r-4 border-b-4 border-white z-10">
-                            {{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
-                        </div>
-
-                        <!-- Article Image -->
-                        @if($article->hasMedia('news/images'))
-                            <div class="aspect-video overflow-hidden">
-                                <img
-                                    src="{{ $article->getFirstMediaUrl('news/images') }}"
-                                    alt="{{ $article->title }}"
-                                    class="w-full h-full object-cover transition-all duration-500 grayscale group-hover:grayscale-0 group-hover:scale-110"
-                                >
-                            </div>
-                        @endif
-
-                        <!-- Article Info -->
-                        <div class="p-6 bg-black">
-                            <h2 class="text-3xl font-bold mb-4 group-hover:text-red-700 transition-colors duration-300">
-                                {{ $article->title }}
-                            </h2>
-
-                            <div class="mb-4 text-sm text-gray-400">
+        <!-- News Editorial Grid -->
+        <div class="max-w-[1440px] mx-auto border-x-8 border-black">
+            @forelse ($news as $index => $article)
+                <div class="group border-b-8 border-black last:border-b-0 hover:bg-neutral-50 transition-colors duration-500">
+                    <a href="/news/{{ $article->id }}" class="flex flex-col md:flex-row items-stretch">
+                        <!-- Date & Index (Sticky on MD+) -->
+                        <div class="w-full md:w-32 border-b-4 md:border-b-0 md:border-r-8 border-black flex flex-col items-center justify-center bg-white text-black p-4 group-hover:bg-red-700 group-hover:text-white transition-colors">
+                            <span class="text-xs font-black opacity-40 group-hover:opacity-100">ITEM_{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</span>
+                            <div class="text-2xl font-black rotate-0 md:-rotate-90 whitespace-nowrap mt-4">
                                 {{ $article->created_at->format('d.m.Y') }}
                             </div>
-
-                            <p class="text-lg mb-6">
-                                {{ Str::limit($article->excerpt ?? $article->content, 150) }}
-                            </p>
-
-                            <a href="/news/{{ $article->id }}"
-                               class="inline-block border-2 border-white px-4 py-2 hover:bg-white hover:text-black transition-colors duration-300">
-                                READ MORE →
-                            </a>
                         </div>
 
-                        <!-- Hover Effect -->
-                        <div class="absolute inset-0 bg-red-700 mix-blend-multiply opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-                    </div>
-                @empty
-                    <div class="col-span-2 text-center py-32 border-4 border-white">
-                        <div class="text-4xl">NO NEWS YET</div>
-                    </div>
-                @endforelse
-            </div>
+                        <!-- Content Section -->
+                        <div class="flex-1 p-8 md:p-16 flex flex-col justify-center space-y-6">
+                            <div class="space-y-2">
+                                <span class="text-xs font-black uppercase tracking-[0.3em] text-red-700">Actualités_Atelier</span>
+                                <h2 class="text-4xl md:text-6xl font-black uppercase leading-none tracking-tighter group-hover:translate-x-4 transition-transform duration-500">
+                                    {{ $article->title }}
+                                </h2>
+                            </div>
+
+                            <div class="prose prose-sm font-mono text-black/60 max-w-2xl group-hover:text-black transition-colors duration-500">
+                                {{ Str::limit(strip_tags($article->description), 200) }}
+                            </div>
+
+                            <div class="flex items-center gap-4 pt-4">
+                                <span class="font-black text-lg underline decoration-4 underline-offset-8 group-hover:text-red-700 transition-colors">LIRE L'ARTICLE_</span>
+                            </div>
+                        </div>
+
+                        <!-- Featured Image (Right Side) -->
+                        <div class="w-full md:w-1/3 lg:w-2/5 border-t-4 md:border-t-0 md:border-l-8 border-black overflow-hidden relative bg-neutral-200 aspect-video md:aspect-auto">
+                            @if($article->hasMedia('news/images'))
+                                <img
+                                    src="{{ $article->getFirstMediaUrl('news/images', 'large') }}"
+                                    alt="{{ $article->title }}"
+                                    class="w-full h-full object-cover transition-all duration-1000 grayscale group-hover:grayscale-0 group-hover:scale-110"
+                                >
+                            @else
+                                <div class="w-full h-full flex items-center justify-center font-black text-black/10 text-6xl">AXEL_</div>
+                            @endif
+                            <div class="absolute inset-0 bg-red-700/0 group-hover:bg-red-700/10 transition-colors duration-500"></div>
+                        </div>
+                    </a>
+                </div>
+            @empty
+                <div class="text-center py-40 bg-white">
+                    <h3 class="font-mono text-4xl font-black uppercase opacity-20">Aucune actualité_</h3>
+                </div>
+            @endforelse
+        </div>
+
+        <!-- Pagination Placeholder / Footer Join -->
+        <div class="bg-black py-20 border-t-8 border-black text-center">
+            <div class="font-mono text-white text-xs opacity-40 uppercase tracking-[0.5em]">Fin de la lecture</div>
         </div>
     </div>
 </x-layouts.app>

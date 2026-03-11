@@ -3,69 +3,54 @@
 use function Livewire\Volt\{state, mount, computed, on};
 use App\Models\Jewel;
 
-state(['jewels' => [], 'selectedJewel' => null]);
+state(['jewels' => []]);
 
 mount(function () {
     $this->jewels = Jewel::with('media')
         ->whereHas('media', function($query) {
             $query->where('collection_name', 'jewels/packshots');
         })
+        // Removed the price filter to show all products
         ->inRandomOrder()
-        ->take(12)
+        ->take(6)
         ->get();
 });
 
-on(['jewel-hovered' => function ($jewel) {
-    $this->selectedJewel = $jewel;
-}]);
-
-on(['jewel-unhovered' => function () {
-    $this->selectedJewel = null;
-}]);
-
 ?>
 
-<div class="w-full bg-black border-b-8 border-white overflow-hidden">
+<div class="w-full bg-white border-b-8 border-black">
     <!-- Header Section -->
-    <div class="flex flex-col md:flex-row justify-between items-end p-8 border-b-8 border-white bg-black">
-        <h2 class="font-mono text-[15vw] md:text-[8vw] leading-none text-white font-black tracking-tighter uppercase mb-4 md:mb-0">
-            RANDOM<br/><span class="text-outline-white text-transparent">DROP</span>
-        </h2>
-        <div class="font-mono text-white text-right space-y-2 uppercase text-sm md:text-xl font-bold">
-            <p class="bg-red-600 px-4 py-1 inline-block transform -skew-x-12">Limited Pieces</p>
-            <p>Handcrafted in Studio</p>
-            <p class="text-gray-400">#AXEL_ARCHIVE_2026</p>
+    <div class="max-w-[1440px] mx-auto px-8 py-20 flex flex-col md:flex-row justify-between items-end gap-12 text-black">
+        <div class="max-w-2xl">
+            <h2 class="font-mono text-7xl md:text-[7vw] leading-[0.85] font-black tracking-tighter uppercase">
+                SÉLECTION<br/><span class="text-red-700">D'OBJETS</span>
+            </h2>
+            <p class="font-mono text-xl mt-8 uppercase font-bold tracking-tight">
+                Une exploration du geste et de la matière. Des pièces uniques forgées à l'établi pour l'individu contemporain.
+            </p>
+        </div>
+        <div class="flex flex-col items-end text-right">
+            <div class="font-mono font-black text-2xl border-4 border-black px-4 py-2 mb-4">NOUVEAU_DROP</div>
+            <p class="font-mono text-sm uppercase tracking-widest opacity-60 max-w-[200px]">Fait main à l'Atelier / Pièces Limitées</p>
         </div>
     </div>
 
     <!-- The Product Grid -->
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 w-full">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 border-t-8 border-black">
         @foreach($jewels as $index => $jewel)
-            <div @class([
-                "relative aspect-square border-r-4 border-b-4 border-white overflow-hidden group",
-                "col-span-2 md:col-span-1 lg:col-span-2 md:row-span-2 lg:row-span-2 aspect-auto" => $index === 0, // First item is bigger
-                "hidden lg:block lg:col-span-2" => $index === 5, // Another bigger item for LG screens
-                "border-r-0" => ($index + 1) % 2 === 0 && (app()->getLocale() == 'en' ? false : true), // Placeholder logic for mobile r-border
-            ])>
+            <div class="relative aspect-square border-b-8 border-black md:even:border-l-8 lg:even:border-l-0 lg:[&:nth-child(3n-1)]:border-l-8 lg:[&:nth-child(3n)]:border-l-8 overflow-hidden group">
                 <livewire:homeproductbox :wire:key="'box-'.$jewel->id" :jewelId="$jewel->id" />
             </div>
         @endforeach
-        
-        <!-- Interactive Brutalist Box (Desktop only) -->
-        <div class="hidden lg:flex col-span-2 row-span-2 bg-white border-b-4 border-white flex-col items-center justify-center p-8 text-center group cursor-help hover:bg-black transition-colors duration-500">
-            <div class="text-6xl mb-4 group-hover:invert animate-bounce">⚡</div>
-            <h3 class="font-mono text-4xl font-black mb-4 group-hover:text-white">EXPLORE THE ARCHIVE</h3>
-            <p class="font-mono text-sm group-hover:text-white uppercase">Surgical precision meets brutalist aesthetics. Each piece is unique.</p>
-            <div class="mt-8 border-4 border-black group-hover:border-white px-8 py-4 font-mono font-black group-hover:text-white group-hover:bg-red-600 transition-all duration-300">
-                VIEW ALL
-            </div>
+    </div>
+    
+    <!-- View All Button Section -->
+    <div class="p-8 md:p-20 bg-black flex justify-center items-center overflow-hidden relative">
+        <div class="absolute inset-0 opacity-20 pointer-events-none font-mono text-[20vw] font-black text-white whitespace-nowrap animate-marquee">
+            COLLECTION_COLLECTION_COLLECTION
         </div>
+        <a href="/jewels" class="relative z-10 px-16 py-8 bg-white text-black font-mono text-4xl font-black uppercase hover:bg-red-700 hover:text-white transition-all transform hover:scale-110 active:scale-95 border-8 border-black shadow-[10px_10px_0px_0px_rgba(255,255,255,0.3)]">
+            VOIR TOUTE LA COLLECTION
+        </a>
     </div>
 </div>
-
-<style>
-.text-outline-white {
-    -webkit-text-stroke: 2px white;
-    text-shadow: none;
-}
-</style>

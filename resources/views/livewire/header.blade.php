@@ -2,69 +2,66 @@
 use function Livewire\Volt\{state};
 ?>
 
-<header x-data="{ mobileMenuOpen: false }" class="fixed top-0 left-0 z-50 w-full bg-white border-b-4 border-black">
-    <div class="flex items-stretch justify-between h-20 md:h-24">
-        <!-- Logo -->
-        <a href="/" class="flex items-center px-6 md:px-10 border-r-4 border-black hover:bg-black hover:text-white transition-colors duration-300">
-            <span class="font-mono text-3xl md:text-5xl font-black tracking-tighter uppercase">AXEL</span>
-        </a>
-        
-        <!-- Desktop Navigation -->
-        <nav class="hidden lg:flex flex-1">
-            <a href="/jewels" class="flex-1 flex items-center justify-center font-mono text-xl font-bold border-r-4 border-black hover:bg-black hover:text-white transition-all duration-300 hover:skew-x-2">
-                BIJOUX
-            </a>
-            <a href="/collections" class="flex-1 flex items-center justify-center font-mono text-xl font-bold border-r-4 border-black hover:bg-black hover:text-white transition-all duration-300 hover:-skew-x-2">
-                COLLECTIONS
-            </a>
-            <a href="/news" class="flex-1 flex items-center justify-center font-mono text-xl font-bold border-r-4 border-black hover:bg-black hover:text-white transition-all duration-300 hover:skew-x-2">
-                NEWS
-            </a>
-            <a href="/#about" class="flex-1 flex items-center justify-center font-mono text-xl font-bold border-r-4 border-black hover:bg-black hover:text-white transition-all duration-300">
-                ABOUT
-            </a>
-        </nav>
-
-        <!-- Right Side / Contact / Mobile Trigger -->
-        <div class="flex">
-            <a href="/#contact" class="hidden md:flex items-center px-8 font-mono font-black text-xl bg-black text-white hover:bg-red-600 transition-colors duration-300 border-l-4 border-black">
-                CONTACT
+<div x-data="{ mobileMenuOpen: false, scrolled: false }" 
+     @scroll.window="scrolled = (window.pageYOffset > 20)"
+     class="relative">
+    <header :class="{ 'bg-white shadow-xl': scrolled, 'bg-white': !scrolled }" 
+            class="fixed top-0 left-0 z-50 w-full transition-all duration-300 border-b-4 border-black">
+        <div class="max-w-[1440px] mx-auto flex items-stretch justify-between h-20 md:h-24 px-4 md:px-8">
+            <!-- Logo Section with Improved Diamond Facets -->
+            <a href="/" class="flex items-center group relative gap-6">
+                <div class="relative w-12 h-12 flex items-center justify-center">
+                    <!-- Outer Facet -->
+                    <div class="absolute inset-0 border-2 border-black rotate-45 group-hover:rotate-[225deg] transition-all duration-1000 ease-in-out group-hover:border-red-700"></div>
+                    <!-- Middle Facet -->
+                    <div class="absolute inset-2 border-2 border-black -rotate-45 group-hover:rotate-[135deg] transition-all duration-700 ease-in-out group-hover:border-red-700 opacity-50"></div>
+                    <!-- Inner Core -->
+                    <div class="w-2 h-2 bg-black group-hover:bg-red-700 animate-ping"></div>
+                    <div class="absolute w-1 h-1 bg-black group-hover:bg-red-700"></div>
+                </div>
+                <span class="font-mono text-3xl md:text-4xl font-black tracking-tighter uppercase group-hover:text-red-700 transition-colors">
+                    AXEL<span class="text-red-700 group-hover:text-black">.</span>STUDIO
+                </span>
             </a>
             
-            <!-- Mobile Menu Trigger -->
-            <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden px-6 flex items-center justify-center border-l-4 border-black bg-white hover:bg-black hover:text-white transition-colors duration-300">
-                <div class="space-y-2">
-                    <div class="w-8 h-1 bg-current transition-all" :class="mobileMenuOpen ? 'rotate-45 translate-y-3' : ''"></div>
-                    <div class="w-8 h-1 bg-current transition-opacity" :class="mobileMenuOpen ? 'opacity-0' : 'opacity-100'"></div>
-                    <div class="w-8 h-1 bg-current transition-all" :class="mobileMenuOpen ? '-rotate-45 -translate-y-3' : ''"></div>
+            <!-- Desktop Navigation -->
+            <nav class="hidden lg:flex items-center space-x-8">
+                <a href="/jewels" class="font-mono text-lg font-bold uppercase hover:text-red-700 transition-colors tracking-tight">Bijoux</a>
+                <a href="/collections" class="font-mono text-lg font-bold uppercase hover:text-red-700 transition-colors tracking-tight">Collections</a>
+                <a href="/news" class="font-mono text-lg font-bold uppercase hover:text-red-700 transition-colors tracking-tight">Actualités</a>
+                <a href="/#about" class="font-mono text-lg font-bold uppercase hover:text-red-700 transition-colors tracking-tight">L'Atelier</a>
+                <a href="/#contact" class="px-6 py-3 bg-black text-white font-mono font-bold uppercase hover:bg-red-700 transition-all transform hover:-translate-y-1 active:translate-y-0">
+                    Contact
+                </a>
+            </nav>
+
+            <!-- Mobile Trigger -->
+            <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden flex items-center justify-center p-2">
+                <div class="space-y-1.5">
+                    <div class="w-8 h-1.5 bg-black transition-all" :class="mobileMenuOpen ? 'rotate-45 translate-y-3' : ''"></div>
+                    <div class="w-8 h-1.5 bg-black transition-opacity" :class="mobileMenuOpen ? 'opacity-0' : 'opacity-100'"></div>
+                    <div class="w-8 h-1.5 bg-black transition-all" :class="mobileMenuOpen ? '-rotate-45 -translate-y-3' : ''"></div>
                 </div>
             </button>
         </div>
-    </div>
 
-    <!-- Mobile Menu Overlay -->
-    <div 
-        x-show="mobileMenuOpen" 
-        x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="translate-x-full"
-        x-transition:enter-end="translate-x-0"
-        x-transition:leave="transition ease-in duration-300"
-        x-transition:leave-start="translate-x-0"
-        x-transition:leave-end="translate-x-full"
-        class="fixed inset-0 top-20 md:top-24 bg-white z-40 lg:hidden flex flex-col border-t-4 border-black"
-    >
-        <nav class="flex flex-col h-full divide-y-4 divide-black">
-            <a href="/jewels" @click="mobileMenuOpen = false" class="flex-1 flex items-center px-10 font-mono text-5xl font-black uppercase hover:bg-black hover:text-white transition-colors">BIJOUX</a>
-            <a href="/collections" @click="mobileMenuOpen = false" class="flex-1 flex items-center px-10 font-mono text-5xl font-black uppercase hover:bg-black hover:text-white transition-colors">COLLECTIONS</a>
-            <a href="/news" @click="mobileMenuOpen = false" class="flex-1 flex items-center px-10 font-mono text-5xl font-black uppercase hover:bg-black hover:text-white transition-colors">NEWS</a>
-            <a href="/#about" @click="mobileMenuOpen = false" class="flex-1 flex items-center px-10 font-mono text-5xl font-black uppercase hover:bg-black hover:text-white transition-colors">ABOUT</a>
-            <a href="/#contact" @click="mobileMenuOpen = false" class="flex-1 flex items-center px-10 font-mono text-5xl font-black uppercase bg-black text-white hover:bg-red-600 transition-colors">CONTACT</a>
-        </nav>
-    </div>
+        <!-- Mobile Menu Overlay -->
+        <div x-show="mobileMenuOpen" 
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 -translate-y-10"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-cloak
+             class="absolute top-full left-0 w-full bg-white border-b-8 border-black shadow-2xl lg:hidden">
+            <nav class="flex flex-col p-8 space-y-6">
+                <a href="/jewels" @click="mobileMenuOpen = false" class="font-mono text-4xl font-black uppercase hover:text-red-700">Bijoux</a>
+                <a href="/collections" @click="mobileMenuOpen = false" class="font-mono text-4xl font-black uppercase hover:text-red-700">Collections</a>
+                <a href="/news" @click="mobileMenuOpen = false" class="font-mono text-4xl font-black uppercase hover:text-red-700">Actualités</a>
+                <a href="/#about" @click="mobileMenuOpen = false" class="font-mono text-4xl font-black uppercase hover:text-red-700">L'Atelier</a>
+                <a href="/#contact" @click="mobileMenuOpen = false" class="font-mono text-4xl font-black uppercase bg-black text-white p-4 text-center">Contact</a>
+            </nav>
+        </div>
+    </header>
 
-    <!-- Background Decoration -->
-    <div class="absolute top-0 right-0 h-full w-2 bg-red-600 hidden lg:block"></div>
-</header>
-
-<!-- Spacer -->
-<div class="h-20 md:h-24"></div>
+    <!-- Spacer -->
+    <div class="h-20 md:h-24"></div>
+</div>
