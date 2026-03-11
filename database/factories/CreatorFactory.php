@@ -25,10 +25,10 @@ class CreatorFactory extends Factory
             'last_name' => $this->faker->lastName(),
             'date_of_birth' => $this->faker->date(),
             'description' => $this->faker->text(),
-            'avatar' => $this->faker->text(),
-            'website_url' => $this->faker->text(),
+            'avatar' => $this->faker->imageUrl(),
+            'website_url' => $this->faker->url(),
             'online' => $this->faker->boolean(),
-            'collection_id' => $this->faker->randomNumber(),
+            'job_title' => $this->faker->jobTitle(),
         ];
     }
 }

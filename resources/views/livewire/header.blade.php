@@ -1,50 +1,67 @@
 <?php
-
 use function Livewire\Volt\{state};
-//
 ?>
 
-<div>
-    <nav class="fixed top-0 left-0 z-50 w-full bg-white">
-        <div class="flex flex-col w-full">
-            <!-- Main Header -->
-            <div class="flex w-full border-b-2 border-black">
-                <!-- Logo -->
-                <a href="/" class="w-1/2 px-6 py-4 transition-colors duration-200 border-r-2 border-black hover:bg-black hover:text-white">
-                    <span class="font-mono text-5xl tracking-tighter">AXEL JEWELRY</span>
+<div x-data="{ mobileMenuOpen: false, scrolled: false }" 
+     @scroll.window="scrolled = (window.pageYOffset > 20)"
+     class="relative">
+    <header :class="{ 'bg-white shadow-xl': scrolled, 'bg-white': !scrolled }" 
+            class="fixed top-0 left-0 z-50 w-full transition-all duration-300 border-b-4 border-black">
+        <div class="max-w-[1440px] mx-auto flex items-stretch justify-between h-20 md:h-24 px-4 md:px-8">
+            <!-- Logo Section with Improved Diamond Facets -->
+            <a href="/" class="flex items-center group relative gap-6">
+                <div class="relative w-12 h-12 flex items-center justify-center">
+                    <!-- Outer Facet -->
+                    <div class="absolute inset-0 border-2 border-black rotate-45 group-hover:rotate-[225deg] transition-all duration-1000 ease-in-out group-hover:border-red-700"></div>
+                    <!-- Middle Facet -->
+                    <div class="absolute inset-2 border-2 border-black -rotate-45 group-hover:rotate-[135deg] transition-all duration-700 ease-in-out group-hover:border-red-700 opacity-50"></div>
+                    <!-- Inner Core -->
+                    <div class="w-2 h-2 bg-black group-hover:bg-red-700 animate-ping"></div>
+                    <div class="absolute w-1 h-1 bg-black group-hover:bg-red-700"></div>
+                </div>
+                <span class="font-mono text-3xl md:text-4xl font-black tracking-tighter uppercase group-hover:text-red-700 transition-colors">
+                    AXEL<span class="text-red-700 group-hover:text-black">.</span>STUDIO
+                </span>
+            </a>
+            
+            <!-- Desktop Navigation -->
+            <nav class="hidden lg:flex items-center space-x-8">
+                <a href="/jewels" class="font-mono text-lg font-bold uppercase hover:text-red-700 transition-colors tracking-tight">Bijoux</a>
+                <a href="/collections" class="font-mono text-lg font-bold uppercase hover:text-red-700 transition-colors tracking-tight">Collections</a>
+                <a href="/news" class="font-mono text-lg font-bold uppercase hover:text-red-700 transition-colors tracking-tight">Actualités</a>
+                <a href="/#about" class="font-mono text-lg font-bold uppercase hover:text-red-700 transition-colors tracking-tight">L'Atelier</a>
+                <a href="/#contact" class="px-6 py-3 bg-black text-white font-mono font-bold uppercase hover:bg-red-700 transition-all transform hover:-translate-y-1 active:translate-y-0">
+                    Contact
                 </a>
-                
-                <!-- Primary Navigation -->
-                <div class="flex w-1/2">
-                    <a href="/jewels" class="flex items-center justify-center flex-1 font-mono text-xl transition-colors duration-200 border-r-2 border-black hover:bg-black hover:text-white">
-                        BIJOUX
-                    </a>
-                    <a href="/collections" class="flex items-center justify-center flex-1 font-mono text-xl transition-colors duration-200 border-r-2 border-black hover:bg-black hover:text-white">
-                        COLLECTIONS
-                    </a>
-                    <a href="/news" class="flex items-center justify-center flex-1 font-mono text-xl transition-colors duration-200 hover:bg-black hover:text-white">
-                        BLOG
-                    </a>
-                </div>
-            </div>
+            </nav>
 
-            <!-- Secondary Navigation -->
-            <div class="flex w-full border-b-2 border-black">
-                <div class="flex w-1/2">
-                    <a href="{{ url('/') }}#about" class="flex-1 px-4 py-2 font-mono transition-colors duration-200 border-r-2 border-black hover:bg-black hover:text-white">
-                        ABOUT
-                    </a>
-                    <a href="#contact" class="flex-1 px-4 py-2 font-mono transition-colors duration-200 border-r-2 border-black hover:bg-black hover:text-white">
-                        CONTACT
-                    </a>
+            <!-- Mobile Trigger -->
+            <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden flex items-center justify-center p-2">
+                <div class="space-y-1.5">
+                    <div class="w-8 h-1.5 bg-black transition-all" :class="mobileMenuOpen ? 'rotate-45 translate-y-3' : ''"></div>
+                    <div class="w-8 h-1.5 bg-black transition-opacity" :class="mobileMenuOpen ? 'opacity-0' : 'opacity-100'"></div>
+                    <div class="w-8 h-1.5 bg-black transition-all" :class="mobileMenuOpen ? '-rotate-45 -translate-y-3' : ''"></div>
                 </div>
-                <div class="flex items-center justify-end w-1/2 px-4 font-mono">
-                    <span class="text-sm tracking-widest">BRUTALIST JEWELRY DESIGN</span>
-                </div>
-            </div>
+            </button>
         </div>
-    </nav>
 
-    <!-- Spacer to prevent content from hiding under fixed header -->
-    <div class="h-32"></div>
+        <!-- Mobile Menu Overlay -->
+        <div x-show="mobileMenuOpen" 
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 -translate-y-10"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-cloak
+             class="absolute top-full left-0 w-full bg-white border-b-8 border-black shadow-2xl lg:hidden">
+            <nav class="flex flex-col p-8 space-y-6">
+                <a href="/jewels" @click="mobileMenuOpen = false" class="font-mono text-4xl font-black uppercase hover:text-red-700">Bijoux</a>
+                <a href="/collections" @click="mobileMenuOpen = false" class="font-mono text-4xl font-black uppercase hover:text-red-700">Collections</a>
+                <a href="/news" @click="mobileMenuOpen = false" class="font-mono text-4xl font-black uppercase hover:text-red-700">Actualités</a>
+                <a href="/#about" @click="mobileMenuOpen = false" class="font-mono text-4xl font-black uppercase hover:text-red-700">L'Atelier</a>
+                <a href="/#contact" @click="mobileMenuOpen = false" class="font-mono text-4xl font-black uppercase bg-black text-white p-4 text-center">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Spacer -->
+    <div class="h-20 md:h-24"></div>
 </div>

@@ -13,119 +13,80 @@ mount(function () {
 });
 ?>
 
-
-<div class="w-full font-mono text-white bg-black">
-    <!-- Title Section -->
-    <div class="relative w-full border-b-8 border-white overflow-hidden"
-         x-data="{ showContent: false }"
-         x-init="setTimeout(() => showContent = true, 100)">
-
-        <!-- Background Pattern -->
-        <div class="absolute inset-0 bg-black"
-             x-show="showContent"
-             x-transition:enter="transition-transform duration-1000"
-             x-transition:enter-start="translate-y-full"
-             x-transition:enter-end="translate-y-0">
-            <div class="absolute inset-0 opacity-20">
-                @for ($i = 0; $i < 50; $i++)
-                    <div class="absolute border border-white"
-                         style="
-                            left: {{ rand(0, 100) }}%;
-                            top: {{ rand(0, 100) }}%;
-                            width: {{ rand(10, 100) }}px;
-                            height: {{ rand(10, 100) }}px;
-                            transform: rotate({{ rand(0, 360) }}deg);
-                         ">
-                    </div>
-                @endfor
+<div class="w-full font-mono text-black bg-white min-h-screen">
+    <!-- Sophisticated Title Section -->
+    <div class="relative w-full border-b-8 border-black overflow-hidden bg-black text-white group">
+        <div class="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity duration-1000">
+            <div class="grid grid-cols-12 h-full w-full">
+                @foreach(range(1, 48) as $i)
+                    <div class="border-[0.5px] border-white/20 aspect-square"></div>
+                @endforeach
             </div>
         </div>
 
-        <!-- Title -->
-        <div class="relative z-10 px-8 py-32">
-            <div class="max-w-screen-xl mx-auto">
-                <h1 class="text-[8rem] font-black uppercase leading-none tracking-tighter"
-                    x-show="showContent"
-                    x-transition:enter="transition-transform duration-1000 delay-500"
-                    x-transition:enter-start="-translate-x-full"
-                    x-transition:enter-end="translate-x-0">
-                    Collections
-                    <span class="absolute top-0 right-0 px-4 py-2 text-4xl text-black bg-white -rotate-12">
-                        {{ str_pad($collections->count(), 2, '0', STR_PAD_LEFT) }}
-                    </span>
-                </h1>
+        <div class="relative z-10 px-8 py-32 md:py-48 max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-end gap-12">
+            <h1 class="text-[12vw] md:text-[8vw] font-black uppercase leading-[0.8] tracking-tighter transform -skew-x-12">
+                LES<br/><span class="text-red-700">SÉRIES</span>
+            </h1>
+            <div class="text-right max-w-md">
+                <p class="text-xl uppercase font-bold mb-4">L'archeologie du geste</p>
+                <p class="text-sm opacity-60 uppercase leading-relaxed">
+                    Chaque série explore une thématique, un matériau ou une technique spécifique. 
+                    Des objets singuliers nés de la rencontre entre l'esprit et la matière.
+                </p>
             </div>
         </div>
+        
+        <!-- Bottom Accent Bar -->
+        <div class="absolute inset-x-0 bottom-0 h-4 transition-transform duration-500 origin-left scale-x-0 bg-red-700 group-hover:scale-x-100"></div>
     </div>
 
-    <!-- Collections Grid -->
-    <div class="grid grid-cols-1 gap-8 p-8 md:grid-cols-2">
+    <!-- Collections List (High-End Layout) -->
+    <div class="w-full">
         @foreach ($collections as $index => $collection)
-            <div
-                class="group relative border-4 border-white overflow-hidden transition-transform duration-300 hover:-translate-y-2"
-                x-data="{ isHovered: false }"
-                @mouseenter="isHovered = true"
-                @mouseleave="isHovered = false"
-            >
-                <a href="/collections/{{ $collection->id }}" class="block relative">
-                    <!-- Collection Number -->
-                    <div class="absolute top-0 left-0 bg-white text-black text-xl font-bold p-2 border-r-4 border-b-4 border-white z-10">
+            <div class="group border-b-8 border-black hover:bg-neutral-50 transition-colors duration-500">
+                <a href="/collections/{{ $collection->id }}" class="flex flex-col md:flex-row items-stretch min-h-[500px]">
+                    <!-- Index Number -->
+                    <div class="w-full md:w-24 border-b-4 md:border-b-0 md:border-r-8 border-black flex items-center justify-center bg-white text-black text-4xl font-black group-hover:bg-red-700 group-hover:text-white transition-colors">
                         {{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
                     </div>
 
-                    <!-- Collection Image -->
-                    @if($collection->hasMedia('collections/images'))
-                        <div class="aspect-square">
+                    <!-- Image Section -->
+                    <div class="w-full md:w-1/2 lg:w-2/5 border-b-4 md:border-b-0 md:border-r-8 border-black overflow-hidden relative bg-neutral-200">
+                        @if($collection->hasMedia('collections/images'))
                             <img
-                                src="{{ $collection->getFirstMediaUrl('collections/images') }}"
+                                src="{{ $collection->getFirstMediaUrl('collections/images', 'large') }}"
                                 alt="{{ $collection->name }}"
-                                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                class="w-full h-full object-cover transition-all duration-1000 grayscale group-hover:grayscale-0 group-hover:scale-110"
                             >
-                        </div>
-                    @else
-                        <div class="aspect-square bg-black flex items-center justify-center">
-                            <div class="text-4xl font-bold opacity-20">NO IMAGE</div>
-                        </div>
-                    @endif
+                        @else
+                            <div class="w-full h-full flex items-center justify-center font-black text-black/10 text-6xl">NO_IMG</div>
+                        @endif
+                        <!-- Hover Overlay -->
+                        <div class="absolute inset-0 bg-red-700/0 group-hover:bg-red-700/10 transition-colors duration-500"></div>
+                    </div>
 
-                    <!-- Collection Info -->
-                    <div
-                        class="absolute inset-0 bg-black bg-opacity-80 flex flex-col justify-end p-6 transition-opacity duration-300"
-                        :class="isHovered ? 'opacity-100' : 'opacity-0'"
-                    >
-                        <h3 class="text-3xl font-bold uppercase mb-4 transform transition-transform duration-300"
-                            :class="isHovered ? 'translate-x-0' : '-translate-x-full'">
-                            {{ $collection->name }}
-                        </h3>
-                        <div class="prose prose-invert max-w-none text-sm leading-relaxed transform transition-transform duration-300 delay-100"
-                            :class="isHovered ? 'translate-x-0' : 'translate-x-full'">
-                            {!! $collection->description !!}
-                            @if($collection->creators->isNotEmpty())
-                                <div class="mt-4">
-                                    <div class="text-sm font-bold">CRÉATEURS</div>
-                                    <div class="flex flex-wrap gap-2">
-                                        @foreach($collection->creators as $creator)
-                                            <span class="inline-block px-2 py-1 text-xs border border-white">
-                                                {{ $creator->name }}
-                                            </span>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @endif
+                    <!-- Content Section -->
+                    <div class="flex-1 p-8 md:p-16 flex flex-col justify-center space-y-8 bg-white group-hover:bg-neutral-50 transition-colors">
+                        <div class="space-y-4">
+                            <span class="text-xs font-black uppercase tracking-[0.3em] text-red-700">Exploration_Thématique</span>
+                            <h2 class="text-5xl md:text-7xl font-black uppercase leading-none tracking-tighter group-hover:translate-x-4 transition-transform duration-500">
+                                {{ $collection->name }}
+                            </h2>
+                        </div>
+
+                        <div class="prose prose-sm font-mono text-black/60 max-w-xl group-hover:text-black transition-colors duration-500 line-clamp-3">
+                            {!! strip_tags($collection->description) !!}
+                        </div>
+
+                        <div class="flex items-center gap-8 pt-4">
+                            <div class="flex-1 h-1 bg-black/10 relative overflow-hidden">
+                                <div class="absolute inset-0 bg-red-700 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-1000"></div>
+                            </div>
+                            <span class="font-black text-xl group-hover:text-red-700 transition-colors">VOIR LA SÉRIE →</span>
                         </div>
                     </div>
                 </a>
-
-                <!-- View Collection Button -->
-                <div
-                    class="absolute bottom-0 right-0 bg-white text-black px-4 py-2 font-bold uppercase text-sm border-l-4 border-t-4 border-white transform translate-y-full transition-transform duration-300"
-                    :class="isHovered ? 'translate-y-0' : 'translate-y-full'"
-                >
-                    View Collection
-                </div>
-
-                <!-- Hover Effect -->
-                <div class="absolute inset-0 bg-red-700 mix-blend-multiply opacity-0 group-hover:opacity-30 transition-opacity duration-500 pointer-events-none"></div>
             </div>
         @endforeach
     </div>

@@ -10,185 +10,84 @@ state([
 ]);
 ?>
 
-<div
-    x-data="{
-        position: 0,
-        maxScroll: 0,
-        canScrollLeft: false,
-        canScrollRight: true,
-        isScrolling: false,
-        autoScrollInterval: null,
-        init() {
-            this.$nextTick(() => {
-                this.maxScroll = this.$refs.scrollContent.scrollWidth - this.$refs.container.offsetWidth;
-                this.updateScrollability();
-            });
-        },
-        updateScrollability() {
-            this.canScrollLeft = this.position > 0;
-            this.canScrollRight = this.position < this.maxScroll;
-        },
-        smoothScroll(target) {
-            if (this.isScrolling) return;
-            this.isScrolling = true;
+<section class="bg-black py-20 border-t-8 border-white overflow-hidden">
+    <style>
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    </style>
 
-            const start = this.position;
-            const distance = target - start;
-            const duration = 300;
-            let startTime = null;
-
-            const animation = currentTime => {
-                if (!startTime) startTime = currentTime;
-                const timeElapsed = currentTime - startTime;
-                const progress = Math.min(timeElapsed / duration, 1);
-
-                const easing = t => t<.5 ? 2*t*t : -1+(4-2*t)*t;
-
-                this.position = start + (distance * easing(progress));
-                this.$refs.scrollContent.style.transform = `translate3d(-${this.position}px, 0, 0)`;
-
-                if (progress < 1) {
-                    requestAnimationFrame(animation);
-                } else {
-                    this.position = target;
-                    this.updateScrollability();
-                    this.isScrolling = false;
-                }
-            };
-
-            requestAnimationFrame(animation);
-        },
-        startAutoScroll() {
-            if (this.autoScrollInterval) return;
-            this.autoScrollInterval = setInterval(() => {
-                const target = this.position >= this.maxScroll ? 0 : Math.min(this.maxScroll, this.position + 200);
-                this.smoothScroll(target);
-            }, 2000);
-        },
-        stopAutoScroll() {
-            if (this.autoScrollInterval) {
-                clearInterval(this.autoScrollInterval);
-                this.autoScrollInterval = null;
-            }
-        },
-        scrollLeft() {
-            this.stopAutoScroll();
-            const target = this.position === 0 ? this.maxScroll : Math.max(0, this.position - 400);
-            this.smoothScroll(target);
-        },
-        scrollRight() {
-            this.stopAutoScroll();
-            const target = this.position >= this.maxScroll ? 0 : Math.min(this.maxScroll, this.position + 400);
-            this.smoothScroll(target);
-        }
-    }"
-    class="relative w-full bg-black creators-section"
-    @mouseenter="startAutoScroll"
-    @mouseleave="stopAutoScroll"
->
-    <!-- Title -->
-    <div class="absolute top-0 left-0 z-10 w-full py-4 bg-black border-t-8 border-b-8 border-white">
-        <h2 class="font-mono text-6xl text-center text-white transform -skew-x-12">NOS COLLABORATEURS</h2>
+    <!-- Header -->
+    <div class="px-8 mb-12 flex flex-col md:flex-row justify-between items-end gap-6">
+        <div>
+            <h2 class="font-mono text-7xl md:text-8xl font-black text-white leading-none uppercase tracking-tighter">
+                CREATORS<span class="text-red-600">.</span>
+            </h2>
+            <p class="font-mono text-xl text-white mt-4 uppercase">Direct from our studio to your hands.</p>
+        </div>
+        <div class="hidden md:block w-32 h-2 bg-red-600"></div>
     </div>
 
-    <!-- Navigation Arrows -->
-    <div
-        class="absolute z-20 transition-opacity duration-300 -translate-y-1/2 left-8 top-1/2"
-        :class="{ 'opacity-0 pointer-events-none': !canScrollLeft }"
-    >
-        <button
-            @click="scrollLeft"
-            class="relative text-white transition-all duration-300 transform cursor-pointer text-8xl hover:scale-150 group"
-        >
-            <span class="absolute inset-0 transition-transform duration-300 transform scale-90 border-8 border-white group-hover:scale-100"></span>
-            <span class="absolute inset-0 border-4 border-white transform scale-[0.85] transition-transform duration-300 group-hover:scale-95"></span>
-            <span class="relative z-10 block px-4 py-2">←</span>
-        </button>
-    </div>
-    <div
-        class="absolute z-20 transition-opacity duration-300 -translate-y-1/2 right-8 top-1/2"
-        :class="{ 'opacity-0 pointer-events-none': !canScrollRight }"
-    >
-        <button
-            @click="scrollRight"
-            class="relative text-white transition-all duration-300 transform cursor-pointer text-8xl hover:scale-150 group"
-        >
-            <span class="absolute inset-0 transition-transform duration-300 transform scale-90 border-8 border-white group-hover:scale-100"></span>
-            <span class="absolute inset-0 border-4 border-white transform scale-[0.85] transition-transform duration-300 group-hover:scale-95"></span>
-            <span class="relative z-10 block px-4 py-2">→</span>
-        </button>
-    </div>
-
-    <!-- Creators Row -->
-    <div
-        x-ref="container"
-        class="relative w-full h-[220px] sm:h-[260px] md:h-[350px] lg:h-[450px] bg-black border-t-4 border-white overflow-hidden flex items-center justify-center"
-    >
-        @if($creators->isEmpty())
-            <div class="py-10 text-center text-white">No creators found</div>
-        @endif
-
-        <div
-            x-ref="scrollContent"
-            class="absolute inset-0 flex items-center gap-4 sm:gap-6 md:gap-8 px-2 sm:px-4 md:px-8 py-2 transition-transform duration-300 will-change-transform"
-            style="transform: translate3d(0, 0, 0)"
+    <!-- Horizontal Scroll Wrapper -->
+    <div class="relative w-full overflow-hidden" x-data="{ }">
+        <div 
+            x-ref="slider"
+            class="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide space-x-0 pb-10"
+            style="scrollbar-width: none; -ms-overflow-style: none; scroll-behavior: smooth;"
         >
             @foreach($creators as $creator)
-            <div class="relative flex-none group w-full max-w-[90vw] sm:w-48 md:w-60 lg:w-72 mt-4 md:mt-16">
-                <a href="/creators/{{ $creator->id }}" class="block">
-                    <div class="relative transition-colors duration-300 border-4 sm:border-8 border-white hover:border-red-700">
-                        <div class="relative w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 mx-auto overflow-hidden aspect-square">
-                            @if($creator->getFirstMediaUrl('creators/profile'))
+                <div class="flex-none w-full md:w-[45vw] lg:w-[30vw] snap-start border-r-4 border-white group relative">
+                    <a href="/creators/{{ $creator->id }}" class="block overflow-hidden relative aspect-[4/5] bg-neutral-900">
+                        <!-- Optimized Image with Srcset -->
+                        @if($creator->getFirstMediaUrl('creators/profile'))
                             <img
-                                srcset="{{ $creator->getFirstMediaUrl('creators/profile', 'small') }} 480w,
-                                        {{ $creator->getFirstMediaUrl('creators/profile', 'medium') }} 768w,
-                                        {{ $creator->getFirstMediaUrl('creators/profile', 'large') }} 1280w,
-                                        {{ $creator->getFirstMediaUrl('creators/profile', 'xl') }} 1920w,
-                                        {{ $creator->getFirstMediaUrl('creators/profile', 'hd') }} 2560w"
-                                sizes="(max-width: 480px) 80vw,
-                                       (max-width: 768px) 40vw,
-                                       (max-width: 1280px) 288px,
-                                       (max-width: 1920px) 288px,
-                                       288px"
                                 src="{{ $creator->getFirstMediaUrl('creators/profile', 'medium') }}"
+                                srcset="{{ $creator->getFirstMediaUrl('creators/profile', 'small') }} 400w, {{ $creator->getFirstMediaUrl('creators/profile', 'medium') }} 800w"
+                                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 45vw, 30vw"
                                 alt="{{ $creator->name }}"
-                                class="object-cover w-full h-full transition-all duration-500 grayscale group-hover:grayscale-0 group-hover:scale-110"
+                                class="w-full h-full object-cover transition-all duration-700 grayscale group-hover:grayscale-0 group-hover:scale-110"
                                 loading="lazy"
                             >
                             @if($creator->getFirstMediaUrl('creators/profile_hover'))
-                            <img
-                                srcset="{{ $creator->getFirstMediaUrl('creators/profile_hover', 'small') }} 480w,
-                                        {{ $creator->getFirstMediaUrl('creators/profile_hover', 'medium') }} 768w,
-                                        {{ $creator->getFirstMediaUrl('creators/profile_hover', 'large') }} 1280w,
-                                        {{ $creator->getFirstMediaUrl('creators/profile_hover', 'xl') }} 1920w,
-                                        {{ $creator->getFirstMediaUrl('creators/profile_hover', 'hd') }} 2560w"
-                                sizes="(max-width: 480px) 80vw,
-                                       (max-width: 768px) 40vw,
-                                       (max-width: 1280px) 288px,
-                                       (max-width: 1920px) 288px,
-                                       288px"
-                                src="{{ $creator->getFirstMediaUrl('creators/profile_hover', 'medium') }}"
-                                alt="{{ $creator->name }}"
-                                class="absolute top-0 left-0 object-cover w-full h-full transition-opacity duration-500 opacity-0 grayscale-0 group-hover:opacity-100"
-                                loading="lazy"
-                            >
+                                <img
+                                    src="{{ $creator->getFirstMediaUrl('creators/profile_hover', 'medium') }}"
+                                    srcset="{{ $creator->getFirstMediaUrl('creators/profile_hover', 'small') }} 400w, {{ $creator->getFirstMediaUrl('creators/profile_hover', 'medium') }} 800w"
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 45vw, 30vw"
+                                    alt="{{ $creator->name }}"
+                                    class="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 opacity-0 group-hover:opacity-100"
+                                    loading="lazy"
+                                >
                             @endif
-                            @else
-                            <div class="flex items-center justify-center w-full h-full text-white bg-gray-800">
-                                No image available for {{ $creator->name }}
-                            </div>
-                            @endif
-                            <div class="absolute inset-0 transition-opacity duration-300 border-4 border-black opacity-0 group-hover:opacity-100"></div>
-                        </div>
+                        @else
+                            <div class="w-full h-full flex items-center justify-center font-mono text-white text-4xl">★</div>
+                        @endif
 
-                        <div class="p-2 sm:p-4 bg-white border-4 sm:border-8 border-black opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
-                            <h3 class="font-mono text-base sm:text-lg md:text-xl font-bold text-black">{{ strtoupper($creator->name) }}</h3>
-                            <p class="font-mono text-xs sm:text-sm md:text-base text-black">{{ strtoupper($creator->job_title) ?? 'ARTISTE' }}</p>
+                        <!-- Content Overlay -->
+                        <div class="absolute inset-x-0 bottom-0 p-8 bg-gradient-to-t from-black via-black/80 to-transparent translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                            <span class="font-mono text-sm text-red-600 font-bold uppercase tracking-widest">{{ $creator->job_title ?? 'Artist' }}</span>
+                            <h3 class="font-mono text-4xl font-black text-white uppercase mt-2 group-hover:text-red-600 transition-colors">{{ $creator->name }}</h3>
                         </div>
+                    </a>
+                    
+                    <!-- Hover Detail (Desktop) -->
+                    <div class="absolute top-8 left-8 p-4 bg-white border-4 border-black font-mono text-black opacity-0 group-hover:opacity-100 transition-all -rotate-12 group-hover:rotate-0 translate-x-10 group-hover:translate-x-0 pointer-events-none z-20 shadow-[8px_8px_0px_0px_rgba(220,38,38,1)]">
+                        <span class="font-black uppercase">View Profile_</span>
                     </div>
-                </a>
-            </div>
+                </div>
             @endforeach
         </div>
+
+        <!-- Custom Navigation -->
+        <div class="flex border-t-4 border-white bg-black">
+            <div class="flex-1 p-8 font-mono text-white text-sm uppercase tracking-widest opacity-50 text-center md:text-left">
+                SCROLL TO DISCOVER / ARCHAEOLOGY OF CRAFT
+            </div>
+            <div class="flex border-l-4 border-white">
+                <button @click="$refs.slider.scrollBy({left: -400, behavior: 'smooth'})" class="p-8 border-r-4 border-white hover:bg-red-600 transition-colors group">
+                    <span class="font-mono text-4xl text-white font-black group-hover:scale-125 inline-block transition-transform">←</span>
+                </button>
+                <button @click="$refs.slider.scrollBy({left: 400, behavior: 'smooth'})" class="p-8 hover:bg-red-600 transition-colors group">
+                    <span class="font-mono text-4xl text-white font-black group-hover:scale-125 inline-block transition-transform">→</span>
+                </button>
+            </div>
+        </div>
     </div>
-</div>
+</section>

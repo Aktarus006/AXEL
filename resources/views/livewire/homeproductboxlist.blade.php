@@ -3,85 +3,54 @@
 use function Livewire\Volt\{state, mount, computed, on};
 use App\Models\Jewel;
 
-state(['jewels' => [], 'selectedJewel' => null]);
+state(['jewels' => []]);
 
 mount(function () {
     $this->jewels = Jewel::with('media')
         ->whereHas('media', function($query) {
             $query->where('collection_name', 'jewels/packshots');
         })
+        // Removed the price filter to show all products
         ->inRandomOrder()
-        ->take(8)
-        ->get()
-        ->map(function($jewel) {
-            return [
-                'id' => $jewel->id,
-                'name' => $jewel->name,
-                'price' => $jewel->price,
-                'media' => [
-                    ['original_url' => $jewel->getFirstMediaUrl('jewels/images', 'thumb')]
-                ]
-            ];
-        });
+        ->take(6)
+        ->get();
 });
-
-on(['jewel-hovered' => function ($jewel) {
-    $this->selectedJewel = $jewel;
-}]);
-
-on(['jewel-unhovered' => function () {
-    $this->selectedJewel = null;
-}]);
 
 ?>
 
-<div class="flex w-full bg-black h-1/2">
-    <!-- Left Jewels -->
-    <div class="flex flex-wrap w-1/3 border-r-4 border-white">
-        @foreach ($jewels->take(4) as $index => $jewel)
-            <div class="relative w-1/2 h-1/2">
-                <div class="absolute inset-0 border-b-4 border-r-4 border-white {{ $index >= 2 ? 'border-b-0' : '' }}">
-                    <livewire:homeproductbox :wire:key="'box-'.$jewel['id']" :jewelId="$jewel['id']" />
-                </div>
-            </div>
-        @endforeach
-    </div>
-
-    <!-- Center Display -->
-    <div class="w-1/3 border-b-4 border-r-4 border-white">
-        <div class="relative flex items-center justify-center w-full h-full">
-            <!-- Default State -->
-            <div class="absolute inset-0 flex items-center justify-center transition-opacity duration-300 {{ $selectedJewel ? 'opacity-0 pointer-events-none' : 'opacity-100' }}">
-                <div class="font-mono text-4xl tracking-widest text-white">NOS PRODUITS</div>
-            </div>
-
-            <!-- Selected Jewel State -->
-            <div class="absolute inset-0 transition-opacity duration-300 {{ $selectedJewel ? 'opacity-100' : 'opacity-0 pointer-events-none' }}">
-                @if($selectedJewel)
-                    <img
-                        src="{{ $selectedJewel['media'][0]['original_url'] }}"
-                        alt="{{ $selectedJewel['name'] }}"
-                        class="object-cover w-full h-full"
-                    >
-                    <div class="absolute inset-0 flex items-end justify-start p-8 transition-opacity duration-300 bg-black bg-opacity-0 hover:bg-opacity-80">
-                        <div class="font-mono text-white transition-opacity duration-300 opacity-0 hover:opacity-100">
-                            <h3 class="mb-2 text-2xl uppercase">{{ $selectedJewel['name'] }}</h3>
-                            <p class="text-xl">€{{ number_format($selectedJewel['price'], 2) }}</p>
-                        </div>
-                    </div>
-                @endif
-            </div>
+<div class="w-full bg-white border-b-8 border-black">
+    <!-- Header Section -->
+    <div class="max-w-[1440px] mx-auto px-8 py-20 flex flex-col md:flex-row justify-between items-end gap-12 text-black">
+        <div class="max-w-2xl">
+            <h2 class="font-mono text-7xl md:text-[7vw] leading-[0.85] font-black tracking-tighter uppercase">
+                SÉLECTION<br/><span class="text-red-700">D'OBJETS</span>
+            </h2>
+            <p class="font-mono text-xl mt-8 uppercase font-bold tracking-tight">
+                Une exploration du geste et de la matière. Des pièces uniques forgées à l'établi pour l'individu contemporain.
+            </p>
+        </div>
+        <div class="flex flex-col items-end text-right">
+            <div class="font-mono font-black text-2xl border-4 border-black px-4 py-2 mb-4">NOUVEAU_DROP</div>
+            <p class="font-mono text-sm uppercase tracking-widest opacity-60 max-w-[200px]">Fait main à l'Atelier / Pièces Limitées</p>
         </div>
     </div>
 
-    <!-- Right Jewels -->
-    <div class="flex flex-wrap w-1/3">
-        @foreach ($jewels->skip(4) as $index => $jewel)
-            <div class="relative w-1/2 h-1/2">
-                <div class="absolute inset-0 border-b-4 border-r-4 border-white {{ $index >= 2 ? 'border-b-0' : '' }}">
-                    <livewire:homeproductbox :wire:key="'box-'.$jewel['id']" :jewelId="$jewel['id']" />
-                </div>
+    <!-- The Product Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 border-t-8 border-black">
+        @foreach($jewels as $index => $jewel)
+            <div class="relative aspect-square border-b-8 border-black md:even:border-l-8 lg:even:border-l-0 lg:[&:nth-child(3n-1)]:border-l-8 lg:[&:nth-child(3n)]:border-l-8 overflow-hidden group">
+                <livewire:homeproductbox :wire:key="'box-'.$jewel->id" :jewelId="$jewel->id" />
             </div>
         @endforeach
+    </div>
+    
+    <!-- View All Button Section -->
+    <div class="p-8 md:p-20 bg-black flex justify-center items-center overflow-hidden relative">
+        <div class="absolute inset-0 opacity-20 pointer-events-none font-mono text-[20vw] font-black text-white whitespace-nowrap animate-marquee">
+            COLLECTION_COLLECTION_COLLECTION
+        </div>
+        <a href="/jewels" class="relative z-10 px-16 py-8 bg-white text-black font-mono text-4xl font-black uppercase hover:bg-red-700 hover:text-white transition-all transform hover:scale-110 active:scale-95 border-8 border-black shadow-[10px_10px_0px_0px_rgba(255,255,255,0.3)]">
+            VOIR TOUTE LA COLLECTION
+        </a>
     </div>
 </div>
