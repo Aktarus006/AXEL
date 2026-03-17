@@ -24,7 +24,7 @@ class News extends Model implements HasMedia
 
     protected $casts = [
         "id" => "integer",
-        "online" => "boolean",
+        "online" => Status::class,
         "creation_date" => "date",
     ];
 
@@ -78,7 +78,7 @@ class News extends Model implements HasMedia
             ->quality(90)
             ->sharpen(10)
             ->optimize()
-            ->performOnCollections("news/images");
+            ->performOnCollections("news");
 
         // Small size for cards
         $this->addMediaConversion("small")
@@ -88,7 +88,7 @@ class News extends Model implements HasMedia
             ->quality(90)
             ->sharpen(10)
             ->optimize()
-            ->performOnCollections("news/images");
+            ->performOnCollections("news");
 
         // Medium size for article preview
         $this->addMediaConversion("medium")
@@ -98,7 +98,7 @@ class News extends Model implements HasMedia
             ->quality(85)
             ->sharpen(10)
             ->optimize()
-            ->performOnCollections("news/images");
+            ->performOnCollections("news");
 
         // Large size for article header
         $this->addMediaConversion("large")
@@ -108,7 +108,7 @@ class News extends Model implements HasMedia
             ->quality(80)
             ->sharpen(10)
             ->optimize()
-            ->performOnCollections("news/images");
+            ->performOnCollections("news");
 
         // Full width banner
         $this->addMediaConversion("banner")
@@ -118,6 +118,6 @@ class News extends Model implements HasMedia
             ->quality(80)
             ->sharpen(10)
             ->optimize()
-            ->performOnCollections("news/banners");
+            ->performOnCollections("news");
     }
 }

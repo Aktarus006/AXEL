@@ -1,7 +1,8 @@
 <?php
 use App\Models\News;
+use App\Enums\Status;
 
-$news = News::where('online', true)->latest()->get();
+$news = News::where('online', Status::ONLINE)->latest()->get();
 view()->share('news', $news);
 ?>
 
@@ -18,7 +19,7 @@ view()->share('news', $news);
             </div>
 
             <div class="relative z-10 px-8 py-32 md:py-48 max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-end gap-12">
-                <h1 class="text-[12vw] md:text-[10vw] font-black uppercase leading-[0.8] tracking-tighter transform -skew-x-12">
+                <h1 class="text-6xl md:text-[10vw] font-black uppercase leading-[0.8] tracking-tighter transform -skew-x-12">
                     LE<br/><span class="text-red-700">JOURNAL</span>
                 </h1>
                 <div class="text-right max-w-md">
@@ -38,17 +39,17 @@ view()->share('news', $news);
         <div class="max-w-[1440px] mx-auto border-x-8 border-black">
             @forelse ($news as $index => $article)
                 <div class="group border-b-8 border-black last:border-b-0 hover:bg-neutral-50 transition-colors duration-500">
-                    <a href="/news/{{ $article->id }}" class="flex flex-col md:flex-row items-stretch">
-                        <!-- Date & Index (Sticky on MD+) -->
-                        <div class="w-full md:w-32 border-b-4 md:border-b-0 md:border-r-8 border-black flex flex-col items-center justify-center bg-white text-black p-4 group-hover:bg-red-700 group-hover:text-white transition-colors">
-                            <span class="text-xs font-black opacity-40 group-hover:opacity-100">ITEM_{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</span>
+                    <a href="/news/{{ $article->id }}" class="grid grid-cols-1 md:grid-cols-12 items-stretch">
+                        <!-- Date & Index (1 Col) -->
+                        <div class="md:col-span-1 border-b-4 md:border-b-0 md:border-r-8 border-black flex flex-col items-center justify-center bg-white text-black p-4 group-hover:bg-red-700 group-hover:text-white transition-colors py-8 md:py-0">
+                            <span class="text-xs font-black opacity-40 group-hover:opacity-100 uppercase">Item_{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</span>
                             <div class="text-2xl font-black rotate-0 md:-rotate-90 whitespace-nowrap mt-4">
                                 {{ $article->created_at->format('d.m.Y') }}
                             </div>
                         </div>
 
-                        <!-- Content Section -->
-                        <div class="flex-1 p-8 md:p-16 flex flex-col justify-center space-y-6">
+                        <!-- Content Section (7 Cols) -->
+                        <div class="md:col-span-7 p-8 md:p-16 flex flex-col justify-center space-y-6">
                             <div class="space-y-2">
                                 <span class="text-xs font-black uppercase tracking-[0.3em] text-red-700">Actualités_Atelier</span>
                                 <h2 class="text-4xl md:text-6xl font-black uppercase leading-none tracking-tighter group-hover:translate-x-4 transition-transform duration-500">
@@ -65,8 +66,8 @@ view()->share('news', $news);
                             </div>
                         </div>
 
-                        <!-- Featured Image (Right Side) -->
-                        <div class="w-full md:w-1/3 lg:w-2/5 border-t-4 md:border-t-0 md:border-l-8 border-black overflow-hidden relative bg-neutral-200 aspect-video md:aspect-auto">
+                        <!-- Featured Image (4 Cols) -->
+                        <div class="md:col-span-4 border-t-4 md:border-t-0 md:border-l-8 border-black overflow-hidden relative bg-neutral-200 aspect-video md:aspect-auto">
                             @if($article->hasMedia('news/images'))
                                 <img
                                     src="{{ $article->getFirstMediaUrl('news/images', 'large') }}"

@@ -1,9 +1,10 @@
 <?php
 use App\Models\Jewel;
+use App\Enums\Status;
 use Illuminate\Support\Str;
 
 $id = request()->segment(count(request()->segments()));
-$jewel = Jewel::with(['media', 'collections'])->find($id);
+$jewel = Jewel::with(['media', 'collections'])->where('online', Status::ONLINE)->find($id);
 
 // Ensure variables are available
 view()->share('jewel', $jewel);
@@ -15,6 +16,7 @@ if ($jewel) {
         $relatedJewels = $relatedJewels->merge(
             $collection->jewels()
                 ->where('jewels.id', '!=', $jewel->id)
+                ->where('jewels.online', Status::ONLINE)
                 ->with('media')
                 ->get()
         );
@@ -39,33 +41,153 @@ view()->share('relatedJewels', $relatedJewels);
             <!-- Immersive Layout -->
             <div class="flex flex-col lg:flex-row min-h-screen">
                 
-                <!-- Left: Giant Image Gallery (Scrollable) -->
+                <!-- Left: Advanced Gallery Layout -->
                 <div class="w-full lg:w-3/5 bg-neutral-100 border-r-4 border-black">
                     @php
                         $packshots = $jewel->getMedia('jewels/packshots');
                         $lifestyles = $jewel->getMedia('jewels/lifestyle');
-                        $allImages = $packshots->merge($lifestyles);
+                        $firstLifestyle = $lifestyles->first();
+                        $remainingLifestyles = $lifestyles->slice(1);
                     @endphp
                     
-                    <div class="flex flex-col space-y-4 p-4 lg:p-8">
-                        @foreach($allImages as $index => $media)
-                            @php
-                                $startsInColor = ($index === 0) || (rand(1, 10) > 7);
-                            @endphp
-                            <div class="relative group overflow-hidden border-4 border-black bg-white shadow-[10px_10px_0px_0px_rgba(185,28,28,1)] mb-8">
-                                <img src="{{ $media->getUrl('large') }}" 
-                                     alt="{{ $jewel->name }}" 
-                                     @class([
-                                         "w-full h-auto object-cover transition-all duration-700 group-hover:grayscale-0 hover:scale-105",
-                                         "grayscale" => !$startsInColor,
-                                         "grayscale-0" => $startsInColor
-                                     ])
-                                     loading="{{ $index === 0 ? 'eager' : 'lazy' }}">
-                                <div class="absolute bottom-4 right-4 bg-black text-white px-3 py-1 text-xs font-black">
-                                    IMAGE_{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
+                    <div class="flex flex-col p-4 lg:p-8 space-y-16">
+                        <!-- 1. The Hero Atmosphere -->
+                        @if($firstLifestyle)
+                            <div class="relative group overflow-hidden border-4 border-black bg-white shadow-[15px_15px_0px_0px_rgba(185,28,28,1)]">
+                                <div class="absolute top-6 left-6 z-10 bg-black text-white px-4 py-2 font-mono text-xs font-black uppercase tracking-widest border border-white">
+                                    ATMOSPHÈRE_01
                                 </div>
+                                <img src="{{ $firstLifestyle->getUrl('large') }}" 
+                                     alt="Mise en situation de {{ $jewel->name }}" 
+                                     class="w-full h-auto object-cover transition-all duration-1000 hover:scale-105"
+                                     loading="eager">
                             </div>
-                        @endforeach
+                        @endif
+
+                        <!-- 2. Technical Details (Grid or Slider) -->
+                        @if($packshots->isNotEmpty())
+                            <div class="space-y-6">
+                                <div class="flex items-center justify-between gap-4">
+                                    <h2 class="font-mono font-black text-sm uppercase tracking-[0.3em] bg-black text-white px-4 py-1">DÉTAILS_TECHNIQUES</h2>
+                                    @if($packshots->count() > 2)
+                                        <span class="text-[10px] font-black uppercase opacity-30 tracking-widest hidden md:block">Scroll_Horizontal_</span>
+                                    @endif
+                                </div>
+
+                                @if($packshots->count() <= 2)
+                                    <!-- Simple Grid for 1 or 2 images -->
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        @foreach($packshots as $index => $media)
+                                            <div class="relative group overflow-hidden border-4 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                                                <img src="{{ $media->getUrl('medium') }}" class="w-full h-full object-cover transition-all duration-700 grayscale group-hover:grayscale-0" loading="lazy">
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <!-- Slider with Visible Brutalist Scrollbar & Smooth Drag to Scroll -->
+                                    <div class="relative group" 
+                                         x-data="{ 
+                                            isDown: false, 
+                                            startX: 0, 
+                                            scrollLeft: 0,
+                                            mouseDown(e) {
+                                                this.isDown = true;
+                                                $refs.slider.style.scrollSnapType = 'none';
+                                                this.startX = e.pageX - $refs.slider.offsetLeft;
+                                                this.scrollLeft = $refs.slider.scrollLeft;
+                                            },
+                                            mouseLeave() {
+                                                this.isDown = false;
+                                                $refs.slider.style.scrollSnapType = 'x mandatory';
+                                            },
+                                            mouseUp() {
+                                                this.isDown = false;
+                                                $refs.slider.style.scrollSnapType = 'x mandatory';
+                                            },
+                                            mouseMove(e) {
+                                                if(!this.isDown) return;
+                                                e.preventDefault();
+                                                const x = e.pageX - $refs.slider.offsetLeft;
+                                                const walk = (x - this.startX) * 1.5; // Ajustement sensibilité
+                                                $refs.slider.scrollLeft = this.scrollLeft - walk;
+                                            }
+                                         }">
+                                        <style>
+                                            .brutalist-scroll::-webkit-scrollbar {
+                                                height: 14px;
+                                            }
+                                            .brutalist-scroll::-webkit-scrollbar-track {
+                                                background: #f3f4f6;
+                                                border: 3px solid black;
+                                            }
+                                            .brutalist-scroll::-webkit-scrollbar-thumb {
+                                                background: black;
+                                                border: 1px solid white;
+                                            }
+                                            .brutalist-scroll::-webkit-scrollbar-thumb:hover {
+                                                background: #b91c1c;
+                                            }
+                                            /* Supprimer les effets de sélection bleus */
+                                            .no-select {
+                                                -webkit-user-select: none;
+                                                -khtml-user-select: none;
+                                                -moz-user-select: none;
+                                                -ms-user-select: none;
+                                                user-select: none;
+                                                -webkit-user-drag: none;
+                                            }
+                                        </style>
+                                        <div 
+                                            x-ref="slider"
+                                            @mousedown="mouseDown"
+                                            @mouseleave="mouseLeave"
+                                            @mouseup="mouseUp"
+                                            @mousemove="mouseMove"
+                                            class="flex overflow-x-auto snap-x snap-mandatory brutalist-scroll gap-6 pb-12 cursor-grab active:cursor-grabbing no-select" 
+                                            style="scrollbar-width: auto; scroll-behavior: auto;">
+                                            @foreach($packshots as $index => $media)
+                                                <div class="flex-none w-4/5 md:w-1/2 snap-start relative group overflow-hidden border-4 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] no-select">
+                                                    <img src="{{ $media->getUrl('medium') }}" 
+                                                         draggable="false"
+                                                         class="w-full aspect-square object-cover transition-all duration-700 grayscale group-hover:grayscale-0 pointer-events-none no-select" 
+                                                         loading="lazy">
+                                                    <div class="absolute bottom-4 right-4 bg-black text-white px-2 py-0.5 text-[10px] font-black">
+                                                        DET_{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
+
+                        <!-- 3. Dynamic Lifestyle Gallery -->
+                        @if($remainingLifestyles->isNotEmpty())
+                            <div class="space-y-12">
+                                @foreach($remainingLifestyles->chunk(3) as $chunk)
+                                    @foreach($chunk as $index => $life)
+                                        @if($loop->first)
+                                            <!-- Full width for the first of the chunk -->
+                                            <div class="relative group overflow-hidden border-4 border-black bg-white shadow-[15px_15px_0px_0px_rgba(185,28,28,1)]">
+                                                <img src="{{ $life->getUrl('large') }}" class="w-full h-auto object-cover transition-all duration-1000 hover:scale-105">
+                                            </div>
+                                        @else
+                                            <!-- Two columns for the others -->
+                                            @if($loop->iteration == 2)
+                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                            @endif
+                                                <div class="relative group overflow-hidden border-4 border-black bg-white shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
+                                                    <img src="{{ $life->getUrl('medium') }}" class="w-full aspect-[4/5] object-cover transition-all duration-1000 hover:scale-105">
+                                                </div>
+                                            @if($loop->last || $loop->iteration == 3)
+                                                </div>
+                                            @endif
+                                        @endif
+                                    @endforeach
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
                 </div>
 
@@ -75,12 +197,12 @@ view()->share('relatedJewels', $relatedJewels);
                         <!-- Navigation -->
                         <div class="flex justify-between items-center border-b-4 border-black pb-4">
                             <a href="/jewels" class="font-black hover:text-red-700 transition-colors">← COLLECTION</a>
-                            <div class="text-[10px] opacity-40">REF: {{ strtoupper(Str::slug($jewel->name)) }}_{{ $jewel->id }}</div>
+                            <div class="text-[10px] text-black/60 font-black uppercase">REF: {{ strtoupper(Str::slug($jewel->name)) }}_{{ $jewel->id }}</div>
                         </div>
 
                         <!-- Header -->
                         <div class="space-y-4">
-                            <h1 class="text-5xl lg:text-7xl font-black uppercase leading-none tracking-tighter">{{ $jewel->name }}</h1>
+                            <h1 class="text-4xl lg:text-7xl font-black uppercase leading-none tracking-tighter">{{ $jewel->name }}</h1>
                             @if($jewel->price > 0)
                             <div class="flex items-center gap-4">
                                 <span class="bg-red-700 text-white px-4 py-2 text-2xl font-black italic">€{{ number_format($jewel->price, 0) }}</span>
@@ -96,7 +218,7 @@ view()->share('relatedJewels', $relatedJewels);
                         <!-- Technical Specs -->
                         <div class="grid grid-cols-2 gap-8 py-8 border-y-2 border-black/10">
                             <div>
-                                <h3 class="text-xs font-black opacity-30 mb-2">MATÉRIAUX</h3>
+                                <h3 class="text-xs font-black text-black/50 mb-2">MATÉRIAUX</h3>
                                 <div class="space-y-1">
                                     @foreach(json_decode($jewel->material ?? '[]') as $material)
                                         <div class="font-bold uppercase">{{ $material }}</div>
@@ -104,7 +226,7 @@ view()->share('relatedJewels', $relatedJewels);
                                 </div>
                             </div>
                             <div>
-                                <h3 class="text-xs font-black opacity-30 mb-2">TYPE</h3>
+                                <h3 class="text-xs font-black text-black/50 mb-2">TYPE</h3>
                                 <div class="space-y-1">
                                     @foreach(json_decode($jewel->type ?? '[]') as $type)
                                         <div class="font-bold uppercase">{{ $type }}</div>
@@ -121,11 +243,11 @@ view()->share('relatedJewels', $relatedJewels);
                         <!-- Actions -->
                         <div class="pt-8">
                             @if($jewel->price > 0)
-                                <a href="#inquiry" class="block w-full py-6 bg-black text-white text-center font-black text-xl hover:bg-red-700 transition-all transform hover:-translate-y-2 shadow-[8px_8px_0px_0px_rgba(185,28,28,1)] uppercase">
+                                <a href="#inquiry" class="block w-full py-6 bg-black text-white text-center font-black text-xl hover:bg-red-700 focus:bg-red-700 focus:outline-none transition-all transform hover:-translate-y-2 shadow-[8px_8px_0px_0px_rgba(185,28,28,1)] uppercase">
                                     Demander l'acquisition
                                 </a>
                             @else
-                                <a href="#custom" class="block w-full py-6 bg-white text-black border-4 border-black text-center font-black text-xl hover:bg-red-700 hover:text-white transition-all transform hover:-translate-y-2 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] uppercase tracking-tighter">
+                                <a href="#custom" class="block w-full py-6 bg-white text-black border-4 border-black text-center font-black text-xl hover:bg-red-700 hover:text-white focus:bg-black focus:text-white focus:outline-none transition-all transform hover:-translate-y-2 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] uppercase tracking-tighter">
                                     Une création unique sur-mesure ?
                                 </a>
                             @endif
@@ -177,8 +299,16 @@ view()->share('relatedJewels', $relatedJewels);
                         </h2>
                         <div class="hidden md:block flex-1 h-2 bg-black mb-4 mx-8"></div>
                         <div class="flex gap-4 mb-2">
-                            <button @click="$refs.relatedSlider.scrollBy({left: -400, behavior: 'smooth'})" class="w-12 h-12 border-4 border-black flex items-center justify-center hover:bg-red-700 transition-colors">←</button>
-                            <button @click="$refs.relatedSlider.scrollBy({left: 400, behavior: 'smooth'})" class="w-12 h-12 border-4 border-black flex items-center justify-center hover:bg-red-700 transition-colors">→</button>
+                            <button @click="$refs.relatedSlider.scrollBy({left: -400, behavior: 'smooth'})" 
+                                    class="w-12 h-12 border-4 border-black flex items-center justify-center hover:bg-red-700 transition-colors group"
+                                    aria-label="Objet précédent">
+                                <span class="font-mono text-2xl font-black group-hover:text-white" aria-hidden="true">←</span>
+                            </button>
+                            <button @click="$refs.relatedSlider.scrollBy({left: 400, behavior: 'smooth'})" 
+                                    class="w-12 h-12 border-4 border-black flex items-center justify-center hover:bg-red-700 transition-colors group"
+                                    aria-label="Objet suivant">
+                                <span class="font-mono text-2xl font-black group-hover:text-white" aria-hidden="true">→</span>
+                            </button>
                         </div>
                     </div>
                     

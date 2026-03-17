@@ -4,6 +4,8 @@ use App\Enums\Type;
 use App\Enums\Material;
 use function Livewire\Volt\{state, mount, computed};
 
+use App\Enums\Status;
+
 state([
     "jewels" => [],
     "selectedMaterials" => [],
@@ -25,6 +27,7 @@ mount(function () {
 
 $filterJewels = function () {
     $query = Jewel::with(['media', 'collections'])
+        ->where('online', Status::ONLINE)
         ->whereHas('media'); // Show all with pictures
 
     if (count($this->selectedMaterials) > 0) {
@@ -97,54 +100,109 @@ $removeType = function($type) {
 
 <div class="bg-white min-h-screen">
     <!-- Filter Bar -->
-    <div class="sticky top-20 md:top-24 z-40 bg-white border-b-4 border-black px-4 md:px-8 py-4">
-        <div class="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
-            <div class="relative flex-1 max-w-md">
+    <div class="sticky top-20 md:top-24 z-40 bg-white border-b-4 border-black px-4 md:px-8 py-6">
+        <div class="max-w-[1440px] mx-auto flex flex-col xl:flex-row justify-between items-stretch xl:items-center gap-6">
+            <div class="relative flex-1">
                 <input
                     wire:model.live.debounce.300ms="name"
                     wire:input="filterJewels"
-                    class="w-full h-12 px-4 font-mono text-sm border-4 border-black focus:bg-red-700 focus:text-white transition-colors outline-none placeholder-black/30"
+                    class="w-full h-14 px-6 font-mono text-base border-4 border-black focus:bg-black focus:text-white transition-colors outline-none placeholder-black/50"
                     placeholder="RECHERCHER DANS L'ATELIER..."
+                    aria-label="Rechercher par nom d'objet"
                 />
             </div>
 
-            <div class="flex flex-wrap gap-2 items-center">
-                <button wire:click="$toggle('showMaterialDropdown')" class="px-4 py-2 border-2 border-black font-mono text-xs font-bold hover:bg-black hover:text-white transition-colors">
-                    MATÉRIAUX {{ count($selectedMaterials) ? '('.count($selectedMaterials).')' : '' }}
+            <div class="flex flex-wrap gap-3 items-center" role="group" aria-label="Filtres de la collection">
+                <button 
+                    wire:click="$toggle('showMaterialDropdown')" 
+                    type="button"
+                    class="h-14 px-6 border-4 border-black font-mono text-sm font-black uppercase hover:bg-black hover:text-white focus:bg-black focus:text-white focus:outline-none transition-all flex items-center gap-2"
+                    :class="$wire.showMaterialDropdown ? 'bg-black text-white' : 'bg-white text-black'"
+                    aria-haspopup="listbox"
+                    aria-expanded="{{ $showMaterialDropdown ? 'true' : 'false' }}">
+                    MATÉRIAUX 
+                    @if(count($selectedMaterials))
+                        <span class="bg-red-700 text-white px-2 py-0.5 text-xs" aria-label="{{ count($selectedMaterials) }} sélectionnés">{{ count($selectedMaterials) }}</span>
+                    @endif
+                    <span class="text-xs transition-transform {{ $showMaterialDropdown ? 'rotate-180' : '' }}" aria-hidden="true">▼</span>
                 </button>
-                <button wire:click="$toggle('showTypeDropdown')" class="px-4 py-2 border-2 border-black font-mono text-xs font-bold hover:bg-black hover:text-white transition-colors">
-                    TYPES {{ count($selectedTypes) ? '('.count($selectedTypes).')' : '' }}
+                <button 
+                    wire:click="$toggle('showTypeDropdown')" 
+                    type="button"
+                    class="h-14 px-6 border-4 border-black font-mono text-sm font-black uppercase hover:bg-black hover:text-white focus:bg-black focus:text-white focus:outline-none transition-all flex items-center gap-2"
+                    :class="$wire.showTypeDropdown ? 'bg-black text-white' : 'bg-white text-black'"
+                    aria-haspopup="listbox"
+                    aria-expanded="{{ $showTypeDropdown ? 'true' : 'false' }}">
+                    TYPES 
+                    @if(count($selectedTypes))
+                        <span class="bg-red-700 text-white px-2 py-0.5 text-xs" aria-label="{{ count($selectedTypes) }} sélectionnés">{{ count($selectedTypes) }}</span>
+                    @endif
+                    <span class="text-xs transition-transform {{ $showTypeDropdown ? 'rotate-180' : '' }}" aria-hidden="true">▼</span>
                 </button>
-                <button wire:click="togglePriceFilter" class="px-4 py-2 border-2 border-black font-mono text-xs font-bold hover:bg-red-700 hover:text-white transition-colors {{ $hideNoPrice ? 'bg-red-700 text-white' : '' }}">
+                <button 
+                    wire:click="togglePriceFilter" 
+                    type="button"
+                    class="h-14 px-6 border-4 border-black font-mono text-sm font-black uppercase hover:bg-red-700 hover:text-white focus:bg-red-700 focus:text-white focus:outline-none transition-all {{ $hideNoPrice ? 'bg-red-700 text-white border-red-700' : 'bg-white text-black' }}"
+                    aria-pressed="{{ $hideNoPrice ? 'true' : 'false' }}">
                     EN VENTE UNIQUEMENT
                 </button>
                 @if(count($selectedMaterials) || count($selectedTypes) || $name || $hideNoPrice)
-                    <button wire:click="clearFilters" class="px-4 py-2 bg-red-600 text-white border-2 border-black font-mono text-xs font-bold hover:bg-black transition-colors">
-                        RÉINITIALISER
+                    <button 
+                        wire:click="clearFilters" 
+                        type="button"
+                        class="h-14 px-6 bg-black text-white border-4 border-black font-mono text-sm font-black uppercase hover:bg-red-700 focus:bg-red-700 focus:outline-none transition-all"
+                        aria-label="Réinitialiser tous les filtres">
+                        RESET_ALL
                     </button>
                 @endif
             </div>
         </div>
 
-        <!-- Dropdowns -->
+        <!-- Dropdowns with better contrast and accessibility -->
         <div class="max-w-[1440px] mx-auto relative">
             @if($showMaterialDropdown)
-                <div class="absolute top-2 left-0 z-50 bg-white border-4 border-black p-4 w-full md:w-64 shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
-                    <div class="grid grid-cols-1 gap-2">
+                <div 
+                    wire:click.outside="$set('showMaterialDropdown', false)"
+                    class="absolute top-4 left-0 z-50 bg-white border-4 border-black p-6 w-full md:w-80 shadow-[15px_15px_0px_0px_rgba(0,0,0,1)]" 
+                    role="listbox" 
+                    aria-multiselectable="true"
+                >
+                    <div class="grid grid-cols-1 gap-3">
                         @foreach($materials as $material)
-                            <button wire:click="addMaterial('{{ $material->value }}')" class="text-left font-mono text-sm hover:text-red-700 {{ in_array($material->value, $selectedMaterials) ? 'font-black underline' : '' }}">
-                                {{ $material->value }}
+                            <button 
+                                wire:click="addMaterial('{{ $material->value }}')" 
+                                type="button"
+                                role="option"
+                                aria-selected="{{ in_array($material->value, $selectedMaterials) ? 'true' : 'false' }}"
+                                class="text-left font-mono text-base py-3 px-4 border-2 border-transparent hover:border-black hover:bg-neutral-100 transition-all flex justify-between items-center {{ in_array($material->value, $selectedMaterials) ? 'bg-neutral-100 font-black' : '' }}">
+                                <span>{{ $material->value }}</span>
+                                @if(in_array($material->value, $selectedMaterials))
+                                    <span class="text-red-700" aria-hidden="true">✓</span>
+                                @endif
                             </button>
                         @endforeach
                     </div>
                 </div>
             @endif
             @if($showTypeDropdown)
-                <div class="absolute top-2 left-0 md:left-40 z-50 bg-white border-4 border-black p-4 w-full md:w-64 shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
-                    <div class="grid grid-cols-1 gap-2">
+                <div 
+                    wire:click.outside="$set('showTypeDropdown', false)"
+                    class="absolute top-4 left-0 xl:left-auto xl:right-0 z-50 bg-white border-4 border-black p-6 w-full md:w-80 shadow-[15px_15px_0px_0px_rgba(0,0,0,1)]" 
+                    role="listbox" 
+                    aria-multiselectable="true"
+                >
+                    <div class="grid grid-cols-1 gap-3">
                         @foreach($types as $type)
-                            <button wire:click="addType('{{ $type->value }}')" class="text-left font-mono text-sm hover:text-red-700 {{ in_array($type->value, $selectedTypes) ? 'font-black underline' : '' }}">
-                                {{ $type->value }}
+                            <button 
+                                wire:click="addType('{{ $type->value }}')" 
+                                type="button"
+                                role="option"
+                                aria-selected="{{ in_array($type->value, $selectedTypes) ? 'true' : 'false' }}"
+                                class="text-left font-mono text-base py-3 px-4 border-2 border-transparent hover:border-black hover:bg-neutral-100 transition-all flex justify-between items-center {{ in_array($type->value, $selectedTypes) ? 'bg-neutral-100 font-black' : '' }}">
+                                <span>{{ $type->value }}</span>
+                                @if(in_array($type->value, $selectedTypes))
+                                    <span class="text-red-700" aria-hidden="true">✓</span>
+                                @endif
                             </button>
                         @endforeach
                     </div>

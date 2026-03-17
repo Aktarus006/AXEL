@@ -27,6 +27,15 @@ class Jewel extends Model implements HasMedia
     use HasFactory;
     use InteractsWithMedia;
 
+    protected $fillable = [
+        "name",
+        "price",
+        "description",
+        "online",
+        "material",
+        "type",
+    ];
+
     protected $casts = [
         "id" => "integer",
         "price" => "float",

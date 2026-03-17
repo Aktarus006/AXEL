@@ -1,10 +1,12 @@
 @volt
 @php
 use App\Models\Collection;
+use App\Enums\Status;
 
 $collection = Collection::with(['jewels' => function($q) {
-    $q->whereHas('media'); // Only jewels with images
-}, 'creators'])->find(request()->route('id'));
+    $q->where('online', Status::ONLINE)
+      ->whereHas('media'); // Only jewels with images
+}, 'creators'])->where('online', Status::ONLINE)->find(request()->route('id'));
 @endphp
 
 <x-layouts.app>
@@ -22,8 +24,12 @@ $collection = Collection::with(['jewels' => function($q) {
             <!-- Immersive Hero Header -->
             <div class="relative w-full h-[70vh] bg-black overflow-hidden border-b-8 border-black group">
                 <!-- Background Image (Large) -->
-                @if($collection->hasMedia('collections/images'))
-                    <img src="{{ $collection->getFirstMediaUrl('collections/images', 'large') }}" 
+                @if($collection->cover)
+                    <img src="{{ Storage::url($collection->cover) }}" 
+                         alt="{{ $collection->name }}" 
+                         class="absolute inset-0 w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[2000ms]">
+                @elseif($collection->hasMedia('collections'))
+                    <img src="{{ $collection->getFirstMediaUrl('collections', 'large') }}" 
                          alt="{{ $collection->name }}" 
                          class="absolute inset-0 w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[2000ms]">
                 @endif
@@ -34,7 +40,7 @@ $collection = Collection::with(['jewels' => function($q) {
                         <div class="flex flex-col md:flex-row justify-between items-end gap-12">
                             <div class="space-y-4">
                                 <span class="bg-red-700 text-white px-4 py-1 text-sm font-black uppercase tracking-widest">SÉRIE_EXPLORATION</span>
-                                <h1 class="text-[12vw] md:text-[10vw] font-black text-white leading-[0.8] uppercase tracking-tighter transform -skew-x-12">
+                                <h1 class="text-6xl md:text-[10vw] font-black text-white leading-[0.8] uppercase tracking-tighter transform -skew-x-12">
                                     {{ $collection->name }}
                                 </h1>
                             </div>
@@ -100,6 +106,24 @@ $collection = Collection::with(['jewels' => function($q) {
                     </div>
                 </div>
             </div>
+
+            <!-- Collection Gallery (Mood/Ambience) -->
+            @if($collection->hasMedia('collections'))
+                <section class="bg-neutral-100 py-24 border-t-8 border-black">
+                    <div class="px-8 mb-12 max-w-[1440px] mx-auto">
+                        <h2 class="text-4xl font-black uppercase tracking-tighter">L'UNIVERS_ DE LA SÉRIE</h2>
+                    </div>
+                    <div class="max-w-[1440px] mx-auto px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        @foreach($collection->getMedia('collections') as $media)
+                            <div class="border-4 border-black bg-white shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] overflow-hidden group aspect-square md:aspect-auto md:h-96">
+                                <img src="{{ $media->getUrl('large') }}" 
+                                     alt="Mood image for {{ $collection->name }}" 
+                                     class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-105">
+                            </div>
+                        @endforeach
+                    </div>
+                </section>
+            @endif
 
             <!-- Bottom Call to Action -->
             <section class="bg-black text-white py-24 px-8 border-t-8 border-black">

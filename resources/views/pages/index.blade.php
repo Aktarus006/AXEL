@@ -6,30 +6,37 @@
     <livewire:homepage-slider />
 
     <!-- About Section -->
-    <section id="about" class="w-full bg-black overflow-hidden border-t-8 border-b-8 border-white">
+    <section id="about" 
+        x-data="{ shown: false }" 
+        x-intersect.once="shown = true"
+        class="w-full bg-black overflow-hidden border-t-8 border-b-8 border-white">
         <!-- Main Content Area with Max Width to prevent stretching on UHD -->
         <div class="max-w-[1920px] mx-auto relative py-24 md:py-40 lg:py-60 px-8 group">
             
-            <!-- Background Grid (Scaled for UHD) -->
-            <div class="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity duration-1000 pointer-events-none">
+            <!-- Background Grid (Softer for accessibility and performance) -->
+            <div class="absolute inset-0 opacity-5 transition-opacity duration-1000 pointer-events-none"
+                :class="shown ? 'opacity-10' : 'opacity-5'">
                 <div class="grid grid-cols-6 md:grid-cols-12 lg:grid-cols-18 h-full w-full">
                     @foreach(range(1, 72) as $i)
-                        <div class="border-[0.5px] border-white/20 aspect-square"></div>
+                        <div class="border-[0.5px] border-white/10 aspect-square"></div>
                     @endforeach
                 </div>
             </div>
 
-            <!-- Giant Fluid Heading (Uses VW to scale perfectly on 4K) -->
+            <!-- Giant Fluid Heading (Improved visibility) -->
             <div class="relative z-10 flex flex-col items-center justify-center text-center">
-                <h2 class="font-mono font-black text-white uppercase tracking-tighter leading-[0.8] flex flex-col md:flex-row items-center gap-x-8">
+                <h2 class="font-mono font-black text-white uppercase tracking-tighter leading-[0.8] flex flex-col md:flex-row items-center gap-x-8 transition-all duration-1000">
                     <!-- Solid Part -->
-                    <span class="text-[15vw] lg:text-[12vw] transform -skew-x-12 group-hover:skew-x-0 transition-transform duration-700">L'ATELIER</span>
+                    <span class="text-[12vw] md:text-[15vw] lg:text-[12vw] transform transition-transform duration-700"
+                        :class="shown ? 'skew-x-0' : '-skew-x-12'">L'ATELIER</span>
                     <!-- Outlined Part -->
-                    <span class="text-[15vw] lg:text-[12vw] text-transparent text-outline-white group-hover:text-white transition-all duration-700 delay-100">AXEL</span>
+                    <span class="text-[12vw] md:text-[15vw] lg:text-[12vw] text-transparent text-outline-white transition-all duration-700 delay-100"
+                        :class="shown ? 'text-white' : 'text-transparent'">AXEL</span>
                 </h2>
                 
                 <!-- Underline Decoration -->
-                <div class="w-full h-4 bg-red-700 mt-8 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-1000 origin-left"></div>
+                <div class="w-full h-4 bg-red-700 mt-8 transform transition-transform duration-1000 origin-left"
+                    :class="shown ? 'scale-x-100' : 'scale-x-0'"></div>
             </div>
 
             <!-- Diamond Animation (Positioned relatively to the text) -->

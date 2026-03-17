@@ -37,7 +37,10 @@ mount(function () {
                     @if($firstMediaUrl)
                         <img 
                             src="{{ $firstMediaUrl }}" 
-                            alt="Image for {{ $step->title }}" 
+                            alt="Étape {{ $step->position }} du processus AXEL : {{ $step->title }}" 
+                            loading="lazy"
+                            width="600"
+                            height="450"
                             class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000"
                         >
                     @else
@@ -48,9 +51,9 @@ mount(function () {
 
                 <!-- Content -->
                 <div class="p-10 flex-1 bg-black text-white group-hover:bg-white group-hover:text-black transition-all duration-500">
-                    <div class="font-mono text-xs mb-4 opacity-50 uppercase tracking-[0.3em]">Phase_D'exécution_{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</div>
+                    <div class="font-mono text-xs mb-4 text-white/70 group-hover:text-black/70 uppercase tracking-[0.3em]">Phase_D'exécution_{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</div>
                     <h3 class="font-mono text-4xl font-black uppercase mb-8 leading-none tracking-tighter">{{ $step->title }}</h3>
-                    <div class="font-mono text-sm leading-relaxed opacity-70 group-hover:opacity-100">
+                    <div class="font-mono text-sm leading-relaxed text-white/80 group-hover:text-black/80">
                         {!! $step->description !!}
                     </div>
                 </div>
