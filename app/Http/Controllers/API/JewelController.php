@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Jewel;
+use App\Enums\Status;
 use Illuminate\Http\Request;
 
 class JewelController extends Controller
@@ -13,7 +14,7 @@ class JewelController extends Controller
      */
     public function index()
     {
-        $jewels = Jewel::all();
+        $jewels = Jewel::where('online', Status::ONLINE)->get();
         foreach ($jewels as $jewel) {
             $jewel->getFirstMedia("jewels/images");
         }
@@ -25,7 +26,7 @@ class JewelController extends Controller
      */
     public function random()
     {
-        $jewels = Jewel::inRandomOrder()->take(8)->get();
+        $jewels = Jewel::where('online', Status::ONLINE)->inRandomOrder()->take(8)->get();
         foreach ($jewels as $jewel) {
             $jewel->getFirstMedia("jewels/images");
         }

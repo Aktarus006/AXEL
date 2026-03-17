@@ -38,6 +38,16 @@
     animation: marquee2 120s linear infinite;
 }
 
-.animate-marquee-reverse {
-    animation: marquee-reverse 60s linear infinite;
+/* Brutalist Global Focus State */
+:focus-visible {
+    outline: 4px solid #b91c1c !important;
+    outline-offset: 4px !important;
+    background-color: rgba(185, 28, 28, 0.1) !important;
 }
+
+/* Specific for black backgrounds */
+.bg-black :focus-visible {
+    outline-color: #ffffff !important;
+}
+
+[x-cloak] { display: none !important; }

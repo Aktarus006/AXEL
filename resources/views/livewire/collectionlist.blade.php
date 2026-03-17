@@ -2,6 +2,7 @@
 
 use function Livewire\Volt\{state, mount};
 use App\Models\Collection;
+use App\Enums\Status;
 use Illuminate\Support\Str;
 
 state([
@@ -9,7 +10,9 @@ state([
 ]);
 
 mount(function () {
-    $this->collections = Collection::with(['media', 'creators'])->get();
+    $this->collections = Collection::with(['media', 'creators'])
+        ->where('online', Status::ONLINE)
+        ->get();
 });
 ?>
 
@@ -25,7 +28,7 @@ mount(function () {
         </div>
 
         <div class="relative z-10 px-8 py-32 md:py-48 max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-end gap-12">
-            <h1 class="text-[12vw] md:text-[8vw] font-black uppercase leading-[0.8] tracking-tighter transform -skew-x-12">
+            <h1 class="text-6xl md:text-[8vw] font-black uppercase leading-[0.8] tracking-tighter transform -skew-x-12">
                 LES<br/><span class="text-red-700">SÉRIES</span>
             </h1>
             <div class="text-right max-w-md">
@@ -41,33 +44,40 @@ mount(function () {
         <div class="absolute inset-x-0 bottom-0 h-4 transition-transform duration-500 origin-left scale-x-0 bg-red-700 group-hover:scale-x-100"></div>
     </div>
 
-    <!-- Collections List (High-End Layout) -->
+    <!-- Collections List (Grid for Perfect Alignment) -->
     <div class="w-full">
         @foreach ($collections as $index => $collection)
             <div class="group border-b-8 border-black hover:bg-neutral-50 transition-colors duration-500">
-                <a href="/collections/{{ $collection->id }}" class="flex flex-col md:flex-row items-stretch min-h-[500px]">
-                    <!-- Index Number -->
-                    <div class="w-full md:w-24 border-b-4 md:border-b-0 md:border-r-8 border-black flex items-center justify-center bg-white text-black text-4xl font-black group-hover:bg-red-700 group-hover:text-white transition-colors">
+                <a href="/collections/{{ $collection->id }}" class="grid grid-cols-1 md:grid-cols-12 items-stretch min-h-[500px]">
+                    <!-- Index Number (1 Col) -->
+                    <div class="md:col-span-1 border-b-4 md:border-b-0 md:border-r-8 border-black flex items-center justify-center bg-white text-black text-4xl font-black group-hover:bg-red-700 group-hover:text-white transition-colors py-8 md:py-0">
                         {{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
                     </div>
 
-                    <!-- Image Section -->
-                    <div class="w-full md:w-1/2 lg:w-2/5 border-b-4 md:border-b-0 md:border-r-8 border-black overflow-hidden relative bg-neutral-200">
-                        @if($collection->hasMedia('collections/images'))
+                    <!-- Image Section (5 Cols) -->
+                    <div class="md:col-span-5 border-b-4 md:border-b-0 md:border-r-8 border-black overflow-hidden relative bg-neutral-200 aspect-video md:aspect-auto">
+                        @if($collection->cover)
                             <img
-                                src="{{ $collection->getFirstMediaUrl('collections/images', 'large') }}"
-                                alt="{{ $collection->name }}"
+                                src="{{ Storage::url($collection->cover) }}"
+                                alt="Collection {{ $collection->name }} par l'Atelier AXEL"
+                                loading="lazy"
+                                class="w-full h-full object-cover transition-all duration-1000 grayscale group-hover:grayscale-0 group-hover:scale-110"
+                            >
+                        @elseif($collection->hasMedia('collections'))
+                            <img
+                                src="{{ $collection->getFirstMediaUrl('collections', 'large') }}"
+                                alt="Collection {{ $collection->name }} par l'Atelier AXEL"
+                                loading="lazy"
                                 class="w-full h-full object-cover transition-all duration-1000 grayscale group-hover:grayscale-0 group-hover:scale-110"
                             >
                         @else
                             <div class="w-full h-full flex items-center justify-center font-black text-black/10 text-6xl">NO_IMG</div>
                         @endif
-                        <!-- Hover Overlay -->
                         <div class="absolute inset-0 bg-red-700/0 group-hover:bg-red-700/10 transition-colors duration-500"></div>
                     </div>
 
-                    <!-- Content Section -->
-                    <div class="flex-1 p-8 md:p-16 flex flex-col justify-center space-y-8 bg-white group-hover:bg-neutral-50 transition-colors">
+                    <!-- Content Section (6 Cols) -->
+                    <div class="md:col-span-6 p-8 md:p-16 flex flex-col justify-center space-y-8 bg-white group-hover:bg-neutral-50 transition-colors">
                         <div class="space-y-4">
                             <span class="text-xs font-black uppercase tracking-[0.3em] text-red-700">Exploration_Thématique</span>
                             <h2 class="text-5xl md:text-7xl font-black uppercase leading-none tracking-tighter group-hover:translate-x-4 transition-transform duration-500">
@@ -90,4 +100,5 @@ mount(function () {
             </div>
         @endforeach
     </div>
+
 </div>

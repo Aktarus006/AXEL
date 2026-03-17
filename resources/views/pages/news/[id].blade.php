@@ -1,15 +1,16 @@
 <?php
 use App\Models\News;
+use App\Enums\Status;
 use Illuminate\Support\Str;
 
 $id = request()->segment(count(request()->segments()));
-$article = News::with(['media'])->find($id);
+$article = News::with(['media'])->where('online', Status::ONLINE)->find($id);
 
 // Ensure variables are available
 view()->share('article', $article);
 
 // Get other recent news
-$otherNews = News::where('id', '!=', $id)->where('online', true)->latest()->take(3)->get();
+$otherNews = News::where('id', '!=', $id)->where('online', Status::ONLINE)->latest()->take(3)->get();
 view()->share('otherNews', $otherNews);
 ?>
 

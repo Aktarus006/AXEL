@@ -1,9 +1,12 @@
 import "./bootstrap";
-
-
-
+import Alpine from 'alpinejs'
+import intersect from '@alpinejs/intersect'
 import Swup from 'swup';
 import gsap from 'gsap';
+
+document.addEventListener('alpine:init', () => {
+    Alpine.plugin(intersect)
+})
 
 const swup = new Swup({
   containers: ['#swup'],  // explicitly define container to be safe

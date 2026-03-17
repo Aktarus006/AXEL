@@ -2,11 +2,13 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\Status;
 use App\Filament\Resources\CollectionResource\Pages;
 use App\Filament\Resources\CollectionResource\RelationManagers;
 use App\Models\Collection;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -36,7 +38,27 @@ class CollectionResource extends Resource
                     ->sortable(),
                 Tables\Columns\IconColumn::make("online")
                     ->label('En ligne')
-                    ->boolean(),
+                    ->icon(fn(Status $state): string => match ($state) {
+                        Status::ONLINE => 'heroicon-s-check-circle',
+                        Status::OFFLINE => 'heroicon-s-x-circle',
+                    })
+                    ->color(fn(Status $state): string => match ($state) {
+                        Status::ONLINE => 'success',
+                        Status::OFFLINE => 'danger',
+                    })
+                    ->sortable()
+                    ->alignCenter()
+                    ->action(function (Collection $record): void {
+                        $record->online = $record->online === Status::ONLINE ? Status::OFFLINE : Status::ONLINE;
+                        $record->save();
+
+                        Notification::make()
+                            ->title('Statut mis à jour')
+                            ->success()
+                            ->send();
+
+                        redirect(request()->header('Referer'));
+                    }),
                 Tables\Columns\TextColumn::make("jewels_count")
                     ->label('Nombre de bijoux')
                     ->counts('jewels')

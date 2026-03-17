@@ -44,19 +44,19 @@ $submit = function() {  Log::info('Contact form submit function called');
 };
 ?>
 
-<div class="w-full bg-black mt-auto pb-12">
+<div class="w-full bg-black mt-auto">
     <form wire:submit.prevent="submit" class="w-full font-mono max-w-4xl mx-auto p-8 relative" data-no-barba>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
             <!-- Name Input -->
             <div class="relative">
-                <label for="name" class="absolute -top-6 left-0 text-xs uppercase tracking-[0.2em] opacity-50 text-white">
+                <label for="name" class="absolute -top-6 left-0 text-xs uppercase tracking-[0.2em] font-black text-white/80">
                     01 | VOTRE NOM
                 </label>
                 <input 
                     type="text" 
                     id="name"
                     wire:model="name"
-                    class="w-full bg-transparent border-b-4 border-white py-4 px-2 text-white placeholder-white/40 focus:outline-none focus:border-red-700 transition-all duration-300"
+                    class="w-full bg-transparent border-b-4 border-white py-4 px-2 text-white placeholder-white/60 focus:outline-none focus:border-red-700 transition-all duration-300"
                     placeholder="NOM_PRÉNOM"
                 />
                 @error('name') <span class="text-red-700 text-sm mt-1 uppercase">{{ $message }}</span> @enderror
@@ -64,14 +64,14 @@ $submit = function() {  Log::info('Contact form submit function called');
 
             <!-- Email Input -->
             <div class="relative">
-                <label for="email" class="absolute -top-6 left-0 text-xs uppercase tracking-[0.2em] opacity-50 text-white">
+                <label for="email" class="absolute -top-6 left-0 text-xs uppercase tracking-[0.2em] font-black text-white/80">
                     02 | VOTRE EMAIL
                 </label>
                 <input 
                     type="email" 
                     id="email"
                     wire:model="email"
-                    class="w-full bg-transparent border-b-4 border-white py-4 px-2 text-white placeholder-white/40 focus:outline-none focus:border-red-700 transition-all duration-300"
+                    class="w-full bg-transparent border-b-4 border-white py-4 px-2 text-white placeholder-white/60 focus:outline-none focus:border-red-700 transition-all duration-300"
                     placeholder="EMAIL_ADRESSE"
                 />
                 @error('email') <span class="text-red-700 text-sm mt-1 uppercase">{{ $message }}</span> @enderror
@@ -80,14 +80,14 @@ $submit = function() {  Log::info('Contact form submit function called');
 
         <!-- Message Input -->
         <div class="relative mb-12">
-            <label for="message" class="absolute -top-6 left-0 text-xs uppercase tracking-[0.2em] opacity-50 text-white">
+            <label for="message" class="absolute -top-6 left-0 text-xs uppercase tracking-[0.2em] font-black text-white/80">
                 03 | VOTRE PROJET
             </label>
             <textarea 
                 id="message"
                 wire:model="message"
-                rows="4"
-                class="w-full bg-transparent border-b-4 border-white py-4 px-2 text-white placeholder-white/40 focus:outline-none focus:border-red-700 transition-all duration-300 resize-none"
+                rows="8"
+                class="w-full bg-transparent border-b-4 border-white py-4 px-2 text-white placeholder-white/60 focus:outline-none focus:border-red-700 transition-all duration-300 resize-none"
                 placeholder="DÉCRIVEZ VOTRE DEMANDE ICI..."
             ></textarea>
             @error('message') <span class="text-red-700 text-sm mt-1 uppercase">{{ $message }}</span> @enderror

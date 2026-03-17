@@ -65,14 +65,17 @@ if (!function_exists('isLight')) {
                 <div class="absolute inset-0 md:relative md:w-2/3 h-full overflow-hidden">
                     <img 
                         src="{{ $slide->getFirstMediaUrl('slides', 'desktop') ?: $slide->getFirstMediaUrl('slides') }}"
-                        alt="{{ $slide->title }}"
-                        class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000"
+                        alt="Projet AXEL : {{ $slide->title }}"
+                        width="1200"
+                        height="800"
+                        class="w-full h-full object-cover grayscale-0 md:grayscale md:hover:grayscale-0 transition-all duration-1000"
+                        loading="{{ $idx === 0 ? 'eager' : 'lazy' }}"
                     >
                     <div class="absolute inset-0 bg-black/40 md:hidden"></div>
                 </div>
 
                 <!-- Text Content -->
-                <div class="relative z-10 w-full md:w-1/3 h-full flex flex-col justify-center p-8 md:p-12 bg-black md:bg-white text-white md:text-black border-l-0 md:border-l-8 border-white md:border-black">
+                <div class="relative z-10 w-full md:w-1/3 h-full flex flex-col justify-center p-8 md:p-12 bg-black/40 md:bg-white text-white md:text-black border-l-0 md:border-l-8 border-white md:border-black">
                     <div class="space-y-6">
                         <div class="font-mono text-sm uppercase tracking-[0.5em] mb-4 opacity-70">FEATURED_PROJECT_{{ $idx + 1 }}</div>
                         <h2 class="font-mono text-5xl md:text-7xl font-black leading-none uppercase tracking-tighter">
@@ -97,18 +100,20 @@ if (!function_exists('isLight')) {
         <div class="absolute bottom-12 left-8 md:left-auto md:right-1/3 md:translate-x-1/2 flex items-center gap-4 z-20">
             <button
                 @click="current = (current - 1 + slides) % slides"
-                class="w-16 h-16 bg-white border-4 border-black flex items-center justify-center hover:bg-red-600 transition-colors group"
+                class="w-16 h-16 bg-white border-4 border-black flex items-center justify-center hover:bg-red-600 focus:bg-red-600 focus:text-white focus:outline-none transition-colors group"
+                aria-label="Slide précédente"
             >
-                <span class="font-mono text-3xl font-black group-hover:text-white">←</span>
+                <span class="font-mono text-3xl font-black group-hover:text-white" aria-hidden="true">←</span>
             </button>
-            <div class="font-mono text-2xl font-black text-white md:text-black bg-black md:bg-white px-4 py-2 border-4 border-white md:border-black">
+            <div class="font-mono text-2xl font-black text-white md:text-black bg-black md:bg-white px-4 py-2 border-4 border-white md:border-black" aria-live="polite">
                 <span x-text="current + 1"></span>/<span x-text="slides"></span>
             </div>
             <button
                 @click="current = (current + 1) % slides"
-                class="w-16 h-16 bg-white border-4 border-black flex items-center justify-center hover:bg-red-600 transition-colors group"
+                class="w-16 h-16 bg-white border-4 border-black flex items-center justify-center hover:bg-red-600 focus:bg-red-600 focus:text-white focus:outline-none transition-colors group"
+                aria-label="Slide suivante"
             >
-                <span class="font-mono text-3xl font-black group-hover:text-white">→</span>
+                <span class="font-mono text-3xl font-black group-hover:text-white" aria-hidden="true">→</span>
             </button>
         </div>
     @endif

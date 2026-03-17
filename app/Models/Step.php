@@ -16,6 +16,12 @@ class Step extends Model implements HasMedia
     use HasFactory;
     use InteractsWithMedia;
 
+    protected $fillable = [
+        "position",
+        "title",
+        "description",
+    ];
+
     protected $casts = [
         "id" => "integer",
     ];

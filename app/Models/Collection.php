@@ -28,7 +28,7 @@ class Collection extends Model implements HasMedia
 
     protected $casts = [
         "id" => "integer",
-        "online" => "boolean",
+        "online" => Status::class,
         "creation_date" => "date",
     ];
 
@@ -104,7 +104,7 @@ class Collection extends Model implements HasMedia
             ->quality(90)
             ->sharpen(10)
             ->optimize()
-            ->performOnCollections("collections/images");
+            ->performOnCollections("collections");
 
         $this->addMediaConversion("small")
             ->width(800)
@@ -113,7 +113,7 @@ class Collection extends Model implements HasMedia
             ->quality(90)
             ->sharpen(10)
             ->optimize()
-            ->performOnCollections("collections/images");
+            ->performOnCollections("collections");
 
         $this->addMediaConversion("medium")
             ->width(1200)
@@ -122,7 +122,7 @@ class Collection extends Model implements HasMedia
             ->quality(85)
             ->sharpen(10)
             ->optimize()
-            ->performOnCollections("collections/images");
+            ->performOnCollections("collections");
 
         $this->addMediaConversion("large")
             ->width(1600)
@@ -131,7 +131,7 @@ class Collection extends Model implements HasMedia
             ->quality(85)
             ->sharpen(10)
             ->optimize()
-            ->performOnCollections("collections/images");
+            ->performOnCollections("collections");
 
         // Banner-specific conversions with different aspect ratios
         $this->addMediaConversion("banner-small")
@@ -141,7 +141,7 @@ class Collection extends Model implements HasMedia
             ->quality(90)
             ->sharpen(10)
             ->optimize()
-            ->performOnCollections("collections/banners");
+            ->performOnCollections("collections");
 
         $this->addMediaConversion("banner-medium")
             ->width(1200)
@@ -150,7 +150,7 @@ class Collection extends Model implements HasMedia
             ->quality(85)
             ->sharpen(10)
             ->optimize()
-            ->performOnCollections("collections/banners");
+            ->performOnCollections("collections");
 
         $this->addMediaConversion("banner-large")
             ->width(1920)
@@ -159,6 +159,6 @@ class Collection extends Model implements HasMedia
             ->quality(80)
             ->sharpen(10)
             ->optimize()
-            ->performOnCollections("collections/banners");
+            ->performOnCollections("collections");
     }
 }

@@ -45,7 +45,9 @@ mount(function (Jewel $jewel = null) {
                 @if($packshotUrl)
                     <img
                         src="{{ $packshotUrl }}"
-                        alt="{{ $this->jewel->name ?? '' }}"
+                        alt="Photographie de {{ $this->jewel->name ?? 'bijou' }} AXEL"
+                        width="600"
+                        height="600"
                         class="absolute inset-0 object-cover w-full h-full transition-all duration-1000 group-hover:grayscale-0 group-hover:scale-105"
                         :class="inColor ? 'grayscale-0' : 'grayscale'"
                         loading="lazy"
@@ -55,10 +57,22 @@ mount(function (Jewel $jewel = null) {
                 @if($lifestyleUrl)
                     <img
                         src="{{ $lifestyleUrl }}"
-                        alt="{{ $this->jewel->name ?? '' }}"
-                        class="absolute inset-0 object-cover w-full h-full transition-opacity duration-700 opacity-0 group-hover:opacity-100"
+                        alt="Vue portée de {{ $this->jewel->name ?? 'bijou' }}"
+                        width="600"
+                        height="600"
+                        @class([
+                            "absolute inset-0 object-cover w-full h-full transition-opacity duration-700",
+                            "opacity-0 group-hover:opacity-100" => $packshotUrl,
+                            "opacity-100" => !$packshotUrl
+                        ])
                         loading="lazy"
                     />
+                @endif
+                
+                @if(!$packshotUrl && !$lifestyleUrl)
+                    <div class="absolute inset-0 flex items-center justify-center bg-neutral-900">
+                        <span class="font-mono text-[10px] text-white/20 uppercase font-black">IMAGE_A_VENIR</span>
+                    </div>
                 @endif
                 
                 <!-- Overlay details on hover -->

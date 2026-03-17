@@ -2,15 +2,16 @@
 
 use function Livewire\Volt\{state};
 use App\Models\Creator;
+use App\Enums\Status;
 
 state([
-    'creators' => Creator::where('online', true)
+    'creators' => Creator::where('online', Status::ONLINE)
         ->with(['media', 'collections'])
         ->get()
 ]);
 ?>
 
-<section class="bg-black py-20 border-t-8 border-white overflow-hidden">
+<section class="bg-black pt-20 border-t-8 border-white overflow-hidden">
     <style>
     .scrollbar-hide::-webkit-scrollbar { display: none; }
     </style>
@@ -18,7 +19,7 @@ state([
     <!-- Header -->
     <div class="px-8 mb-12 flex flex-col md:flex-row justify-between items-end gap-6">
         <div>
-            <h2 class="font-mono text-7xl md:text-8xl font-black text-white leading-none uppercase tracking-tighter">
+            <h2 class="font-mono text-5xl md:text-8xl font-black text-white leading-none uppercase tracking-tighter">
                 CREATORS<span class="text-red-600">.</span>
             </h2>
             <p class="font-mono text-xl text-white mt-4 uppercase">Direct from our studio to your hands.</p>
@@ -27,10 +28,10 @@ state([
     </div>
 
     <!-- Horizontal Scroll Wrapper -->
-    <div class="relative w-full overflow-hidden" x-data="{ }">
+    <div class="relative w-full overflow-hidden border-t-8 border-white" x-data="{ }">
         <div 
             x-ref="slider"
-            class="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide space-x-0 pb-10"
+            class="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide space-x-0"
             style="scrollbar-width: none; -ms-overflow-style: none; scroll-behavior: smooth;"
         >
             @foreach($creators as $creator)
@@ -42,7 +43,9 @@ state([
                                 src="{{ $creator->getFirstMediaUrl('creators/profile', 'medium') }}"
                                 srcset="{{ $creator->getFirstMediaUrl('creators/profile', 'small') }} 400w, {{ $creator->getFirstMediaUrl('creators/profile', 'medium') }} 800w"
                                 sizes="(max-width: 768px) 100vw, (max-width: 1024px) 45vw, 30vw"
-                                alt="{{ $creator->name }}"
+                                alt="Portrait de {{ $creator->name }}, créateur chez AXEL"
+                                width="800"
+                                height="1000"
                                 class="w-full h-full object-cover transition-all duration-700 grayscale group-hover:grayscale-0 group-hover:scale-110"
                                 loading="lazy"
                             >
@@ -51,7 +54,9 @@ state([
                                     src="{{ $creator->getFirstMediaUrl('creators/profile_hover', 'medium') }}"
                                     srcset="{{ $creator->getFirstMediaUrl('creators/profile_hover', 'small') }} 400w, {{ $creator->getFirstMediaUrl('creators/profile_hover', 'medium') }} 800w"
                                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 45vw, 30vw"
-                                    alt="{{ $creator->name }}"
+                                    alt="Vue alternative de {{ $creator->name }}"
+                                    width="800"
+                                    height="1000"
                                     class="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 opacity-0 group-hover:opacity-100"
                                     loading="lazy"
                                 >
@@ -61,7 +66,7 @@ state([
                         @endif
 
                         <!-- Content Overlay -->
-                        <div class="absolute inset-x-0 bottom-0 p-8 bg-gradient-to-t from-black via-black/80 to-transparent translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                        <div class="absolute inset-x-0 bottom-0 p-8 bg-gradient-to-t from-black via-black/90 to-transparent translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
                             <span class="font-mono text-sm text-red-600 font-bold uppercase tracking-widest">{{ $creator->job_title ?? 'Artist' }}</span>
                             <h3 class="font-mono text-4xl font-black text-white uppercase mt-2 group-hover:text-red-600 transition-colors">{{ $creator->name }}</h3>
                         </div>
@@ -75,17 +80,25 @@ state([
             @endforeach
         </div>
 
-        <!-- Custom Navigation -->
-        <div class="flex border-t-4 border-white bg-black">
-            <div class="flex-1 p-8 font-mono text-white text-sm uppercase tracking-widest opacity-50 text-center md:text-left">
+        <!-- Custom Navigation (Refined Borders) -->
+        <div class="flex border-t-8 border-white bg-black h-32 items-stretch">
+            <div class="flex-1 px-8 flex items-center font-mono text-white/70 text-sm uppercase tracking-widest text-center md:text-left border-r-8 border-white">
                 SCROLL TO DISCOVER / ARCHAEOLOGY OF CRAFT
             </div>
-            <div class="flex border-l-4 border-white">
-                <button @click="$refs.slider.scrollBy({left: -400, behavior: 'smooth'})" class="p-8 border-r-4 border-white hover:bg-red-600 transition-colors group">
-                    <span class="font-mono text-4xl text-white font-black group-hover:scale-125 inline-block transition-transform">←</span>
+            <div class="flex items-stretch">
+                <button 
+                    @click="$refs.slider.scrollBy({left: -400, behavior: 'smooth'})" 
+                    class="px-10 border-r-8 border-white hover:bg-red-600 focus:bg-red-600 focus:outline-none transition-colors group"
+                    aria-label="Créateur précédent"
+                >
+                    <span class="font-mono text-4xl text-white font-black group-hover:scale-125 inline-block transition-transform" aria-hidden="true">←</span>
                 </button>
-                <button @click="$refs.slider.scrollBy({left: 400, behavior: 'smooth'})" class="p-8 hover:bg-red-600 transition-colors group">
-                    <span class="font-mono text-4xl text-white font-black group-hover:scale-125 inline-block transition-transform">→</span>
+                <button 
+                    @click="$refs.slider.scrollBy({left: 400, behavior: 'smooth'})" 
+                    class="px-10 hover:bg-red-600 focus:bg-red-600 focus:outline-none transition-colors group"
+                    aria-label="Créateur suivant"
+                >
+                    <span class="font-mono text-4xl text-white font-black group-hover:scale-125 inline-block transition-transform" aria-hidden="true">→</span>
                 </button>
             </div>
         </div>

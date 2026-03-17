@@ -34,16 +34,21 @@
     <a
         href="/jewels/{{ $this->jewel->id ?? '' }}"
         wire:key="jewel-box-{{ $jewelId }}"
-        class="relative flex items-center justify-center w-full h-full cursor-pointer group overflow-hidden bg-white"
+        class="absolute inset-0 flex items-center justify-center cursor-pointer group overflow-hidden bg-neutral-100"
         wire:mouseover="hover"
         wire:mouseout="unhover"
     >
-        <img
-            src="{{ $getImageUrl() }}"
-            alt="{{ $this->jewel->name ?? 'Jewel' }}"
-            class="w-full h-full object-cover transition-all duration-700
-                {{ !$isHovered ? 'grayscale' : 'grayscale-0 scale-110' }}"
-        >
+        @if($getImageUrl())
+            <img
+                src="{{ $getImageUrl() }}"
+                alt="Photographie de {{ $this->jewel->name ?? 'bijou' }} AXEL"
+                loading="lazy"
+                class="absolute inset-0 w-full h-full object-cover transition-all duration-1000
+                    {{ !$isHovered ? 'grayscale' : 'grayscale-0 scale-110' }}"
+            >
+        @else
+            <div class="font-mono text-xs opacity-20 uppercase font-black">IMAGE_NON_DISPONIBLE</div>
+        @endif
         
         <!-- Brutalist Overlay -->
         <div class="absolute inset-0 border-4 border-transparent group-hover:border-red-700 transition-all duration-300"></div>

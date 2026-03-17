@@ -36,7 +36,7 @@ class Creator extends Model implements HasMedia
     protected $casts = [
         "id" => "integer",
         "date_of_birth" => "date",
-        "online" => "boolean",
+        "online" => Status::class,
     ];
 
     protected $appends = ["name"];
