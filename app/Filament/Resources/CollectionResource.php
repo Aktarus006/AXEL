@@ -76,6 +76,8 @@ class CollectionResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->reorderable('order_column')
+            ->defaultSort('order_column')
             ->filters([
                 //
             ])

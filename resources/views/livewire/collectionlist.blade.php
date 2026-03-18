@@ -12,6 +12,7 @@ state([
 mount(function () {
     $this->collections = Collection::with(['media', 'creators'])
         ->where('online', Status::ONLINE)
+        ->orderBy('order_column')
         ->get();
 });
 ?>

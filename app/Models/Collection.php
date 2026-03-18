@@ -32,7 +32,7 @@ class Collection extends Model implements HasMedia
         "creation_date" => "date",
     ];
 
-    protected $fillable = ["name", "description", "online", "creation_date", "cover"];
+    protected $fillable = ["name", "description", "online", "creation_date", "cover", "order_column"];
 
     public function jewels(): BelongsToMany
     {
