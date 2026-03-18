@@ -72,7 +72,7 @@ class Jewel extends Model implements HasMedia
             ->width(150)
             ->height(150)
             ->format("webp")
-            ->quality(90)
+            ->quality(80)
             ->sharpen(10)
             ->nonQueued()
             ->performOnCollections("jewels/packshots", "jewels/lifestyle");
@@ -81,7 +81,7 @@ class Jewel extends Model implements HasMedia
             ->width(400)
             ->height(400)
             ->format("webp")
-            ->quality(90)
+            ->quality(80)
             ->sharpen(10)
             ->nonQueued()
             ->performOnCollections("jewels/packshots", "jewels/lifestyle");
@@ -90,7 +90,7 @@ class Jewel extends Model implements HasMedia
             ->width(800)
             ->height(800)
             ->format("webp")
-            ->quality(85)
+            ->quality(80)
             ->sharpen(10)
             ->nonQueued()
             ->performOnCollections("jewels/packshots", "jewels/lifestyle");
@@ -99,7 +99,7 @@ class Jewel extends Model implements HasMedia
             ->width(1200)
             ->height(1200)
             ->format("webp")
-            ->quality(85)
+            ->quality(80)
             ->sharpen(10)
             ->nonQueued()
             ->performOnCollections("jewels/packshots", "jewels/lifestyle");

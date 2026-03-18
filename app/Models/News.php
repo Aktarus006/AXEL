@@ -75,7 +75,7 @@ class News extends Model implements HasMedia
             ->width(400)
             ->height(300)
             ->format("webp")
-            ->quality(90)
+            ->quality(80)
             ->sharpen(10)
             ->nonQueued()
             ->performOnCollections("news");
@@ -85,7 +85,7 @@ class News extends Model implements HasMedia
             ->width(800)
             ->height(600)
             ->format("webp")
-            ->quality(90)
+            ->quality(80)
             ->sharpen(10)
             ->nonQueued()
             ->performOnCollections("news");
@@ -95,7 +95,7 @@ class News extends Model implements HasMedia
             ->width(1200)
             ->height(900)
             ->format("webp")
-            ->quality(85)
+            ->quality(80)
             ->sharpen(10)
             ->nonQueued()
             ->performOnCollections("news");
