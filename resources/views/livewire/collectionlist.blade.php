@@ -56,7 +56,14 @@ mount(function () {
 
                     <!-- Image Section (5 Cols) -->
                     <div class="md:col-span-5 border-b-4 md:border-b-0 md:border-r-8 border-black overflow-hidden relative bg-neutral-200 aspect-video md:aspect-auto">
-                        @if($collection->cover)
+                        @if($collection->hasMedia('collections/cover'))
+                            <img
+                                src="{{ $collection->getFirstMediaUrl('collections/cover', 'cover') }}"
+                                alt="Collection {{ $collection->name }} par l'Atelier AXEL"
+                                loading="lazy"
+                                class="w-full h-full object-cover transition-all duration-1000 grayscale group-hover:grayscale-0 group-hover:scale-110"
+                            >
+                        @elseif($collection->cover)
                             <img
                                 src="{{ Storage::url($collection->cover) }}"
                                 alt="Collection {{ $collection->name }} par l'Atelier AXEL"

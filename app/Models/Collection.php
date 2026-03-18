@@ -65,12 +65,13 @@ class Collection extends Model implements HasMedia
                 ->image()
                 ->conversion("thumbnail")
                 ->downloadable(),
-            FileUpload::make("cover")
+            SpatieMediaLibraryFileUpload::make("cover")
+                ->collection("collections/cover")
                 ->label("Cover")
                 ->image()
                 ->acceptedFileTypes(["image/jpeg", "image/png", "image/webp"])
-                ->directory("collections")
-                ->imageEditor(),
+                ->imageEditor()
+                ->conversion("cover"),
             Radio::make("online")
                 ->options(Status::class)
                 ->inline()
@@ -160,5 +161,14 @@ class Collection extends Model implements HasMedia
             ->sharpen(10)
             ->nonQueued()
             ->performOnCollections("collections");
+
+        $this->addMediaConversion("cover")
+            ->width(1920)
+            ->height(1080)
+            ->format("webp")
+            ->quality(80)
+            ->sharpen(10)
+            ->nonQueued()
+            ->performOnCollections("collections/cover");
     }
 }

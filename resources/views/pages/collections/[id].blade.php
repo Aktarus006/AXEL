@@ -24,7 +24,11 @@ $collection = Collection::with(['jewels' => function($q) {
             <!-- Immersive Hero Header -->
             <div class="relative w-full h-[70vh] bg-black overflow-hidden border-b-8 border-black group">
                 <!-- Background Image (Large) -->
-                @if($collection->cover)
+                @if($collection->hasMedia('collections/cover'))
+                    <img src="{{ $collection->getFirstMediaUrl('collections/cover', 'cover') }}" 
+                         alt="{{ $collection->name }}" 
+                         class="absolute inset-0 w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[2000ms]">
+                @elseif($collection->cover)
                     <img src="{{ Storage::url($collection->cover) }}" 
                          alt="{{ $collection->name }}" 
                          class="absolute inset-0 w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[2000ms]">

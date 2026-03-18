@@ -112,6 +112,15 @@ class Jewel extends Model implements HasMedia
             ->sharpen(10)
             ->nonQueued()
             ->performOnCollections("jewels/packshots", "jewels/lifestyle");
+
+        $this->addMediaConversion("cover")
+            ->width(1920)
+            ->height(1080)
+            ->format("webp")
+            ->quality(80)
+            ->sharpen(10)
+            ->nonQueued()
+            ->performOnCollections("jewels/cover");
     }
 
     public function collections(): BelongsToMany
@@ -157,6 +166,14 @@ class Jewel extends Model implements HasMedia
                         ->options(Status::class)
                         ->inline()
                         ->default(Status::OFFLINE),
+                    SpatieMediaLibraryFileUpload::make("cover")
+                        ->collection("jewels/cover")
+                        ->label("Cover")
+                        ->image()
+                        ->acceptedFileTypes(["image/jpeg", "image/png", "image/webp"])
+                        ->imageEditor()
+                        ->conversion("cover")
+                        ->columnSpan(2),
                 ]),
             Section::make("Photos")
                 ->description(
