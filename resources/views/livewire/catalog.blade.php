@@ -106,12 +106,11 @@ $removeType = function($type) {
             $activeCount = count($selectedMaterials) + count($selectedTypes) + ($hideNoPrice ? 1 : 0);
         @endphp
         
-        <div class="max-w-[1440px] mx-auto flex flex-col xl:flex-row justify-between items-stretch xl:items-center gap-6">
-            <div class="relative flex-1 flex gap-3">
+            <div class="relative flex-1 flex gap-3 text-black">
                 <input
                     wire:model.live.debounce.300ms="name"
                     wire:input="filterJewels"
-                    class="flex-1 h-14 px-6 font-mono text-base border-4 border-black focus:bg-black focus:text-white transition-colors outline-none placeholder-black/50"
+                    class="flex-1 h-14 px-6 font-mono text-base border-4 border-black bg-white focus:bg-black focus:text-white transition-colors outline-none placeholder-black/50 text-black"
                     placeholder="RECHERCHER DANS L'ATELIER..."
                     aria-label="Rechercher par nom d'objet"
                 />
@@ -181,7 +180,7 @@ $removeType = function($type) {
             @if($showMaterialDropdown)
                 <div 
                     wire:click.outside="$set('showMaterialDropdown', false)"
-                    class="absolute top-4 left-0 z-50 bg-white border-4 border-black p-6 w-full md:w-80 shadow-[15px_15px_0px_0px_rgba(0,0,0,1)]" 
+                    class="absolute top-4 left-0 z-50 bg-white border-4 border-black p-6 w-full md:w-80 shadow-[15px_15px_0px_0px_rgba(0,0,0,1)] max-h-[60vh] overflow-y-auto" 
                     role="listbox" 
                     aria-multiselectable="true"
                 >
@@ -205,7 +204,7 @@ $removeType = function($type) {
             @if($showTypeDropdown)
                 <div 
                     wire:click.outside="$set('showTypeDropdown', false)"
-                    class="absolute top-4 left-0 xl:left-auto xl:right-0 z-50 bg-white border-4 border-black p-6 w-full md:w-80 shadow-[15px_15px_0px_0px_rgba(0,0,0,1)]" 
+                    class="absolute top-4 left-0 xl:left-auto xl:right-0 z-50 bg-white border-4 border-black p-6 w-full md:w-80 shadow-[15px_15px_0px_0px_rgba(0,0,0,1)] max-h-[60vh] overflow-y-auto" 
                     role="listbox" 
                     aria-multiselectable="true"
                 >
