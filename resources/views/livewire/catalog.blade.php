@@ -19,6 +19,7 @@ state([
     "typeSearch" => "",
     "showMaterialDropdown" => false,
     "showTypeDropdown" => false,
+    "showMobileFilters" => false,
 ]);
 
 mount(function () {
@@ -101,22 +102,39 @@ $removeType = function($type) {
 <div class="bg-white min-h-screen">
     <!-- Filter Bar -->
     <div class="sticky top-20 md:top-24 z-40 bg-white border-b-4 border-black px-4 md:px-8 py-6">
+        @php
+            $activeCount = count($selectedMaterials) + count($selectedTypes) + ($hideNoPrice ? 1 : 0);
+        @endphp
+        
         <div class="max-w-[1440px] mx-auto flex flex-col xl:flex-row justify-between items-stretch xl:items-center gap-6">
-            <div class="relative flex-1">
+            <div class="relative flex-1 flex gap-3">
                 <input
                     wire:model.live.debounce.300ms="name"
                     wire:input="filterJewels"
-                    class="w-full h-14 px-6 font-mono text-base border-4 border-black focus:bg-black focus:text-white transition-colors outline-none placeholder-black/50"
+                    class="flex-1 h-14 px-6 font-mono text-base border-4 border-black focus:bg-black focus:text-white transition-colors outline-none placeholder-black/50"
                     placeholder="RECHERCHER DANS L'ATELIER..."
                     aria-label="Rechercher par nom d'objet"
                 />
+                
+                <!-- Mobile Filter Toggle (Visible only on mobile/tablet) -->
+                <button 
+                    wire:click="$toggle('showMobileFilters')" 
+                    type="button"
+                    class="xl:hidden h-14 px-4 border-4 border-black font-mono text-sm font-black uppercase hover:bg-black hover:text-white focus:bg-black focus:text-white focus:outline-none transition-all flex items-center gap-2 {{ $showMobileFilters ? 'bg-black text-white' : 'bg-white text-black' }}"
+                >
+                    FILTRES 
+                    @if($activeCount)
+                        <span class="bg-red-700 text-white px-2 py-0.5 text-xs">{{ $activeCount }}</span>
+                    @endif
+                    <span class="text-xs transition-transform {{ $showMobileFilters ? 'rotate-180' : '' }}">▼</span>
+                </button>
             </div>
 
-            <div class="flex flex-wrap gap-3 items-center" role="group" aria-label="Filtres de la collection">
+            <div class="{{ $showMobileFilters ? 'flex' : 'hidden xl:flex' }} flex-wrap gap-3 items-center" role="group" aria-label="Filtres de la collection">
                 <button 
                     wire:click="$toggle('showMaterialDropdown')" 
                     type="button"
-                    class="h-14 px-6 border-4 border-black font-mono text-sm font-black uppercase hover:bg-black hover:text-white focus:bg-black focus:text-white focus:outline-none transition-all flex items-center gap-2"
+                    class="flex-1 sm:flex-none h-14 px-6 border-4 border-black font-mono text-sm font-black uppercase hover:bg-black hover:text-white focus:bg-black focus:text-white focus:outline-none transition-all flex items-center justify-center gap-2"
                     :class="$wire.showMaterialDropdown ? 'bg-black text-white' : 'bg-white text-black'"
                     aria-haspopup="listbox"
                     aria-expanded="{{ $showMaterialDropdown ? 'true' : 'false' }}">
@@ -129,7 +147,7 @@ $removeType = function($type) {
                 <button 
                     wire:click="$toggle('showTypeDropdown')" 
                     type="button"
-                    class="h-14 px-6 border-4 border-black font-mono text-sm font-black uppercase hover:bg-black hover:text-white focus:bg-black focus:text-white focus:outline-none transition-all flex items-center gap-2"
+                    class="flex-1 sm:flex-none h-14 px-6 border-4 border-black font-mono text-sm font-black uppercase hover:bg-black hover:text-white focus:bg-black focus:text-white focus:outline-none transition-all flex items-center justify-center gap-2"
                     :class="$wire.showTypeDropdown ? 'bg-black text-white' : 'bg-white text-black'"
                     aria-haspopup="listbox"
                     aria-expanded="{{ $showTypeDropdown ? 'true' : 'false' }}">
@@ -142,15 +160,15 @@ $removeType = function($type) {
                 <button 
                     wire:click="togglePriceFilter" 
                     type="button"
-                    class="h-14 px-6 border-4 border-black font-mono text-sm font-black uppercase hover:bg-red-700 hover:text-white focus:bg-red-700 focus:text-white focus:outline-none transition-all {{ $hideNoPrice ? 'bg-red-700 text-white border-red-700' : 'bg-white text-black' }}"
+                    class="w-full sm:w-auto h-14 px-6 border-4 border-black font-mono text-sm font-black uppercase hover:bg-red-700 hover:text-white focus:bg-red-700 focus:text-white focus:outline-none transition-all {{ $hideNoPrice ? 'bg-red-700 text-white border-red-700' : 'bg-white text-black' }}"
                     aria-pressed="{{ $hideNoPrice ? 'true' : 'false' }}">
                     EN VENTE UNIQUEMENT
                 </button>
-                @if(count($selectedMaterials) || count($selectedTypes) || $name || $hideNoPrice)
+                @if($activeCount || $name)
                     <button 
                         wire:click="clearFilters" 
                         type="button"
-                        class="h-14 px-6 bg-black text-white border-4 border-black font-mono text-sm font-black uppercase hover:bg-red-700 focus:bg-red-700 focus:outline-none transition-all"
+                        class="w-full sm:w-auto h-14 px-6 bg-black text-white border-4 border-black font-mono text-sm font-black uppercase hover:bg-red-700 focus:bg-red-700 focus:outline-none transition-all"
                         aria-label="Réinitialiser tous les filtres">
                         RESET_ALL
                     </button>
