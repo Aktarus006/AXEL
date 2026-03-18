@@ -10,7 +10,7 @@
 
     <!-- Title -->
     <h2 class="text-4xl sm:text-6xl lg:text-[7.5vw] font-mono font-black text-white text-right uppercase tracking-tighter transform md:-skew-x-12 group-hover:-skew-x-0 transition-transform duration-500 px-4 sm:px-8 md:px-32 leading-none">
-        NOS_RÉALISATIONS
+        NOS_CRÉATIONS
     </h2>
 
     <div class="absolute inset-x-0 bottom-0 h-4 transition-transform duration-500 origin-left scale-x-0 bg-red-700 group-hover:scale-x-100"></div>
