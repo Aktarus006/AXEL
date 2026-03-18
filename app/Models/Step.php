@@ -26,6 +26,17 @@ class Step extends Model implements HasMedia
         "id" => "integer",
     ];
 
+    public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
+    {
+        $this->addMediaConversion("thumbnail")
+            ->width(400)
+            ->height(400)
+            ->format("webp")
+            ->quality(90)
+            ->nonQueued()
+            ->performOnCollections("steps/images");
+    }
+
     public static function getForm(): array
     {
         return [

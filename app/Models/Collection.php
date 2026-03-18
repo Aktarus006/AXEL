@@ -32,7 +32,7 @@ class Collection extends Model implements HasMedia
         "creation_date" => "date",
     ];
 
-    protected $fillable = ["name", "description", "online", "creation_date"];
+    protected $fillable = ["name", "description", "online", "creation_date", "cover"];
 
     public function jewels(): BelongsToMany
     {
@@ -103,7 +103,7 @@ class Collection extends Model implements HasMedia
             ->format("webp")
             ->quality(90)
             ->sharpen(10)
-            ->optimize()
+            ->nonQueued()
             ->performOnCollections("collections");
 
         $this->addMediaConversion("small")
@@ -112,7 +112,7 @@ class Collection extends Model implements HasMedia
             ->format("webp")
             ->quality(90)
             ->sharpen(10)
-            ->optimize()
+            ->nonQueued()
             ->performOnCollections("collections");
 
         $this->addMediaConversion("medium")
@@ -121,7 +121,7 @@ class Collection extends Model implements HasMedia
             ->format("webp")
             ->quality(85)
             ->sharpen(10)
-            ->optimize()
+            ->nonQueued()
             ->performOnCollections("collections");
 
         $this->addMediaConversion("large")
@@ -130,7 +130,7 @@ class Collection extends Model implements HasMedia
             ->format("webp")
             ->quality(85)
             ->sharpen(10)
-            ->optimize()
+            ->nonQueued()
             ->performOnCollections("collections");
 
         // Banner-specific conversions with different aspect ratios
@@ -140,7 +140,7 @@ class Collection extends Model implements HasMedia
             ->format("webp")
             ->quality(90)
             ->sharpen(10)
-            ->optimize()
+            ->nonQueued()
             ->performOnCollections("collections");
 
         $this->addMediaConversion("banner-medium")
@@ -149,7 +149,7 @@ class Collection extends Model implements HasMedia
             ->format("webp")
             ->quality(85)
             ->sharpen(10)
-            ->optimize()
+            ->nonQueued()
             ->performOnCollections("collections");
 
         $this->addMediaConversion("banner-large")
@@ -158,7 +158,7 @@ class Collection extends Model implements HasMedia
             ->format("webp")
             ->quality(80)
             ->sharpen(10)
-            ->optimize()
+            ->nonQueued()
             ->performOnCollections("collections");
     }
 }

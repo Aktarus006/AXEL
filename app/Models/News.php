@@ -77,7 +77,7 @@ class News extends Model implements HasMedia
             ->format("webp")
             ->quality(90)
             ->sharpen(10)
-            ->optimize()
+            ->nonQueued()
             ->performOnCollections("news");
 
         // Small size for cards
@@ -87,7 +87,7 @@ class News extends Model implements HasMedia
             ->format("webp")
             ->quality(90)
             ->sharpen(10)
-            ->optimize()
+            ->nonQueued()
             ->performOnCollections("news");
 
         // Medium size for article preview
@@ -97,7 +97,7 @@ class News extends Model implements HasMedia
             ->format("webp")
             ->quality(85)
             ->sharpen(10)
-            ->optimize()
+            ->nonQueued()
             ->performOnCollections("news");
 
         // Large size for article header
@@ -107,7 +107,7 @@ class News extends Model implements HasMedia
             ->format("webp")
             ->quality(80)
             ->sharpen(10)
-            ->optimize()
+            ->nonQueued()
             ->performOnCollections("news");
 
         // Full width banner
@@ -117,7 +117,7 @@ class News extends Model implements HasMedia
             ->format("webp")
             ->quality(80)
             ->sharpen(10)
-            ->optimize()
+            ->nonQueued()
             ->performOnCollections("news");
     }
 }

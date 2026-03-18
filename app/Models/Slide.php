@@ -30,19 +30,19 @@ class Slide extends Model implements HasMedia
         $this->addMediaConversion("desktop")
             ->width(1920)
             ->format("webp")
-            ->optimize()
+            ->nonQueued()
             ->performOnCollections("slides");
 
         $this->addMediaConversion("mobile")
             ->width(800)
             ->format("webp")
-            ->optimize()
+            ->nonQueued()
             ->performOnCollections("slides");
 
         $this->addMediaConversion("thumb")
             ->width(400)
             ->format("webp")
-            ->optimize()
+            ->nonQueued()
             ->performOnCollections("slides");
     }
     public static function getForm(): array

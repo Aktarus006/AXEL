@@ -34,6 +34,7 @@ class Jewel extends Model implements HasMedia
         "online",
         "material",
         "type",
+        "cover",
     ];
 
     protected $casts = [

@@ -115,6 +115,7 @@ return [
      * the optimizers that will be used by default.
      */
     'image_optimizers' => [
+        /*
         Spatie\ImageOptimizer\Optimizers\Jpegoptim::class => [
             '-m85', // set maximum quality to 85%
             '--force', // ensure that progressive generation is always done also if a little bigger
@@ -152,6 +153,7 @@ return [
             '-a end-usage=q', // rate control mode set to Constant Quality mode.
             '-a tune=ssim', // SSIM as tune the encoder for distortion metric.
         ],
+        */
     ],
 
     /*
