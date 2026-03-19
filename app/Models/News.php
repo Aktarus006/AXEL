@@ -35,11 +35,6 @@ class News extends Model implements HasMedia
         "creation_date" => "date",
     ];
 
-    public function collaboration(): BelongsTo
-    {
-        return $this->belongsTo(Collaboration::class);
-    }
-
     public function creators(): BelongsToMany
     {
         return $this->belongsToMany(Creator::class);

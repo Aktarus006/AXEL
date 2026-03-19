@@ -26,7 +26,6 @@ class NewsFactory extends Factory
             'image' => $this->faker->imageUrl(),
             'online' => $this->faker->boolean(),
             'creation_date' => $this->faker->date(),
-            'collaboration_id' => 0, // Set a default or nullable if migration allows
         ];
     }
 }
