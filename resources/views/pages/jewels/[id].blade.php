@@ -196,7 +196,7 @@ view()->share('relatedJewels', $relatedJewels);
                     <div class="space-y-12">
                         <!-- Navigation -->
                         <div class="flex justify-between items-center border-b-4 border-black pb-4">
-                            <a href="/jewels" class="font-black hover:text-red-700 transition-colors">← COLLECTION</a>
+                            <a href="/jewels" class="font-black hover:text-red-700 transition-colors">← CRÉATIONS</a>
                             <div class="text-[10px] text-black/60 font-black uppercase">REF: {{ strtoupper(Str::slug($jewel->name)) }}_{{ $jewel->id }}</div>
                         </div>
 

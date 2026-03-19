@@ -160,9 +160,12 @@ $collection = Collection::with(['jewels' => function($q) {
                                 <div 
                                     @click="galleryOpen = true; currentIndex = {{ $index }}"
                                     class="col-span-2 {{ $pattern['cols'] }} {{ $pattern['rows'] }} border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden group relative bg-white cursor-zoom-in min-h-[300px]">
+                                    @php
+                                        $shouldBeInColor = (rand(0, 100) < 30); // 30% chance to be in color by default
+                                    @endphp
                                     <img src="{{ $media->getUrl('large') }}" 
                                          alt="Mood image for {{ $collection->name }}" 
-                                         class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-110">
+                                         class="w-full h-full object-cover {{ $shouldBeInColor ? '' : 'grayscale' }} group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-110">
                                     
                                     <!-- Technical Overlay -->
                                     <div class="absolute inset-0 bg-red-700/0 group-hover:bg-red-700/10 transition-colors pointer-events-none"></div>
@@ -180,12 +183,15 @@ $collection = Collection::with(['jewels' => function($q) {
                         <!-- Standard Impact Grid for smaller sets -->
                         <div class="max-w-[1440px] mx-auto px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             @foreach($mediaItems as $index => $media)
+                                @php
+                                    $shouldBeInColor = (rand(0, 100) < 30);
+                                @endphp
                                 <div 
                                     @click="galleryOpen = true; currentIndex = {{ $index }}"
                                     class="border-4 border-black bg-white shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] overflow-hidden group aspect-square md:aspect-auto md:h-96 relative cursor-zoom-in">
                                     <img src="{{ $media->getUrl('large') }}" 
                                          alt="Mood image for {{ $collection->name }}" 
-                                         class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-105">
+                                         class="w-full h-full object-cover {{ $shouldBeInColor ? '' : 'grayscale' }} group-hover:grayscale-0 transition-all duration-700 hover:scale-105">
                                     <div class="absolute bottom-4 left-4 bg-black text-white px-2 py-1 text-[10px] font-black uppercase">
                                         VIEW_DETAIL_{{ $index + 1 }}
                                     </div>
