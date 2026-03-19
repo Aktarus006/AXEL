@@ -113,19 +113,72 @@ $collection = Collection::with(['jewels' => function($q) {
 
             <!-- Collection Gallery (Mood/Ambience) -->
             @if($collection->hasMedia('collections'))
-                <section class="bg-neutral-100 py-24 border-t-8 border-black">
-                    <div class="px-8 mb-12 max-w-[1440px] mx-auto">
-                        <h2 class="text-4xl font-black uppercase tracking-tighter">L'UNIVERS_ DE LA SÉRIE</h2>
+                @php
+                    $mediaItems = $collection->getMedia('collections');
+                    $isLargeGallery = $mediaItems->count() > 10;
+                @endphp
+                
+                <section class="bg-neutral-100 py-24 border-t-8 border-black overflow-hidden">
+                    <div class="px-8 mb-12 max-w-[1440px] mx-auto flex items-end justify-between">
+                        <h2 class="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none">
+                            L'UNIVERS_<br><span class="text-red-700">DE LA SÉRIE.</span>
+                        </h2>
+                        <div class="hidden md:block font-mono text-xs font-black opacity-20 text-right">
+                            EXPLORATION_VISUELLE / {{ str_pad($mediaItems->count(), 2, '0', STR_PAD_LEFT) }}_SAMPLES
+                        </div>
                     </div>
-                    <div class="max-w-[1440px] mx-auto px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        @foreach($collection->getMedia('collections') as $media)
-                            <div class="border-4 border-black bg-white shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] overflow-hidden group aspect-square md:aspect-auto md:h-96">
-                                <img src="{{ $media->getUrl('large') }}" 
-                                     alt="Mood image for {{ $collection->name }}" 
-                                     class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-105">
-                            </div>
-                        @endforeach
-                    </div>
+
+                    @if($isLargeGallery)
+                        <!-- Brutalist Bento Grid for 10+ images -->
+                        <div class="max-w-[1440px] mx-auto px-4 md:px-8 grid grid-cols-2 md:grid-cols-12 gap-0 border-4 border-black bg-black">
+                            @foreach($mediaItems as $index => $media)
+                                @php
+                                    $patterns = [
+                                        ['cols' => 'md:col-span-8', 'rows' => 'md:row-span-2', 'h' => 'h-[300px] md:h-[600px]'],
+                                        ['cols' => 'md:col-span-4', 'rows' => 'md:row-span-1', 'h' => 'h-[300px]'],
+                                        ['cols' => 'md:col-span-4', 'rows' => 'md:row-span-2', 'h' => 'h-[300px] md:h-[600px]'],
+                                        ['cols' => 'md:col-span-4', 'rows' => 'md:row-span-1', 'h' => 'h-[300px]'],
+                                        ['cols' => 'md:col-span-4', 'rows' => 'md:row-span-1', 'h' => 'h-[300px]'],
+                                        ['cols' => 'md:col-span-6', 'rows' => 'md:row-span-2', 'h' => 'h-[400px] md:h-[800px]'],
+                                        ['cols' => 'md:col-span-6', 'rows' => 'md:row-span-1', 'h' => 'h-[400px]'],
+                                        ['cols' => 'md:col-span-3', 'rows' => 'md:row-span-1', 'h' => 'h-[300px]'],
+                                        ['cols' => 'md:col-span-3', 'rows' => 'md:row-span-1', 'h' => 'h-[300px]'],
+                                        ['cols' => 'md:col-span-12', 'rows' => 'md:row-span-1', 'h' => 'h-[200px] md:h-[400px]'],
+                                    ];
+                                    $pattern = $patterns[$index % count($patterns)];
+                                @endphp
+                                <div class="col-span-2 {{ $pattern['cols'] }} {{ $pattern['rows'] }} border-2 border-black overflow-hidden group relative bg-white">
+                                    <img src="{{ $media->getUrl('large') }}" 
+                                         alt="Mood image for {{ $collection->name }}" 
+                                         class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-110">
+                                    
+                                    <!-- Technical Overlay -->
+                                    <div class="absolute inset-0 bg-red-700/0 group-hover:bg-red-700/10 transition-colors pointer-events-none"></div>
+                                    <div class="absolute top-4 right-4 bg-black text-white text-[10px] px-2 py-1 font-black opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-4 group-hover:translate-x-0">
+                                        SAMPLE_{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
+                                    </div>
+                                    
+                                    <!-- Brutalist Cross -->
+                                    <div class="absolute top-0 left-0 w-4 h-4 border-r border-b border-black/20 group-hover:border-white transition-colors"></div>
+                                    <div class="absolute bottom-0 right-0 w-4 h-4 border-l border-t border-black/20 group-hover:border-white transition-colors"></div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <!-- Standard Impact Grid for smaller sets -->
+                        <div class="max-w-[1440px] mx-auto px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            @foreach($mediaItems as $index => $media)
+                                <div class="border-4 border-black bg-white shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] overflow-hidden group aspect-square md:aspect-auto md:h-96 relative">
+                                    <img src="{{ $media->getUrl('large') }}" 
+                                         alt="Mood image for {{ $collection->name }}" 
+                                         class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-105">
+                                    <div class="absolute bottom-4 left-4 bg-black text-white px-2 py-1 text-[10px] font-black uppercase">
+                                        VIEW_DETAIL_{{ $index + 1 }}
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
                 </section>
             @endif
 
