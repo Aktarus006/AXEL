@@ -7,6 +7,10 @@
         'jewels/packshots': 'Packshots',
         'jewels/lifestyle': 'Lifestyle'
     },
+    collectionKeys: {
+        'jewels/packshots': 'packshots',
+        'jewels/lifestyle': 'lifestyle'
+    },
     dragStart(event, media) {
         console.log('Drag start:', media);
         this.dragging = media;
@@ -91,21 +95,37 @@
                     <div class="fi-fo-file-upload">
                         <input
                             type="file"
-                            wire:model="files.{{ $collection }}"
+                            wire:model="files.{{ $collection === 'jewels/packshots' ? 'packshots' : 'lifestyle' }}"
                             multiple
                             class="hidden"
                             accept="image/*"
                             id="file-{{ $collection }}"
                         />
-                        <label
-                            for="file-{{ $collection }}"
-                            class="flex items-center gap-2 px-4 py-2 text-xs text-gray-500 border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-50"
-                        >
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                            </svg>
-                            {{ $collection === 'jewels/packshots' ? 'Ajouter des photos sur fond blanc' : 'Ajouter des photos de mise en scène' }}
-                        </label>
+                        <div class="flex flex-col items-end gap-2">
+                            <label
+                                for="file-{{ $collection }}"
+                                class="flex items-center gap-2 px-4 py-2 text-xs text-gray-500 border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-50"
+                                wire:loading.class="opacity-50 cursor-not-allowed"
+                                wire:target="files.{{ $collection === 'jewels/packshots' ? 'packshots' : 'lifestyle' }}"
+                            >
+                                <svg wire:loading.remove wire:target="files.{{ $collection === 'jewels/packshots' ? 'packshots' : 'lifestyle' }}" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                </svg>
+                                <svg wire:loading wire:target="files.{{ $collection === 'jewels/packshots' ? 'packshots' : 'lifestyle' }}" class="w-4 h-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span wire:loading.remove wire:target="files.{{ $collection === 'jewels/packshots' ? 'packshots' : 'lifestyle' }}">
+                                    {{ $collection === 'jewels/packshots' ? 'Ajouter des photos sur fond blanc' : 'Ajouter des photos de mise en scène' }}
+                                </span>
+                                <span wire:loading wire:target="files.{{ $collection === 'jewels/packshots' ? 'packshots' : 'lifestyle' }}">
+                                    Téléchargement...
+                                </span>
+                            </label>
+                            @error('files.' . ($collection === 'jewels/packshots' ? 'packshots' : 'lifestyle'))
+                                <span class="text-xs font-medium text-red-600">{{ $message }}</span>
+                            @enderror
+                        </div>
                     </div>
                 </div>
                 <div class="relative flex flex-wrap gap-4">
@@ -146,11 +166,16 @@
                                         type="button"
                                         @click.stop="deleteMedia({{ $media->id }})"
                                         @mousedown.stop
-                                        class="flex items-center justify-center w-6 h-6 mx-4 transition-all bg-red-500 rounded-full shadow-lg cursor-pointer hover:bg-red-600 hover:scale-110"
+                                        class="flex items-center justify-center w-6 h-6 mx-4 transition-all bg-red-500 rounded-full shadow-lg cursor-pointer hover:bg-red-600 hover:scale-110 disabled:opacity-50"
                                         title="Supprimer"
+                                        wire:loading.attr="disabled"
                                     >
-                                        <svg class="w-3.5 h-3.5 text-white pointer-events-none" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                        <svg wire:loading.remove wire:target="deleteMedia" class="w-3.5 h-3.5 text-white pointer-events-none" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                        <svg wire:loading wire:target="deleteMedia" class="w-3.5 h-3.5 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                         </svg>
                                     </button>
                                 </div>

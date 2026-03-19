@@ -16,8 +16,8 @@ class EditJewel extends EditRecord
     protected static string $resource = JewelResource::class;
 
     public $files = [
-        "jewels/packshots" => [],
-        "jewels/lifestyle" => [],
+        "packshots" => [],
+        "lifestyle" => [],
     ];
 
     protected function getHeaderActions(): array
@@ -27,12 +27,27 @@ class EditJewel extends EditRecord
 
     public function updatedFiles($value, $key)
     {
-        // 1. VALIDATION CRUCIALE
-        $this->validate([
-            "files." .
-            $key .
-            ".*" => "image|mimes:jpeg,png,webp,svg+xml|max:10240",
-        ]);
+        $collectionMap = [
+            "packshots" => "jewels/packshots",
+            "lifestyle" => "jewels/lifestyle",
+        ];
+
+        $collectionName = $collectionMap[$key] ?? $key;
+
+        try {
+            // 1. VALIDATION CRUCIALE
+            $this->validate([
+                "files." .
+                $key .
+                ".*" => "image|mimes:jpeg,png,webp,svg+xml|max:10240",
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Illuminate\Support\Facades\Log::error("Validation failed for files upload: " . $key, [
+                'errors' => $e->errors(),
+                'key' => $key
+            ]);
+            throw $e;
+        }
 
         // 2. Traitement seulement si la validation passe
         foreach ($value as $file) {
@@ -40,7 +55,7 @@ class EditJewel extends EditRecord
                 ->addMedia($file->getRealPath())
                 ->usingName($file->getClientOriginalName())
                 ->usingFileName($file->hashName()) // Sécurité: on change le nom du fichier sur le disque
-                ->toMediaCollection($key);
+                ->toMediaCollection($collectionName);
         }
 
         $this->files[$key] = [];
