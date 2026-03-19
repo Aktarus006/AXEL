@@ -143,7 +143,7 @@ class Jewel extends Model implements HasMedia
                     TextInput::make("price")
                         ->label("Prix")
                         ->numeric()
-                        ->prefix("€"),
+                        ->suffix(" €"),
                     RichEditor::make("description")
                         ->label("Description")
                         ->columnSpan(2),

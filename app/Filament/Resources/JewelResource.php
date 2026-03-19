@@ -57,7 +57,8 @@ class JewelResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make("price")
                     ->label('Prix')
-                    ->money('eur')
+                    ->numeric(decimalPlaces: 0, thousandsSeparator: ' ')
+                    ->suffix(' €')
                     ->sortable(),
                 Tables\Columns\TextColumn::make("material")
                     ->label('Matériaux')

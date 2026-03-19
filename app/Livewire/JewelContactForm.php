@@ -27,7 +27,7 @@ class JewelContactForm extends Component
     public function mount($jewel)
     {
         $this->jewel = $jewel;
-        $this->message = "Je suis intéressé(e) par {$jewel->name} au prix de €" . number_format($jewel->price, 2) . ".";
+        $this->message = "Je suis intéressé(e) par {$jewel->name} au prix de " . number_format($jewel->price, 0, '.', ' ') . " €.";
     }
 
     public function submit()

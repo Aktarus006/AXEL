@@ -57,7 +57,7 @@
             <div class="absolute bottom-0 left-0 w-full p-4 bg-black text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 font-mono text-xs uppercase flex justify-between items-center">
                 <span class="truncate font-black text-lg">{{ $this->jewel->name }}</span>
                 @if($this->jewel->price > 0)
-                    <span class="font-black text-xl italic ml-2">€{{ number_format($this->jewel->price, 0) }}</span>
+                    <span class="font-black text-xl italic ml-2">{{ number_format($this->jewel->price, 0, '.', ' ') }} €</span>
                 @endif
             </div>
         @endif

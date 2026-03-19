@@ -205,7 +205,7 @@ view()->share('relatedJewels', $relatedJewels);
                             <h1 class="text-4xl lg:text-7xl font-black uppercase leading-none tracking-tighter">{{ $jewel->name }}</h1>
                             @if($jewel->price > 0)
                             <div class="flex items-center gap-4">
-                                <span class="bg-red-700 text-white px-4 py-2 text-2xl font-black italic">€{{ number_format($jewel->price, 0) }}</span>
+                                <span class="bg-red-700 text-white px-4 py-2 text-2xl font-black italic">{{ number_format($jewel->price, 0, '.', ' ') }} €</span>
                                 <span class="text-xs font-black uppercase tracking-widest bg-black text-white px-2 py-1">Prêt_à_expédier</span>
                             </div>
                             @else

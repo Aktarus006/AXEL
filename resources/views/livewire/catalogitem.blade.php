@@ -96,7 +96,7 @@ mount(function (Jewel $jewel = null) {
                     </div>
                     <div class="text-right min-w-[100px]">
                         @if($this->jewel && $this->jewel->price > 0)
-                            <span class="font-mono text-3xl font-black italic tracking-tighter leading-none">€{{ number_format($this->jewel->price, 0) }}</span>
+                            <span class="font-mono text-3xl font-black italic tracking-tighter leading-none">{{ number_format($this->jewel->price, 0, '.', ' ') }} €</span>
                         @endif
                     </div>
                 </div>

@@ -2,7 +2,7 @@
 # Nouvelle demande d'information
 
 **Bijou**: {{ $jewel->name }}
-**Prix**: €{{ number_format($jewel->price, 2) }}
+**Prix**: {{ number_format($jewel->price, 0, '.', ' ') }} €
 
 **De**: {{ $userName }}
 **Email**: {{ $userEmail }}

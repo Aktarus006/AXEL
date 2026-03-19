@@ -38,7 +38,8 @@ class LatestJewels extends BaseWidget
                     ->limit(30),
                 Tables\Columns\TextColumn::make('price')
                     ->label('Prix')
-                    ->money('eur'),
+                    ->numeric(decimalPlaces: 0, thousandsSeparator: ' ')
+                    ->suffix(' €'),
                 Tables\Columns\IconColumn::make('online')
                     ->label('Statut')
                     ->boolean(),
