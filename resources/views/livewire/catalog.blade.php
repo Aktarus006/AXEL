@@ -125,7 +125,7 @@ $removeType = function($type) {
                 <input
                     wire:model.live.debounce.300ms="name"
                     wire:input="filterJewels"
-                    class="flex-1 h-14 px-4 md:px-6 font-mono text-sm md:text-base border-4 border-black bg-white text-black focus:bg-black focus:text-white transition-colors outline-none placeholder-black/50"
+                    class="flex-1 h-14 px-4 md:px-6 font-mono text-sm md:text-base border-4 border-black bg-white text-black focus:bg-black focus:text-white transition-all outline-none placeholder-black/50"
                     placeholder="RECHERCHER..."
                     aria-label="Rechercher par nom d'objet"
                 />
