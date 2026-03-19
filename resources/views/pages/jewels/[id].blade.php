@@ -2,6 +2,7 @@
 use App\Models\Jewel;
 use App\Enums\Status;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 $id = request()->segment(count(request()->segments()));
 $jewel = Jewel::with(['media', 'collections'])->where('online', Status::ONLINE)->find($id);
@@ -45,22 +46,37 @@ view()->share('relatedJewels', $relatedJewels);
                 
                 $allMedia = collect();
                 
-                // Add cover first if exists
+                // 1. Dual-source Hero Logic
+                $heroUrl = null;
+                $heroId = null;
+
                 if ($coverMedia) {
-                    $allMedia->push(['url' => $coverMedia->getUrl('large'), 'type' => 'lifestyle', 'id' => $coverMedia->id, 'is_cover' => true]);
+                    $heroUrl = $coverMedia->getUrl('large');
+                    $heroId = $coverMedia->id;
+                } elseif ($jewel->cover && str_contains($jewel->cover, '.')) {
+                    // Check legacy disk path
+                    if (Storage::disk('public')->exists($jewel->cover)) {
+                        $heroUrl = Storage::url($jewel->cover);
+                    }
                 }
 
-                // Add others
+                // Add hero first if found
+                if ($heroUrl) {
+                    $allMedia->push(['url' => $heroUrl, 'type' => 'lifestyle', 'id' => $heroId ?? 'cover', 'is_cover' => true]);
+                }
+
+                // 2. Add others, avoiding duplicates
                 foreach($lifestyles as $m) {
-                    if ($coverMedia && $m->id === $coverMedia->id) continue;
+                    if ($heroId && $m->id === $heroId) continue;
                     $allMedia->push(['url' => $m->getUrl('large'), 'type' => 'lifestyle', 'id' => $m->id, 'is_cover' => false]);
                 }
                 foreach($packshots as $m) {
+                    if ($heroId && $m->id === $heroId) continue;
                     $allMedia->push(['url' => $m->getUrl('large'), 'type' => 'packshot', 'id' => $m->id, 'is_cover' => false]);
                 }
                 
-                // Randomize others but keep cover at first if it exists
-                if ($coverMedia) {
+                // 3. Randomize others but keep hero at first if it exists
+                if ($heroUrl) {
                     $first = $allMedia->shift();
                     $allMedia = $allMedia->shuffle();
                     $allMedia->prepend($first);
@@ -97,7 +113,7 @@ view()->share('relatedJewels', $relatedJewels);
                             <button @click="activeFilter = 'lifestyle'" 
                                     :class="activeFilter === 'lifestyle' ? 'bg-red-700 text-white border-red-700' : 'bg-white text-black'"
                                     class="px-6 py-2 border-4 border-black font-black uppercase text-xs transition-all hover:bg-red-700 hover:text-white">
-                                Atmosphère [{{ $lifestyles->count() + ($coverMedia ? 1 : 0) }}]
+                                Atmosphère [{{ $lifestyles->count() + ($heroUrl ? 1 : 0) }}]
                             </button>
                             <button @click="activeFilter = 'packshot'" 
                                     :class="activeFilter === 'packshot' ? 'bg-black text-white' : 'bg-white text-black'"
@@ -123,7 +139,9 @@ view()->share('relatedJewels', $relatedJewels);
                                             ['span' => 'lg:col-span-6', 'aspect' => 'aspect-square'],
                                             ['span' => 'lg:col-span-6', 'aspect' => 'aspect-[16/9]'],
                                         ];
-                                        $pattern = $patterns[($index - ($coverMedia ? 1 : 0)) % count($patterns)];
+                                        // Offset patterns if cover exists
+                                        $pIndex = ($heroUrl) ? ($index - 1) : $index;
+                                        $pattern = $patterns[max(0, $pIndex) % count($patterns)];
                                     }
                                 @endphp
                                 <div x-show="activeFilter === 'all' || activeFilter === '{{ $item['type'] }}'"
