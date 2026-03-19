@@ -315,18 +315,18 @@ view()->share('relatedJewels', $relatedJewels);
 
             <!-- Conditional Form Section -->
             @if($jewel->price > 0)
-                <section id="inquiry" class="bg-red-700 py-24 px-8 border-y-8 border-black">
-                    <div class="max-w-4xl mx-auto bg-white border-8 border-black p-8 lg:p-16 shadow-[20px_20px_0px_0px_rgba(0,0,0,1)]">
-                        <h2 class="text-4xl font-black uppercase mb-4 border-b-4 border-black pb-4 text-black">Demande d'acquisition</h2>
-                        <p class="font-mono text-sm mb-12 opacity-60 uppercase">Cette pièce est disponible immédiatement. Veuillez remplir le formulaire ci-dessous pour réserver l'objet.</p>
+                <section id="inquiry" class="bg-red-700 py-24 px-4 md:px-8 border-y-8 border-black">
+                    <div class="max-w-4xl mx-auto bg-white border-4 md:border-8 border-black p-4 md:p-12 lg:p-16 shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] md:shadow-[20px_20px_0px_0px_rgba(0,0,0,1)]">
+                        <h2 class="text-3xl md:text-4xl font-black uppercase mb-4 border-b-4 border-black pb-4 text-black">Demande d'acquisition</h2>
+                        <p class="font-mono text-xs md:text-sm mb-12 opacity-60 uppercase">Cette pièce est disponible immédiatement. Veuillez remplir le formulaire ci-dessous pour réserver l'objet.</p>
                         <livewire:jewel-contact-form :jewel="$jewel" />
                     </div>
                 </section>
             @else
-                <section id="custom" class="bg-black py-24 px-8 border-y-8 border-black">
-                    <div class="max-w-4xl mx-auto bg-white border-8 border-black p-8 lg:p-16 shadow-[20px_20px_0px_0px_rgba(185,28,28,1)]">
-                        <h2 class="text-4xl font-black uppercase mb-4 border-b-4 border-black pb-4 text-black">Projet Personnel</h2>
-                        <p class="font-mono text-sm mb-12 opacity-60 uppercase tracking-tighter">
+                <section id="custom" class="bg-black py-24 px-4 md:px-8 border-y-8 border-black">
+                    <div class="max-w-4xl mx-auto bg-white border-4 md:border-8 border-black p-4 md:p-12 lg:p-16 shadow-[10px_10px_0px_0px_rgba(185,28,28,1)] md:shadow-[20px_20px_0px_0px_rgba(185,28,28,1)]">
+                        <h2 class="text-3xl md:text-4xl font-black uppercase mb-4 border-b-4 border-black pb-4 text-black">Projet Personnel</h2>
+                        <p class="font-mono text-xs md:text-sm mb-12 opacity-60 uppercase tracking-tighter">
                             Cette pièce n'est plus disponible, mais l'Atelier Axel peut s'inspirer de cet univers pour réaliser une création originale, unique et sur-mesure.
                         </p>
                         <livewire:contactform />

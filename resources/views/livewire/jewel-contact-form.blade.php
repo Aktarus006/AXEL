@@ -7,35 +7,35 @@
             DEMANDER L'ACQUISITION_
         </button>
     @else
-        <form wire:submit="submit" class="w-full border-4 border-black p-4 md:p-8 relative bg-white">
-            <h2 class="text-2xl md:text-3xl mb-8 md:mb-12 text-black font-black tracking-tighter uppercase border-b-4 border-black pb-4">DEMANDE D'INFORMATION_</h2>
+        <form wire:submit="submit" class="w-full border-2 md:border-4 border-black p-2 md:p-8 relative bg-white">
+            <h2 class="text-xl md:text-3xl mb-10 md:mb-12 text-black font-black tracking-tighter uppercase border-b-4 border-black pb-4">DEMANDE D'INFORMATION_</h2>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-8 md:mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-8 mb-8 md:mb-12">
                 <!-- Name Input -->
-                <div class="relative">
-                    <label for="name" class="absolute -top-6 left-0 text-[10px] md:text-xs uppercase tracking-[0.2em] opacity-50 text-black">
+                <div class="relative px-2 md:px-0">
+                    <label for="name" class="absolute -top-6 left-2 md:left-0 text-[10px] md:text-xs uppercase tracking-[0.2em] opacity-50 text-black">
                         01 | VOTRE NOM
                     </label>
                     <input
                         type="text"
                         id="name"
                         wire:model="name"
-                        class="w-full bg-transparent border-b-4 border-black py-3 md:py-4 text-black placeholder-black/10 focus:outline-none focus:border-red-700 transition-all duration-300"
+                        class="w-full bg-transparent border-b-2 md:border-b-4 border-black py-3 md:py-4 text-black placeholder-black/10 focus:outline-none focus:border-red-700 transition-all duration-300"
                         placeholder="NOM_PRÉNOM"
                     />
                     @error('name') <span class="text-red-700 text-xs mt-1 uppercase">{{ $message }}</span> @enderror
                 </div>
 
                 <!-- Email Input -->
-                <div class="relative">
-                    <label for="email" class="absolute -top-6 left-0 text-[10px] md:text-xs uppercase tracking-[0.2em] opacity-50 text-black">
+                <div class="relative px-2 md:px-0">
+                    <label for="email" class="absolute -top-6 left-2 md:left-0 text-[10px] md:text-xs uppercase tracking-[0.2em] opacity-50 text-black">
                         02 | VOTRE EMAIL
                     </label>
                     <input
                         type="email"
                         id="email"
                         wire:model="email"
-                        class="w-full bg-transparent border-b-4 border-black py-3 md:py-4 text-black placeholder-black/10 focus:outline-none focus:border-red-700 transition-all duration-300"
+                        class="w-full bg-transparent border-b-2 md:border-b-4 border-black py-3 md:py-4 text-black placeholder-black/10 focus:outline-none focus:border-red-700 transition-all duration-300"
                         placeholder="EMAIL_ADRESSE"
                     />
                     @error('email') <span class="text-red-700 text-xs mt-1 uppercase">{{ $message }}</span> @enderror
@@ -43,15 +43,15 @@
             </div>
 
             <!-- Message Input -->
-            <div class="relative mb-8 md:mb-12">
-                <label for="message" class="absolute -top-6 left-0 text-[10px] md:text-xs uppercase tracking-[0.2em] opacity-50 text-black">
+            <div class="relative mb-8 md:mb-12 px-2 md:px-0">
+                <label for="message" class="absolute -top-6 left-2 md:left-0 text-[10px] md:text-xs uppercase tracking-[0.2em] opacity-50 text-black">
                     03 | VOTRE MESSAGE
                 </label>
                 <textarea
                     id="message"
                     wire:model="message"
                     rows="4"
-                    class="w-full bg-transparent border-b-4 border-black py-3 md:py-4 text-black placeholder-black/10 focus:outline-none focus:border-red-700 transition-all duration-300 resize-none"
+                    class="w-full bg-transparent border-b-2 md:border-b-4 border-black py-3 md:py-4 text-black placeholder-black/10 focus:outline-none focus:border-red-700 transition-all duration-300 resize-none"
                     placeholder="VOTRE MESSAGE..."
                 ></textarea>
                 @error('message') <span class="text-red-700 text-xs mt-1 uppercase">{{ $message }}</span> @enderror
