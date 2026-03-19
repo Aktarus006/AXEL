@@ -22,6 +22,20 @@ state([
     "showMobileFilters" => false,
 ]);
 
+$filteredMaterials = computed(function () {
+    if (!$this->materialSearch) return $this->materials;
+    return array_filter($this->materials, function($m) {
+        return str_contains(strtolower($m->value), strtolower($this->materialSearch));
+    });
+});
+
+$filteredTypes = computed(function () {
+    if (!$this->typeSearch) return $this->types;
+    return array_filter($this->types, function($t) {
+        return str_contains(strtolower($t->value), strtolower($this->typeSearch));
+    });
+});
+
 mount(function () {
     $this->filterJewels();
 });
@@ -107,11 +121,11 @@ $removeType = function($type) {
         @endphp
         
         <div class="max-w-[1440px] mx-auto flex flex-col xl:flex-row justify-between items-stretch xl:items-center gap-6">
-            <div class="relative flex-1 flex gap-3 text-black">
+            <div class="relative flex-1 flex gap-3">
                 <input
                     wire:model.live.debounce.300ms="name"
                     wire:input="filterJewels"
-                    class="flex-1 h-14 px-6 font-mono text-base border-4 border-black bg-white focus:bg-black focus:text-white transition-colors outline-none placeholder-black/50 text-black"
+                    class="flex-1 h-14 px-6 font-mono text-base border-4 border-black bg-white text-black focus:bg-black focus:text-white transition-colors outline-none placeholder-black/50"
                     placeholder="RECHERCHER DANS L'ATELIER..."
                     aria-label="Rechercher par nom d'objet"
                 />
@@ -185,8 +199,16 @@ $removeType = function($type) {
                     role="listbox" 
                     aria-multiselectable="true"
                 >
+                    <div class="sticky top-0 bg-white pb-4 z-10 border-b-2 border-black mb-4">
+                        <input 
+                            wire:model.live="materialSearch"
+                            type="text" 
+                            placeholder="Rechercher matériau..."
+                            class="w-full h-10 px-4 border-2 border-black font-mono text-sm outline-none focus:bg-neutral-50"
+                        >
+                    </div>
                     <div class="grid grid-cols-1 gap-3">
-                        @foreach($materials as $material)
+                        @foreach($this->filteredMaterials as $material)
                             <button 
                                 wire:click="addMaterial('{{ $material->value }}')" 
                                 type="button"
@@ -209,8 +231,16 @@ $removeType = function($type) {
                     role="listbox" 
                     aria-multiselectable="true"
                 >
+                    <div class="sticky top-0 bg-white pb-4 z-10 border-b-2 border-black mb-4">
+                        <input 
+                            wire:model.live="typeSearch"
+                            type="text" 
+                            placeholder="Rechercher type..."
+                            class="w-full h-10 px-4 border-2 border-black font-mono text-sm outline-none focus:bg-neutral-50"
+                        >
+                    </div>
                     <div class="grid grid-cols-1 gap-3">
-                        @foreach($types as $type)
+                        @foreach($this->filteredTypes as $type)
                             <button 
                                 wire:click="addType('{{ $type->value }}')" 
                                 type="button"
