@@ -114,7 +114,7 @@ $collection = Collection::with(['jewels' => function($q) {
             <!-- Collection Gallery (Mood/Ambience) -->
             @if($collection->hasMedia('collections'))
                 @php
-                    $mediaItems = $collection->getMedia('collections');
+                    $mediaItems = $collection->getMedia('collections')->sortBy(fn($media) => $media->getCustomProperty('order') ?? $media->order_column);
                     $isLargeGallery = $mediaItems->count() > 10;
                 @endphp
                 
