@@ -121,11 +121,11 @@ $removeType = function($type) {
         @endphp
         
         <div class="max-w-[1440px] mx-auto flex flex-col xl:flex-row justify-between items-stretch xl:items-center gap-6">
-            <div class="relative flex-1 flex gap-2">
+            <div class="relative flex-1 flex gap-4">
                 <input
                     wire:model.live.debounce.300ms="name"
                     wire:input="filterJewels"
-                    class="flex-1 h-14 px-4 md:px-6 font-mono text-sm md:text-base border-4 border-black bg-white text-black focus:bg-neutral-50 transition-all outline-none placeholder-black/50"
+                    class="flex-1 h-14 px-4 md:px-6 font-mono text-sm md:text-base border-4 border-black bg-white text-black focus:border-red-700 focus:bg-neutral-50 transition-all outline-none placeholder-black/50"
                     placeholder="RECHERCHER..."
                     aria-label="Rechercher par nom d'objet"
                 />
