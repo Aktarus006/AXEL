@@ -38,161 +38,124 @@ view()->share('relatedJewels', $relatedJewels);
                 </div>
             </div>
         @else
+            @php
+                $packshots = $jewel->getMedia('jewels/packshots');
+                $lifestyles = $jewel->getMedia('jewels/lifestyle');
+                $coverMedia = $jewel->getMedia('jewels/cover')->first();
+                
+                $allMedia = collect();
+                
+                // Add cover first if exists
+                if ($coverMedia) {
+                    $allMedia->push(['url' => $coverMedia->getUrl('large'), 'type' => 'lifestyle', 'id' => $coverMedia->id, 'is_cover' => true]);
+                }
+
+                // Add others
+                foreach($lifestyles as $m) {
+                    if ($coverMedia && $m->id === $coverMedia->id) continue;
+                    $allMedia->push(['url' => $m->getUrl('large'), 'type' => 'lifestyle', 'id' => $m->id, 'is_cover' => false]);
+                }
+                foreach($packshots as $m) {
+                    $allMedia->push(['url' => $m->getUrl('large'), 'type' => 'packshot', 'id' => $m->id, 'is_cover' => false]);
+                }
+                
+                // Randomize others but keep cover at first if it exists
+                if ($coverMedia) {
+                    $first = $allMedia->shift();
+                    $allMedia = $allMedia->shuffle();
+                    $allMedia->prepend($first);
+                } else {
+                    $allMedia = $allMedia->shuffle();
+                }
+            @endphp
+
             <!-- Immersive Layout -->
-            <div class="flex flex-col lg:flex-row min-h-screen">
+            <div class="flex flex-col lg:flex-row min-h-screen" 
+                 x-data="{ 
+                    activeFilter: 'all',
+                    galleryOpen: false,
+                    currentIndex: 0,
+                    mediaCount: {{ $allMedia->count() }},
+                    next() { this.currentIndex = (this.currentIndex + 1) % this.mediaCount },
+                    prev() { this.currentIndex = (this.currentIndex - 1 + this.mediaCount) % this.mediaCount }
+                 }"
+                 @keydown.escape.window="galleryOpen = false"
+                 @keydown.right.window="if(galleryOpen) next()"
+                 @keydown.left.window="if(galleryOpen) prev()"
+            >
                 
                 <!-- Left: Advanced Gallery Layout -->
                 <div class="w-full lg:w-3/5 bg-neutral-100 border-r-4 border-black">
-                    @php
-                        $packshots = $jewel->getMedia('jewels/packshots');
-                        $lifestyles = $jewel->getMedia('jewels/lifestyle');
-                        $firstLifestyle = $lifestyles->first();
-                        $remainingLifestyles = $lifestyles->slice(1);
-                    @endphp
-                    
-                    <div class="flex flex-col p-4 lg:p-8 space-y-16">
-                        <!-- 1. The Hero Atmosphere -->
-                        @if($firstLifestyle)
-                            <div class="relative group overflow-hidden border-4 border-black bg-white shadow-[15px_15px_0px_0px_rgba(185,28,28,1)]">
-                                <div class="absolute top-6 left-6 z-10 bg-black text-white px-4 py-2 font-mono text-xs font-black uppercase tracking-widest border border-white">
-                                    ATMOSPHÈRE_01
-                                </div>
-                                <img src="{{ $firstLifestyle->getUrl('large') }}" 
-                                     alt="Mise en situation de {{ $jewel->name }}" 
-                                     class="w-full h-auto object-cover transition-all duration-1000 hover:scale-105"
-                                     loading="eager">
-                            </div>
-                        @endif
+                    <div class="flex flex-col p-4 lg:p-8 space-y-8">
+                        <!-- Gallery Filter Controls -->
+                        <div class="flex flex-wrap gap-4 sticky top-0 z-40 py-4 bg-neutral-100/80 backdrop-blur-md border-b-2 border-black/5">
+                            <button @click="activeFilter = 'all'" 
+                                    :class="activeFilter === 'all' ? 'bg-black text-white' : 'bg-white text-black'"
+                                    class="px-6 py-2 border-4 border-black font-black uppercase text-xs transition-all hover:bg-red-700 hover:text-white">
+                                Tout_Afficher [{{ $allMedia->count() }}]
+                            </button>
+                            <button @click="activeFilter = 'lifestyle'" 
+                                    :class="activeFilter === 'lifestyle' ? 'bg-red-700 text-white border-red-700' : 'bg-white text-black'"
+                                    class="px-6 py-2 border-4 border-black font-black uppercase text-xs transition-all hover:bg-red-700 hover:text-white">
+                                Atmosphère [{{ $lifestyles->count() + ($coverMedia ? 1 : 0) }}]
+                            </button>
+                            <button @click="activeFilter = 'packshot'" 
+                                    :class="activeFilter === 'packshot' ? 'bg-black text-white' : 'bg-white text-black'"
+                                    class="px-6 py-2 border-4 border-black font-black uppercase text-xs transition-all hover:bg-red-700 hover:text-white">
+                                Détails_Techniques [{{ $packshots->count() }}]
+                            </button>
+                        </div>
 
-                        <!-- 2. Technical Details (Grid or Slider) -->
-                        @if($packshots->isNotEmpty())
-                            <div class="space-y-6">
-                                <div class="flex items-center justify-between gap-4">
-                                    <h2 class="font-mono font-black text-sm uppercase tracking-[0.3em] bg-black text-white px-4 py-1">DÉTAILS_TECHNIQUES</h2>
-                                    @if($packshots->count() > 2)
-                                        <span class="text-[10px] font-black uppercase opacity-30 tracking-widest hidden md:block">Scroll_Horizontal_</span>
-                                    @endif
-                                </div>
-
-                                @if($packshots->count() <= 2)
-                                    <!-- Simple Grid for 1 or 2 images -->
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        @foreach($packshots as $index => $media)
-                                            <div class="relative group overflow-hidden border-4 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                                                <img src="{{ $media->getUrl('medium') }}" class="w-full h-full object-cover transition-all duration-700 grayscale group-hover:grayscale-0" loading="lazy">
-                                            </div>
-                                        @endforeach
+                        <!-- Brutalist Bento Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6">
+                            @foreach($allMedia as $index => $item)
+                                @php
+                                    // Variation logic: alternate between different spans and aspect ratios
+                                    // Cover (first item if exists) gets a special large span
+                                    if ($item['is_cover']) {
+                                        $pattern = ['span' => 'lg:col-span-12', 'aspect' => 'aspect-video'];
+                                    } else {
+                                        $patterns = [
+                                            ['span' => 'lg:col-span-8', 'aspect' => 'aspect-video'],
+                                            ['span' => 'lg:col-span-4', 'aspect' => 'aspect-square'],
+                                            ['span' => 'lg:col-span-4', 'aspect' => 'aspect-[3/4]'],
+                                            ['span' => 'lg:col-span-8', 'aspect' => 'aspect-video'],
+                                            ['span' => 'lg:col-span-6', 'aspect' => 'aspect-square'],
+                                            ['span' => 'lg:col-span-6', 'aspect' => 'aspect-[16/9]'],
+                                        ];
+                                        $pattern = $patterns[($index - ($coverMedia ? 1 : 0)) % count($patterns)];
+                                    }
+                                @endphp
+                                <div x-show="activeFilter === 'all' || activeFilter === '{{ $item['type'] }}'"
+                                     x-transition:enter="transition ease-out duration-300"
+                                     x-transition:enter-start="opacity-0 transform scale-95"
+                                     x-transition:enter-end="opacity-100 transform scale-100"
+                                     @click="galleryOpen = true; currentIndex = {{ $index }}"
+                                     class="{{ $pattern['span'] }} break-inside-avoid relative group overflow-hidden border-4 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] cursor-zoom-in">
+                                    <div class="{{ $pattern['aspect'] }} w-full overflow-hidden">
+                                        <img src="{{ $item['url'] }}" 
+                                             alt="{{ $jewel->name }}" 
+                                             class="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
+                                             loading="{{ $index < 2 ? 'eager' : 'lazy' }}">
                                     </div>
-                                @else
-                                    <!-- Slider with Visible Brutalist Scrollbar & Smooth Drag to Scroll -->
-                                    <div class="relative group" 
-                                         x-data="{ 
-                                            isDown: false, 
-                                            startX: 0, 
-                                            scrollLeft: 0,
-                                            mouseDown(e) {
-                                                this.isDown = true;
-                                                $refs.slider.style.scrollSnapType = 'none';
-                                                this.startX = e.pageX - $refs.slider.offsetLeft;
-                                                this.scrollLeft = $refs.slider.scrollLeft;
-                                            },
-                                            mouseLeave() {
-                                                this.isDown = false;
-                                                $refs.slider.style.scrollSnapType = 'x mandatory';
-                                            },
-                                            mouseUp() {
-                                                this.isDown = false;
-                                                $refs.slider.style.scrollSnapType = 'x mandatory';
-                                            },
-                                            mouseMove(e) {
-                                                if(!this.isDown) return;
-                                                e.preventDefault();
-                                                const x = e.pageX - $refs.slider.offsetLeft;
-                                                const walk = (x - this.startX) * 1.5; // Ajustement sensibilité
-                                                $refs.slider.scrollLeft = this.scrollLeft - walk;
-                                            }
-                                         }">
-                                        <style>
-                                            .brutalist-scroll::-webkit-scrollbar {
-                                                height: 14px;
-                                            }
-                                            .brutalist-scroll::-webkit-scrollbar-track {
-                                                background: #f3f4f6;
-                                                border: 3px solid black;
-                                            }
-                                            .brutalist-scroll::-webkit-scrollbar-thumb {
-                                                background: black;
-                                                border: 1px solid white;
-                                            }
-                                            .brutalist-scroll::-webkit-scrollbar-thumb:hover {
-                                                background: #b91c1c;
-                                            }
-                                            /* Supprimer les effets de sélection bleus */
-                                            .no-select {
-                                                -webkit-user-select: none;
-                                                -khtml-user-select: none;
-                                                -moz-user-select: none;
-                                                -ms-user-select: none;
-                                                user-select: none;
-                                                -webkit-user-drag: none;
-                                            }
-                                        </style>
-                                        <div 
-                                            x-ref="slider"
-                                            @mousedown="mouseDown"
-                                            @mouseleave="mouseLeave"
-                                            @mouseup="mouseUp"
-                                            @mousemove="mouseMove"
-                                            class="flex overflow-x-auto snap-x snap-mandatory brutalist-scroll gap-6 pb-12 cursor-grab active:cursor-grabbing no-select" 
-                                            style="scrollbar-width: auto; scroll-behavior: auto;">
-                                            @foreach($packshots as $index => $media)
-                                                <div class="flex-none w-4/5 md:w-1/2 snap-start relative group overflow-hidden border-4 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] no-select">
-                                                    <img src="{{ $media->getUrl('medium') }}" 
-                                                         draggable="false"
-                                                         class="w-full aspect-square object-cover transition-all duration-700 grayscale group-hover:grayscale-0 pointer-events-none no-select" 
-                                                         loading="lazy">
-                                                    <div class="absolute bottom-4 right-4 bg-black text-white px-2 py-0.5 text-[10px] font-black">
-                                                        DET_{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                @endif
-                            </div>
-                        @endif
-
-                        <!-- 3. Dynamic Lifestyle Gallery -->
-                        @if($remainingLifestyles->isNotEmpty())
-                            <div class="space-y-12">
-                                @foreach($remainingLifestyles->chunk(3) as $chunk)
-                                    @foreach($chunk as $index => $life)
-                                        @if($loop->first)
-                                            <!-- Full width for the first of the chunk -->
-                                            <div class="relative group overflow-hidden border-4 border-black bg-white shadow-[15px_15px_0px_0px_rgba(185,28,28,1)]">
-                                                <img src="{{ $life->getUrl('large') }}" class="w-full h-auto object-cover transition-all duration-1000 hover:scale-105">
-                                            </div>
+                                    <div class="absolute bottom-4 right-4 bg-black text-white px-2 py-0.5 text-[10px] font-black uppercase z-10">
+                                        @if($item['is_cover'])
+                                            MASTER_IMAGE
                                         @else
-                                            <!-- Two columns for the others -->
-                                            @if($loop->iteration == 2)
-                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                            @endif
-                                                <div class="relative group overflow-hidden border-4 border-black bg-white shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
-                                                    <img src="{{ $life->getUrl('medium') }}" class="w-full aspect-[4/5] object-cover transition-all duration-1000 hover:scale-105">
-                                                </div>
-                                            @if($loop->last || $loop->iteration == 3)
-                                                </div>
-                                            @endif
+                                            {{ $item['type'] === 'lifestyle' ? 'ATMOS' : 'TECH' }}_{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
                                         @endif
-                                    @endforeach
-                                @endforeach
-                            </div>
-                        @endif
+                                    </div>
+                                    <!-- Crosshair details for brutalist feel -->
+                                    <div class="absolute top-0 left-0 w-4 h-4 border-r border-b border-black/10"></div>
+                                    <div class="absolute bottom-0 right-0 w-4 h-4 border-l border-t border-black/10"></div>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
 
                 <!-- Right: Content & Specs (Sticky Dashboard) -->
-                <div class="w-full lg:w-2/5 lg:sticky lg:top-24 lg:h-[calc(100vh-6rem)] flex flex-col bg-white border-l-4 lg:border-l-8 border-black">
+                <div class="w-full lg:w-2/5 lg:sticky lg:top-24 lg:h-[calc(100vh-6rem)] flex flex-col bg-white border-l-4 lg:border-l-8 border-black z-10">
                     <!-- Fixed Header within the Sidebar (Desktop only) -->
                     <div class="p-8 lg:p-12 border-b-4 border-black bg-white z-30">
                         <div class="flex justify-between items-center mb-8">
@@ -314,6 +277,73 @@ view()->share('relatedJewels', $relatedJewels);
                         </div>
                     </div>
                 </div>
+
+                <!-- Brutalist Modal Gallery (High Z-Index & Teleported) -->
+                <template x-teleport="body">
+                    <div 
+                        x-show="galleryOpen" 
+                        x-transition:enter="transition ease-out duration-300"
+                        x-transition:enter-start="opacity-0"
+                        x-transition:enter-end="opacity-100"
+                        x-transition:leave="transition ease-in duration-200"
+                        x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0"
+                        class="fixed inset-0 z-[9999] bg-black/95 flex flex-col items-center justify-center p-4 md:p-12"
+                        x-cloak
+                    >
+                        <!-- Modal Header -->
+                        <div class="absolute top-0 left-0 w-full p-6 md:p-8 flex justify-between items-start z-[10000]">
+                            <div class="text-white font-mono flex flex-col gap-2">
+                                <span class="bg-red-700 text-white px-3 py-1 font-black uppercase text-sm inline-block w-fit">TECHNICAL_DOSSIER_REVIEW</span>
+                                <div class="flex items-center gap-4 mt-2">
+                                    <span class="opacity-50 text-xs" x-text="(currentIndex + 1) + ' / ' + mediaCount"></span>
+                                </div>
+                            </div>
+                            <button @click="galleryOpen = false" class="text-white hover:text-red-700 transition-colors" aria-label="Fermer la galerie">
+                                <span class="text-6xl leading-none font-light">×</span>
+                            </button>
+                        </div>
+
+                        <!-- Main Slider Area -->
+                        <div class="relative w-full h-full flex items-center justify-center overflow-hidden">
+                            @foreach($allMedia as $index => $item)
+                                <div 
+                                    x-show="currentIndex === {{ $index }}"
+                                    x-transition:enter="transition ease-out duration-500 transform"
+                                    x-transition:enter-start="opacity-0 scale-95"
+                                    x-transition:enter-end="opacity-100 scale-100"
+                                    x-transition:leave="transition ease-in duration-300 transform absolute"
+                                    x-transition:leave-start="opacity-100 scale-100"
+                                    x-transition:leave-end="opacity-0 scale-95"
+                                    class="w-full h-full flex items-center justify-center p-4 md:p-12"
+                                >
+                                    <div class="relative border-4 md:border-[12px] border-white shadow-[20px_20px_0px_0px_rgba(185,28,28,1)] md:shadow-[40px_40px_0px_0px_rgba(185,28,28,1)] max-w-full max-h-full bg-white">
+                                        <img src="{{ $item['url'] }}" 
+                                             class="max-w-full max-h-[75vh] md:max-h-[85vh] object-contain">
+                                        <div class="absolute -bottom-10 md:-bottom-16 left-0 w-full text-white/5 font-mono text-[12vw] md:text-[10vw] font-black uppercase leading-none select-none pointer-events-none truncate">
+                                            {{ $item['is_cover'] ? 'MASTER_IMAGE' : ($item['type'] === 'lifestyle' ? 'ATMOS' : 'TECH') }}_{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <!-- Bottom Navigation -->
+                        <div class="absolute bottom-0 left-0 w-full p-8 flex justify-center items-center gap-8 z-[10001] bg-gradient-to-t from-black via-black/50 to-transparent">
+                            <button @click="prev()" class="w-16 h-16 border-4 border-white flex items-center justify-center text-white text-3xl font-black hover:bg-red-700 hover:border-red-700 transition-all active:scale-95">
+                                ←
+                            </button>
+                            
+                            <div class="hidden md:block text-white/30 font-mono text-[10px] uppercase tracking-widest">
+                                [←/→] Naviguer // [Esc] Fermer
+                            </div>
+
+                            <button @click="next()" class="w-16 h-16 border-4 border-white flex items-center justify-center text-white text-3xl font-black hover:bg-red-700 hover:border-red-700 transition-all active:scale-95">
+                                →
+                            </button>
+                        </div>
+                    </div>
+                </template>
             </div>
 
             <!-- Conditional Form Section -->
@@ -337,7 +367,7 @@ view()->share('relatedJewels', $relatedJewels);
                 </section>
             @endif
 
-            <!-- Cool Horizontal Related Slider -->
+            <!-- Related Items -->
             @if($relatedJewels->isNotEmpty())
                 <section class="bg-white py-24 border-t-8 border-black overflow-hidden">
                     <div class="px-8 mb-12 flex items-end justify-between gap-8 max-w-[1440px] mx-auto w-full">
@@ -359,7 +389,7 @@ view()->share('relatedJewels', $relatedJewels);
                         </div>
                     </div>
                     
-                    <div class="relative w-full overflow-hidden" x-data="{}">
+                    <div class="relative w-full overflow-hidden">
                         <div x-ref="relatedSlider" class="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-0 border-y-8 border-black" style="scrollbar-width: none; -ms-overflow-style: none;">
                             @foreach($relatedJewels as $index => $related)
                                 <div class="flex-none w-full md:w-[45vw] lg:w-[25vw] snap-start border-r-8 border-black h-[500px]">
