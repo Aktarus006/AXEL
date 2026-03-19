@@ -6,6 +6,7 @@ use App\Enums\Status;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -27,6 +28,8 @@ class News extends Model implements HasMedia
         "description",
         "online",
         "creation_date",
+        "jewel_id",
+        "collection_id",
     ];
 
     protected $casts = [
@@ -38,6 +41,16 @@ class News extends Model implements HasMedia
     public function creators(): BelongsToMany
     {
         return $this->belongsToMany(Creator::class);
+    }
+
+    public function jewel(): BelongsTo
+    {
+        return $this->belongsTo(Jewel::class);
+    }
+
+    public function collection(): BelongsTo
+    {
+        return $this->belongsTo(Collection::class);
     }
 
     public static function getForm(): array
@@ -67,6 +80,23 @@ class News extends Model implements HasMedia
             DatePicker::make("creation_date")
                 ->label("Date de création")
                 ->required(),
+            Select::make("jewel_id")
+                ->label("Bijou lié")
+                ->relationship("jewel", "name")
+                ->searchable()
+                ->preload(),
+            Select::make("collection_id")
+                ->label("Série liée")
+                ->relationship("collection", "name")
+                ->searchable()
+                ->preload(),
+            Select::make("creators")
+                ->label("Créateurs liés")
+                ->multiple()
+                ->relationship("creators", "last_name")
+                ->getOptionLabelFromRecordUsing(fn($record) => "{$record->first_name} {$record->last_name}")
+                ->searchable()
+                ->preload(),
         ];
     }
 
