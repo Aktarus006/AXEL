@@ -134,7 +134,7 @@ $removeType = function($type) {
                 <button 
                     wire:click="$toggle('showMobileFilters')" 
                     type="button"
-                    class="xl:hidden h-14 px-4 border-4 border-black font-mono text-sm font-black uppercase hover:bg-black hover:text-white focus:bg-black focus:text-white focus:outline-none transition-all flex items-center gap-2"
+                    class="xl:hidden h-14 px-4 border-4 border-black font-mono text-sm font-black uppercase hover:bg-black hover:text-white focus:outline-none transition-all flex items-center gap-2"
                     :class="$wire.showMobileFilters ? 'bg-black text-white' : 'bg-white text-black'"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
