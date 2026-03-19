@@ -226,14 +226,17 @@ view()->share('relatedJewels', $relatedJewels);
                         </style>
 
                         <!-- Scale Ruler (Visual Progress & Brutalist Detail) -->
-                        <div class="absolute left-0 top-0 bottom-0 w-8 border-r border-black/10 hidden lg:flex flex-col items-center py-8 pointer-events-none opacity-20 group-hover:opacity-100 transition-opacity">
-                            <div class="w-full bg-red-700 transition-all duration-150" :style="`height: ${progress}%`"></div>
-                            <div class="flex-1 flex flex-col justify-between py-4 text-[8px] font-black text-black">
-                                <span>0%</span>
-                                <span>25</span>
-                                <span>50</span>
-                                <span>75</span>
-                                <span>100</span>
+                        <div class="absolute left-0 top-0 bottom-0 w-8 border-r border-black/10 hidden lg:flex flex-col items-center pointer-events-none opacity-20 group-hover:opacity-100 transition-opacity z-20">
+                            <!-- Progress Fill -->
+                            <div class="absolute top-0 left-0 w-full bg-red-700" :style="`height: ${progress}%`" style="will-change: height;"></div>
+                            
+                            <!-- Graduation Markers -->
+                            <div class="relative flex-1 w-full flex flex-col justify-between py-12 text-[8px] font-black text-black z-10">
+                                <span class="text-center">00</span>
+                                <span class="text-center">25</span>
+                                <span class="text-center">50</span>
+                                <span class="text-center">75</span>
+                                <span class="text-center">100</span>
                             </div>
                         </div>
 
