@@ -192,10 +192,26 @@ view()->share('relatedJewels', $relatedJewels);
                 </div>
 
                 <!-- Right: Content & Specs (Sticky) -->
-                <div class="w-full lg:w-2/5 lg:sticky lg:top-24 lg:h-[calc(100vh-6rem)] overflow-y-auto bg-white p-8 lg:p-16">
+                <div class="w-full lg:w-2/5 lg:sticky lg:top-24 lg:h-[calc(100vh-6rem)] overflow-y-auto bg-white p-8 lg:p-16 border-l-4 border-black scrollbar-brutal" x-data="{ scrolled: false }" @scroll="scrolled = $event.target.scrollTop > 50">
+                    <style>
+                        .scrollbar-brutal::-webkit-scrollbar {
+                            width: 12px;
+                        }
+                        .scrollbar-brutal::-webkit-scrollbar-track {
+                            background: #f3f4f6;
+                            border-left: 4px solid black;
+                        }
+                        .scrollbar-brutal::-webkit-scrollbar-thumb {
+                            background: black;
+                            border: 2px solid white;
+                        }
+                        .scrollbar-brutal::-webkit-scrollbar-thumb:hover {
+                            background: #b91c1c;
+                        }
+                    </style>
                     <div class="space-y-12">
                         <!-- Navigation -->
-                        <div class="flex justify-between items-center border-b-4 border-black pb-4">
+                        <div class="flex justify-between items-center border-b-4 border-black pb-4 sticky top-0 bg-white z-20">
                             <a href="/jewels" class="font-black hover:text-red-700 transition-colors">← CRÉATIONS</a>
                             <div class="text-[10px] text-black/60 font-black uppercase">REF: {{ strtoupper(Str::slug($jewel->name)) }}_{{ $jewel->id }}</div>
                         </div>
@@ -220,18 +236,32 @@ view()->share('relatedJewels', $relatedJewels);
                             <div>
                                 <h3 class="text-xs font-black text-black/50 mb-2">MATÉRIAUX</h3>
                                 <div class="space-y-1">
-                                    @foreach(json_decode($jewel->material ?? '[]') as $material)
-                                        <div class="font-bold uppercase">{{ $material }}</div>
+                                    @php
+                                        $materials = is_string($jewel->material) ? json_decode($jewel->material, true) : $jewel->material;
+                                    @endphp
+                                    @foreach($materials ?? [] as $material)
+                                        <div class="font-bold uppercase">{{ $material instanceof \App\Enums\Material ? $material->value : $material }}</div>
                                     @endforeach
                                 </div>
                             </div>
                             <div>
                                 <h3 class="text-xs font-black text-black/50 mb-2">TYPE</h3>
                                 <div class="space-y-1">
-                                    @foreach(json_decode($jewel->type ?? '[]') as $type)
-                                        <div class="font-bold uppercase">{{ $type }}</div>
+                                    @php
+                                        $types = is_string($jewel->type) ? json_decode($jewel->type, true) : $jewel->type;
+                                    @endphp
+                                    @foreach($types ?? [] as $type)
+                                        <div class="font-bold uppercase">{{ $type instanceof \App\Enums\Type ? $type->value : $type }}</div>
                                     @endforeach
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Scroll Hint -->
+                        <div class="flex justify-center transition-opacity duration-300" :class="scrolled ? 'opacity-0' : 'opacity-100'">
+                            <div class="animate-bounce flex flex-col items-center gap-2">
+                                <span class="text-[10px] font-black uppercase tracking-widest opacity-30">Poursuivre la lecture</span>
+                                <div class="w-1 h-8 bg-black/10"></div>
                             </div>
                         </div>
 
