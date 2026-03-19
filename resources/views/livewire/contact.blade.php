@@ -11,10 +11,33 @@ use function Livewire\Volt\{state};
                 <h2 class="font-mono text-4xl md:text-7xl font-black text-white uppercase tracking-tighter mt-4 leading-none">DISCUTONS_ DE VOTRE PROJET_</h2>
             </div>
 
-            <div class="mb-20">
+            <div class="mb-20 contact-form-white-labels">
                 <livewire:contactform />
             </div>
         </div>
+
+        <style>
+            .contact-form-white-labels label {
+                color: rgba(255, 255, 255, 0.8) !important;
+            }
+            .contact-form-white-labels input, 
+            .contact-form-white-labels textarea {
+                color: white !important;
+                border-color: white !important;
+            }
+            .contact-form-white-labels input::placeholder,
+            .contact-form-white-labels textarea::placeholder {
+                color: rgba(255, 255, 255, 0.3) !important;
+            }
+            .contact-form-white-labels button[type="submit"] {
+                background-color: white !important;
+                color: black !important;
+            }
+            .contact-form-white-labels button[type="submit"]:hover {
+                background-color: #b91c1c !important;
+                color: white !important;
+            }
+        </style>
 
         <!-- Social Row (Full Width Massive Blocks) -->
         <div class="flex flex-col md:flex-row w-full border-t-8 border-white">

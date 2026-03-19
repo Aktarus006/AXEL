@@ -10,7 +10,7 @@
         <form wire:submit="submit" class="w-full border-2 md:border-4 border-black p-2 md:p-8 relative bg-white">
             <h2 class="text-xl md:text-3xl mb-10 md:mb-12 text-black font-black tracking-tighter uppercase border-b-4 border-black pb-4">DEMANDE D'INFORMATION_</h2>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-8 mb-8 md:mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-8 mt-12 mb-8 md:mb-12">
                 <!-- Name Input -->
                 <div class="relative px-2 md:px-0">
                     <label for="name" class="absolute -top-6 left-2 md:left-0 text-[10px] md:text-xs uppercase tracking-[0.2em] opacity-50 text-black">
