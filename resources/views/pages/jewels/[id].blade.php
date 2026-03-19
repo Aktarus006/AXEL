@@ -42,47 +42,19 @@ view()->share('relatedJewels', $relatedJewels);
             @php
                 $packshots = $jewel->getMedia('jewels/packshots');
                 $lifestyles = $jewel->getMedia('jewels/lifestyle');
-                $coverMedia = $jewel->getMedia('jewels/cover')->first();
                 
                 $allMedia = collect();
                 
-                // 1. Dual-source Hero Logic
-                $heroUrl = null;
-                $heroId = null;
-
-                if ($coverMedia) {
-                    $heroUrl = $coverMedia->getUrl('large');
-                    $heroId = $coverMedia->id;
-                } elseif ($jewel->cover && str_contains($jewel->cover, '.')) {
-                    // Check legacy disk path
-                    if (Storage::disk('public')->exists($jewel->cover)) {
-                        $heroUrl = Storage::url($jewel->cover);
-                    }
-                }
-
-                // Add hero first if found
-                if ($heroUrl) {
-                    $allMedia->push(['url' => $heroUrl, 'type' => 'lifestyle', 'id' => $heroId ?? 'cover', 'is_cover' => true]);
-                }
-
-                // 2. Add others, avoiding duplicates
+                // Only use standard media for now, skip cover/master image
                 foreach($lifestyles as $m) {
-                    if ($heroId && $m->id === $heroId) continue;
-                    $allMedia->push(['url' => $m->getUrl('large'), 'type' => 'lifestyle', 'id' => $m->id, 'is_cover' => false]);
+                    $allMedia->push(['url' => $m->getUrl('large'), 'type' => 'lifestyle', 'id' => $m->id]);
                 }
                 foreach($packshots as $m) {
-                    if ($heroId && $m->id === $heroId) continue;
-                    $allMedia->push(['url' => $m->getUrl('large'), 'type' => 'packshot', 'id' => $m->id, 'is_cover' => false]);
+                    $allMedia->push(['url' => $m->getUrl('large'), 'type' => 'packshot', 'id' => $m->id]);
                 }
                 
-                // 3. Randomize others but keep hero at first if it exists
-                if ($heroUrl) {
-                    $first = $allMedia->shift();
-                    $allMedia = $allMedia->shuffle();
-                    $allMedia->prepend($first);
-                } else {
-                    $allMedia = $allMedia->shuffle();
-                }
+                // Randomize display order
+                $allMedia = $allMedia->shuffle();
             @endphp
 
             <!-- Immersive Layout -->
@@ -113,7 +85,7 @@ view()->share('relatedJewels', $relatedJewels);
                             <button @click="activeFilter = 'lifestyle'" 
                                     :class="activeFilter === 'lifestyle' ? 'bg-red-700 text-white border-red-700' : 'bg-white text-black'"
                                     class="px-6 py-2 border-4 border-black font-black uppercase text-xs transition-all hover:bg-red-700 hover:text-white">
-                                Atmosphère [{{ $lifestyles->count() + ($heroUrl ? 1 : 0) }}]
+                                Atmosphère [{{ $lifestyles->count() }}]
                             </button>
                             <button @click="activeFilter = 'packshot'" 
                                     :class="activeFilter === 'packshot' ? 'bg-black text-white' : 'bg-white text-black'"
@@ -127,22 +99,15 @@ view()->share('relatedJewels', $relatedJewels);
                             @foreach($allMedia as $index => $item)
                                 @php
                                     // Variation logic: alternate between different spans and aspect ratios
-                                    // Cover (first item if exists) gets a special large span
-                                    if ($item['is_cover']) {
-                                        $pattern = ['span' => 'lg:col-span-12', 'aspect' => 'aspect-video'];
-                                    } else {
-                                        $patterns = [
-                                            ['span' => 'lg:col-span-8', 'aspect' => 'aspect-video'],
-                                            ['span' => 'lg:col-span-4', 'aspect' => 'aspect-square'],
-                                            ['span' => 'lg:col-span-4', 'aspect' => 'aspect-[3/4]'],
-                                            ['span' => 'lg:col-span-8', 'aspect' => 'aspect-video'],
-                                            ['span' => 'lg:col-span-6', 'aspect' => 'aspect-square'],
-                                            ['span' => 'lg:col-span-6', 'aspect' => 'aspect-[16/9]'],
-                                        ];
-                                        // Offset patterns if cover exists
-                                        $pIndex = ($heroUrl) ? ($index - 1) : $index;
-                                        $pattern = $patterns[max(0, $pIndex) % count($patterns)];
-                                    }
+                                    $patterns = [
+                                        ['span' => 'lg:col-span-8', 'aspect' => 'aspect-video'],
+                                        ['span' => 'lg:col-span-4', 'aspect' => 'aspect-square'],
+                                        ['span' => 'lg:col-span-4', 'aspect' => 'aspect-[3/4]'],
+                                        ['span' => 'lg:col-span-8', 'aspect' => 'aspect-video'],
+                                        ['span' => 'lg:col-span-6', 'aspect' => 'aspect-square'],
+                                        ['span' => 'lg:col-span-6', 'aspect' => 'aspect-[16/9]'],
+                                    ];
+                                    $pattern = $patterns[$index % count($patterns)];
                                 @endphp
                                 <div x-show="activeFilter === 'all' || activeFilter === '{{ $item['type'] }}'"
                                      x-transition:enter="transition ease-out duration-300"
@@ -157,11 +122,7 @@ view()->share('relatedJewels', $relatedJewels);
                                              loading="{{ $index < 2 ? 'eager' : 'lazy' }}">
                                     </div>
                                     <div class="absolute bottom-4 right-4 bg-black text-white px-2 py-0.5 text-[10px] font-black uppercase z-10">
-                                        @if($item['is_cover'])
-                                            MASTER_IMAGE
-                                        @else
-                                            {{ $item['type'] === 'lifestyle' ? 'ATMOS' : 'TECH' }}_{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
-                                        @endif
+                                        {{ $item['type'] === 'lifestyle' ? 'ATMOS' : 'TECH' }}_{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
                                     </div>
                                     <!-- Crosshair details for brutalist feel -->
                                     <div class="absolute top-0 left-0 w-4 h-4 border-r border-b border-black/10"></div>
@@ -339,7 +300,7 @@ view()->share('relatedJewels', $relatedJewels);
                                         <img src="{{ $item['url'] }}" 
                                              class="max-w-full max-h-[75vh] md:max-h-[85vh] object-contain">
                                         <div class="absolute -bottom-10 md:-bottom-16 left-0 w-full text-white/5 font-mono text-[12vw] md:text-[10vw] font-black uppercase leading-none select-none pointer-events-none truncate">
-                                            {{ $item['is_cover'] ? 'MASTER_IMAGE' : ($item['type'] === 'lifestyle' ? 'ATMOS' : 'TECH') }}_{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
+                                            {{ ($item['type'] === 'lifestyle' ? 'ATMOS' : 'TECH') }}_{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
                                         </div>
                                     </div>
                                 </div>
