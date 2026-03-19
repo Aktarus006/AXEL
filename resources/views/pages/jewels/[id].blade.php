@@ -191,110 +191,124 @@ view()->share('relatedJewels', $relatedJewels);
                     </div>
                 </div>
 
-                <!-- Right: Content & Specs (Sticky) -->
-                <div class="w-full lg:w-2/5 lg:sticky lg:top-24 lg:h-[calc(100vh-6rem)] overflow-y-auto bg-white p-8 lg:p-16 border-l-4 border-black scrollbar-brutal" x-data="{ scrolled: false }" @scroll="scrolled = $event.target.scrollTop > 50">
-                    <style>
-                        .scrollbar-brutal::-webkit-scrollbar {
-                            width: 12px;
-                        }
-                        .scrollbar-brutal::-webkit-scrollbar-track {
-                            background: #f3f4f6;
-                            border-left: 4px solid black;
-                        }
-                        .scrollbar-brutal::-webkit-scrollbar-thumb {
-                            background: black;
-                            border: 2px solid white;
-                        }
-                        .scrollbar-brutal::-webkit-scrollbar-thumb:hover {
-                            background: #b91c1c;
-                        }
-                    </style>
-                    <div class="space-y-12">
-                        <!-- Navigation -->
-                        <div class="flex justify-between items-center border-b-4 border-black pb-4 sticky top-0 bg-white z-20">
-                            <a href="/jewels" class="font-black hover:text-red-700 transition-colors">← CRÉATIONS</a>
-                            <div class="text-[10px] text-black/60 font-black uppercase">REF: {{ strtoupper(Str::slug($jewel->name)) }}_{{ $jewel->id }}</div>
+                <!-- Right: Content & Specs (Sticky Dashboard) -->
+                <div class="w-full lg:w-2/5 lg:sticky lg:top-24 lg:h-[calc(100vh-6rem)] flex flex-col bg-white border-l-4 lg:border-l-8 border-black">
+                    <!-- Fixed Header within the Sidebar (Desktop only) -->
+                    <div class="p-8 lg:p-12 border-b-4 border-black bg-white z-30">
+                        <div class="flex justify-between items-center mb-8">
+                            <a href="/jewels" class="font-black hover:text-red-700 transition-colors flex items-center gap-2 text-sm">
+                                <span class="bg-black text-white px-2 py-0.5">←</span> CRÉATIONS
+                            </a>
+                            <div class="text-[10px] text-black font-black uppercase tracking-widest bg-neutral-100 px-2 py-1 border border-black/10">
+                                DOSSIER_#{{ str_pad($jewel->id, 3, '0', STR_PAD_LEFT) }}
+                            </div>
                         </div>
 
-                        <!-- Header -->
                         <div class="space-y-4">
-                            <h1 class="text-4xl lg:text-7xl font-black uppercase leading-none tracking-tighter">{{ $jewel->name }}</h1>
-                            @if($jewel->price > 0)
-                            <div class="flex items-center gap-4">
-                                <span class="bg-red-700 text-white px-4 py-2 text-2xl font-black italic">{{ number_format($jewel->price, 0, '.', ' ') }} €</span>
-                                <span class="text-xs font-black uppercase tracking-widest bg-black text-white px-2 py-1">Prêt_à_expédier</span>
+                            <h1 class="text-4xl lg:text-6xl font-black uppercase leading-[0.9] tracking-tighter">{{ $jewel->name }}</h1>
+                            <div class="flex flex-wrap items-center gap-4">
+                                @if($jewel->price > 0)
+                                    <span class="bg-red-700 text-white px-4 py-2 text-2xl font-black italic">{{ number_format($jewel->price, 0, '.', ' ') }} €</span>
+                                @else
+                                    <span class="text-xs font-black uppercase tracking-widest bg-black text-white px-4 py-2 border-4 border-black italic">PIÈCE_UNIQUE</span>
+                                @endif
+                                <span class="text-[10px] font-black uppercase tracking-widest border-2 border-black px-2 py-1">ORIGINAL_WORK</span>
                             </div>
-                            @else
-                            <div class="flex items-center gap-4">
-                                <span class="text-xs font-black uppercase tracking-widest bg-black text-white px-4 py-2 border-4 border-black">Pièce_déjà_acquise_ou_en_exposition</span>
+                        </div>
+                    </div>
+
+                    <!-- Scrollable Body with Scale Ruler -->
+                    <div class="flex-1 overflow-y-auto scrollbar-brutal relative group" x-data="{ progress: 0 }" @scroll="progress = ($event.target.scrollTop / ($event.target.scrollHeight - $event.target.offsetHeight)) * 100">
+                        <style>
+                            .scrollbar-brutal::-webkit-scrollbar { width: 10px; }
+                            .scrollbar-brutal::-webkit-scrollbar-track { background: transparent; }
+                            .scrollbar-brutal::-webkit-scrollbar-thumb { background: black; border: 2px solid white; }
+                        </style>
+
+                        <!-- Scale Ruler (Visual Progress & Brutalist Detail) -->
+                        <div class="absolute left-0 top-0 bottom-0 w-8 border-r border-black/10 hidden lg:flex flex-col items-center py-8 pointer-events-none opacity-20 group-hover:opacity-100 transition-opacity">
+                            <div class="w-full bg-red-700 transition-all duration-150" :style="`height: ${progress}%`"></div>
+                            <div class="flex-1 flex flex-col justify-between py-4 text-[8px] font-black text-black">
+                                <span>0%</span>
+                                <span>25</span>
+                                <span>50</span>
+                                <span>75</span>
+                                <span>100</span>
                             </div>
-                            @endif
                         </div>
 
-                        <!-- Technical Specs -->
-                        <div class="grid grid-cols-2 gap-8 py-8 border-y-2 border-black/10">
-                            <div>
-                                <h3 class="text-xs font-black text-black/50 mb-2">MATÉRIAUX</h3>
-                                <div class="space-y-1">
-                                    @php
-                                        $materials = is_string($jewel->material) ? json_decode($jewel->material, true) : $jewel->material;
-                                    @endphp
-                                    @foreach($materials ?? [] as $material)
-                                        <div class="font-bold uppercase">{{ $material instanceof \App\Enums\Material ? $material->value : $material }}</div>
-                                    @endforeach
+                        <div class="p-8 lg:p-12 lg:pl-16 space-y-16">
+                            <!-- Technical Specs -->
+                            <section class="space-y-8">
+                                <h3 class="inline-block bg-black text-white text-[10px] font-black uppercase px-2 py-1 tracking-[0.2em]">01_SPECIFICATIONS</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 border-l-2 border-black/10 pl-8">
+                                    <div class="space-y-4">
+                                        <h4 class="text-xs font-black opacity-30 uppercase tracking-widest">Matériaux</h4>
+                                        <div class="space-y-2">
+                                            @php $materials = is_string($jewel->material) ? json_decode($jewel->material, true) : $jewel->material; @endphp
+                                            @foreach($materials ?? [] as $material)
+                                                <div class="font-black uppercase text-lg italic tracking-tighter">{{ $material instanceof \App\Enums\Material ? $material->value : $material }}</div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                    <div class="space-y-4">
+                                        <h4 class="text-xs font-black opacity-30 uppercase tracking-widest">Classification</h4>
+                                        <div class="space-y-2">
+                                            @php $types = is_string($jewel->type) ? json_decode($jewel->type, true) : $jewel->type; @endphp
+                                            @foreach($types ?? [] as $type)
+                                                <div class="font-black uppercase text-lg italic tracking-tighter">{{ $type instanceof \App\Enums\Type ? $type->value : $type }}</div>
+                                            @endforeach
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div>
-                                <h3 class="text-xs font-black text-black/50 mb-2">TYPE</h3>
-                                <div class="space-y-1">
-                                    @php
-                                        $types = is_string($jewel->type) ? json_decode($jewel->type, true) : $jewel->type;
-                                    @endphp
-                                    @foreach($types ?? [] as $type)
-                                        <div class="font-bold uppercase">{{ $type instanceof \App\Enums\Type ? $type->value : $type }}</div>
-                                    @endforeach
+                            </section>
+
+                            <!-- Description -->
+                            <section class="space-y-8">
+                                <h3 class="inline-block bg-black text-white text-[10px] font-black uppercase px-2 py-1 tracking-[0.2em]">02_HISTORIQUE_CONCEPT</h3>
+                                <div class="prose prose-sm font-mono leading-relaxed text-black max-w-none border-l-2 border-black/10 pl-8">
+                                    {!! $jewel->description !!}
                                 </div>
-                            </div>
-                        </div>
+                            </section>
 
-                        <!-- Scroll Hint -->
-                        <div class="flex justify-center transition-opacity duration-300" :class="scrolled ? 'opacity-0' : 'opacity-100'">
-                            <div class="animate-bounce flex flex-col items-center gap-2">
-                                <span class="text-[10px] font-black uppercase tracking-widest opacity-30">Poursuivre la lecture</span>
-                                <div class="w-1 h-8 bg-black/10"></div>
-                            </div>
-                        </div>
+                            <!-- Actions -->
+                            <section class="space-y-8 pt-8">
+                                <h3 class="inline-block bg-black text-white text-[10px] font-black uppercase px-2 py-1 tracking-[0.2em]">03_ACQUISITION</h3>
+                                <div class="pl-8">
+                                    @if($jewel->price > 0)
+                                        <a href="#inquiry" class="group block relative w-full p-8 bg-black hover:bg-red-700 transition-colors text-center overflow-hidden">
+                                            <span class="relative z-10 text-white font-black text-2xl uppercase italic tracking-tighter">Réserver l'Objet_</span>
+                                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-10 translate-y-10 group-hover:translate-y-0 transition-all">
+                                                <span class="text-white text-6xl font-black uppercase">CONFIRMER_</span>
+                                            </div>
+                                        </a>
+                                    @else
+                                        <a href="#custom" class="block w-full py-8 border-4 border-black text-center font-black text-xl hover:bg-black hover:text-white transition-all uppercase tracking-tighter shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                                            Étude d'une pièce dérivée_
+                                        </a>
+                                    @endif
+                                </div>
+                            </section>
 
-                        <!-- Description -->
-                        <div class="prose prose-sm font-mono leading-relaxed text-black max-w-none">
-                            {!! $jewel->description !!}
-                        </div>
-
-                        <!-- Actions -->
-                        <div class="pt-8">
-                            @if($jewel->price > 0)
-                                <a href="#inquiry" class="block w-full py-6 bg-black text-white text-center font-black text-xl hover:bg-red-700 focus:bg-red-700 focus:outline-none transition-all transform hover:-translate-y-2 shadow-[8px_8px_0px_0px_rgba(185,28,28,1)] uppercase">
-                                    Demander l'acquisition
-                                </a>
-                            @else
-                                <a href="#custom" class="block w-full py-6 bg-white text-black border-4 border-black text-center font-black text-xl hover:bg-red-700 hover:text-white focus:bg-black focus:text-white focus:outline-none transition-all transform hover:-translate-y-2 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] uppercase tracking-tighter">
-                                    Une création unique sur-mesure ?
-                                </a>
+                            <!-- Collections Archive -->
+                            @if($jewel->collections->isNotEmpty())
+                                <section class="space-y-8 pt-12">
+                                    <h3 class="inline-block bg-black text-white text-[10px] font-black uppercase px-2 py-1 tracking-[0.2em]">04_CONTEXTE_SERIE</h3>
+                                    <div class="pl-8 space-y-4">
+                                        @foreach($jewel->collections as $collection)
+                                            <a href="/collections/{{ $collection->id }}" class="group block p-6 border-2 border-black/20 hover:border-red-700 hover:bg-neutral-50 transition-all relative">
+                                                <div class="font-black text-xl uppercase group-hover:text-red-700 transition-colors">{{ $collection->name }}</div>
+                                                <div class="mt-2 text-[10px] opacity-40 uppercase tracking-widest font-black">Archive_Série_Connectée →</div>
+                                                <div class="absolute top-2 right-2 w-2 h-2 bg-black/10 group-hover:bg-red-700 group-hover:animate-ping"></div>
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                </section>
                             @endif
-                        </div>
 
-                        <!-- Collections Info -->
-                        @if($jewel->collections->isNotEmpty())
-                            <div class="pt-12 border-t-2 border-black/10">
-                                <h3 class="text-xs font-black opacity-30 mb-6">ARCHIVE_DE_LA_SÉRIE</h3>
-                                @foreach($jewel->collections as $collection)
-                                    <a href="/collections/{{ $collection->id }}" class="group block p-6 border-4 border-black hover:bg-neutral-50 transition-colors">
-                                        <div class="font-black text-xl uppercase group-hover:text-red-700 transition-colors">{{ $collection->name }}</div>
-                                        <div class="mt-2 text-xs opacity-60 uppercase">Explorer toute la série →</div>
-                                    </a>
-                                @endforeach
-                            </div>
-                        @endif
+                            <!-- Bottom padding for scrollability -->
+                            <div class="h-24"></div>
+                        </div>
                     </div>
                 </div>
             </div>
