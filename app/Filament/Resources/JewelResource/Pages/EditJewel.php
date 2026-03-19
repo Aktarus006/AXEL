@@ -8,6 +8,7 @@ use Filament\Resources\Pages\EditRecord;
 use Filament\Notifications\Notification;
 use Livewire\Attributes\On;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Log;
 
 class EditJewel extends EditRecord
 {
@@ -25,47 +26,85 @@ class EditJewel extends EditRecord
         return [Actions\DeleteAction::make()];
     }
 
-    public function updatedFiles($value, $key)
+    /**
+     * Handle file updates using the generic updated hook.
+     * This is more reliable for nested properties like files.lifestyle.
+     */
+    public function updated($propertyName)
     {
+        if (!str_starts_with($propertyName, 'files.')) {
+            return;
+        }
+
+        $key = str_replace('files.', '', $propertyName);
+        $value = $this->files[$key];
+
+        if (empty($value)) {
+            return;
+        }
+
         $collectionMap = [
             "packshots" => "jewels/packshots",
             "lifestyle" => "jewels/lifestyle",
         ];
 
-        $collectionName = $collectionMap[$key] ?? $key;
+        $collectionName = $collectionMap[$key] ?? null;
+
+        if (!$collectionName) {
+            Log::error("Unknown collection key for upload: " . $key);
+            return;
+        }
 
         try {
-            // 1. VALIDATION CRUCIALE
+            // Validation with custom message
             $this->validate([
-                "files." .
-                $key .
-                ".*" => "image|mimes:jpeg,png,webp,svg+xml|max:10240",
+                $propertyName . ".*" => "image|mimes:jpeg,png,webp,svg+xml|max:20480",
+            ], [
+                $propertyName . ".*.max" => "L'image est trop volumineuse (maximum 20 Mo).",
             ]);
+
+            // Process uploads
+            $files = is_array($value) ? $value : [$value];
+            
+            foreach ($files as $file) {
+                $this->record
+                    ->addMedia($file->getRealPath())
+                    ->usingName($file->getClientOriginalName())
+                    ->usingFileName($file->hashName())
+                    ->toMediaCollection($collectionName);
+            }
+
+            // Clear the files property
+            $this->files[$key] = [];
+
+            Notification::make()
+                ->success()
+                ->title("Images ajoutées")
+                ->send();
+
+            $this->dispatch("media-uploaded");
+            
         } catch (\Illuminate\Validation\ValidationException $e) {
-            \Illuminate\Support\Facades\Log::error("Validation failed for files upload: " . $key, [
+            Log::error("Validation failed for files upload: " . $key, [
                 'errors' => $e->errors(),
                 'key' => $key
             ]);
+            
+            Notification::make()
+                ->danger()
+                ->title("Erreur de validation")
+                ->body(collect($e->errors())->flatten()->first())
+                ->send();
+                
             throw $e;
+        } catch (\Exception $e) {
+            Log::error("Error uploading files: " . $e->getMessage());
+            
+            Notification::make()
+                ->danger()
+                ->title("Erreur lors de l'envoi")
+                ->send();
         }
-
-        // 2. Traitement seulement si la validation passe
-        foreach ($value as $file) {
-            $this->record
-                ->addMedia($file->getRealPath())
-                ->usingName($file->getClientOriginalName())
-                ->usingFileName($file->hashName()) // Sécurité: on change le nom du fichier sur le disque
-                ->toMediaCollection($collectionName);
-        }
-
-        $this->files[$key] = [];
-
-        Notification::make()
-            ->success()
-            ->title("Images ajoutées en toute sécurité")
-            ->send();
-
-        $this->dispatch("media-uploaded");
     }
 
     public function moveMedia($mediaId, $toCollection)
@@ -74,26 +113,21 @@ class EditJewel extends EditRecord
         if (!in_array($toCollection, $allowedCollections)) {
             throw new \Exception("Collection non autorisée");
         }
+        
         $media = $this->record->media()->find($mediaId);
         if ($media) {
             $media->move($this->record, $toCollection);
             Notification::make()->success()->title("Image déplacée")->send();
-
             $this->dispatch("media-moved");
         }
     }
 
     public function deleteMedia($mediaId)
     {
-        $allowedCollections = ["jewels/packshots", "jewels/lifestyle"];
-        if (!in_array($toCollection, $allowedCollections)) {
-            throw new \Exception("Collection non autorisée");
-        }
         $media = $this->record->media()->find($mediaId);
         if ($media) {
             $media->delete();
             Notification::make()->success()->title("Image supprimée")->send();
-
             $this->dispatch("media-deleted");
         }
     }
