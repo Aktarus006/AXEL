@@ -208,14 +208,15 @@ $collection = Collection::with(['jewels' => function($q) {
                             x-cloak
                         >
                             <!-- Modal Header -->
-                            <div class="absolute top-0 left-0 w-full p-8 flex justify-between items-center z-[110]">
-                                <div class="text-white font-mono">
-                                    <span class="bg-red-700 px-3 py-1 font-black uppercase text-sm">Exploration_Mode</span>
-                                    <span class="ml-4 opacity-50 text-xs" x-text="(currentIndex + 1) + ' / ' + mediaCount"></span>
+                            <div class="absolute top-0 left-0 w-full p-6 md:p-8 flex justify-between items-start z-[110]">
+                                <div class="text-white font-mono flex flex-col gap-2">
+                                    <span class="bg-red-700 px-3 py-1 font-black uppercase text-sm inline-block w-fit">Exploration_Mode</span>
+                                    <div class="flex items-center gap-4 mt-2">
+                                        <span class="opacity-50 text-xs" x-text="(currentIndex + 1) + ' / ' + mediaCount"></span>
+                                    </div>
                                 </div>
-                                <button @click="galleryOpen = false" class="group flex items-center gap-4 text-white font-black uppercase hover:text-red-700 transition-colors">
-                                    <span>Fermer</span>
-                                    <span class="text-4xl">×</span>
+                                <button @click="galleryOpen = false" class="text-white hover:text-red-700 transition-colors" aria-label="Fermer la galerie">
+                                    <span class="text-6xl leading-none font-light">×</span>
                                 </button>
                             </div>
 
@@ -225,35 +226,37 @@ $collection = Collection::with(['jewels' => function($q) {
                                     <div 
                                         x-show="currentIndex === {{ $index }}"
                                         x-transition:enter="transition ease-out duration-500 transform"
-                                        x-transition:enter-start="opacity-0 scale-95 translate-x-20"
-                                        x-transition:enter-end="opacity-100 scale-100 translate-x-0"
+                                        x-transition:enter-start="opacity-0 scale-95"
+                                        x-transition:enter-end="opacity-100 scale-100"
                                         x-transition:leave="transition ease-in duration-300 transform absolute"
-                                        x-transition:leave-start="opacity-100 scale-100 translate-x-0"
-                                        x-transition:leave-end="opacity-0 scale-95 -translate-x-20"
-                                        class="w-full h-full flex items-center justify-center"
+                                        x-transition:leave-start="opacity-100 scale-100"
+                                        x-transition:leave-end="opacity-0 scale-95"
+                                        class="w-full h-full flex items-center justify-center p-4 md:p-12"
                                     >
-                                        <div class="relative border-[12px] border-white shadow-[30px_30px_0px_0px_rgba(185,28,28,1)] max-w-full max-h-full">
+                                        <div class="relative border-4 md:border-[12px] border-white shadow-[15px_15px_0px_0px_rgba(185,28,28,1)] md:shadow-[30px_30px_0px_0px_rgba(185,28,28,1)] max-w-full max-h-full">
                                             <img src="{{ $media->getUrl('large') }}" 
-                                                 class="max-w-full max-h-[70vh] md:max-h-[80vh] object-contain">
-                                            <div class="absolute -bottom-12 left-0 w-full text-white/20 font-mono text-[8vw] font-black uppercase leading-none select-none pointer-events-none">
+                                                 class="max-w-full max-h-[60vh] md:max-h-[80vh] object-contain">
+                                            <div class="absolute -bottom-8 md:-bottom-12 left-0 w-full text-white/20 font-mono text-[10vw] md:text-[8vw] font-black uppercase leading-none select-none pointer-events-none truncate">
                                                 SAMPLE_{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
                                             </div>
                                         </div>
                                     </div>
                                 @endforeach
-
-                                <!-- Navigation Buttons -->
-                                <button @click="prev()" class="absolute left-4 md:left-12 top-1/2 -translate-y-1/2 w-16 h-16 md:w-24 md:h-24 border-4 border-white flex items-center justify-center text-white text-4xl font-black hover:bg-red-700 hover:border-red-700 transition-all transform hover:scale-110 z-[120]">
-                                    ←
-                                </button>
-                                <button @click="next()" class="absolute right-4 md:right-12 top-1/2 -translate-y-1/2 w-16 h-16 md:w-24 md:h-24 border-4 border-white flex items-center justify-center text-white text-4xl font-black hover:bg-red-700 hover:border-red-700 transition-all transform hover:scale-110 z-[120]">
-                                    →
-                                </button>
                             </div>
 
-                            <!-- Keyboard Hints -->
-                            <div class="absolute bottom-8 text-white/30 font-mono text-[10px] uppercase tracking-widest hidden md:block">
-                                [Esc] Fermer // [←/→] Naviguer
+                            <!-- Bottom Navigation -->
+                            <div class="absolute bottom-0 left-0 w-full p-8 flex justify-center items-center gap-8 z-[120] bg-gradient-to-t from-black via-black/50 to-transparent">
+                                <button @click="prev()" class="w-16 h-16 border-4 border-white flex items-center justify-center text-white text-3xl font-black hover:bg-red-700 hover:border-red-700 transition-all active:scale-95">
+                                    ←
+                                </button>
+                                
+                                <div class="hidden md:block text-white/30 font-mono text-[10px] uppercase tracking-widest">
+                                    [←/→] Naviguer // [Esc] Fermer
+                                </div>
+
+                                <button @click="next()" class="w-16 h-16 border-4 border-white flex items-center justify-center text-white text-3xl font-black hover:bg-red-700 hover:border-red-700 transition-all active:scale-95">
+                                    →
+                                </button>
                             </div>
                         </div>
                     </template>
