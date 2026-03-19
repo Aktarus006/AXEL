@@ -118,7 +118,17 @@ $collection = Collection::with(['jewels' => function($q) {
                     $isLargeGallery = $mediaItems->count() > 10;
                 @endphp
                 
-                <section class="bg-neutral-100 py-24 border-t-8 border-black overflow-hidden">
+                <section 
+                    x-data="{ 
+                        galleryOpen: false, 
+                        currentIndex: 0,
+                        mediaCount: {{ $mediaItems->count() }},
+                        next() { this.currentIndex = (this.currentIndex + 1) % this.mediaCount },
+                        prev() { this.currentIndex = (this.currentIndex - 1 + this.mediaCount) % this.mediaCount }
+                    }"
+                    @keydown.escape.window="galleryOpen = false"
+                    class="bg-neutral-100 py-24 border-t-8 border-black overflow-hidden"
+                >
                     <div class="px-8 mb-12 max-w-[1440px] mx-auto flex items-end justify-between">
                         <h2 class="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none">
                             L'UNIVERS_<br><span class="text-red-700">DE LA SÉRIE.</span>
@@ -134,20 +144,22 @@ $collection = Collection::with(['jewels' => function($q) {
                             @foreach($mediaItems as $index => $media)
                                 @php
                                     $patterns = [
-                                        ['cols' => 'md:col-span-8', 'rows' => 'md:row-span-2', 'h' => 'h-[300px] md:h-[600px]'],
-                                        ['cols' => 'md:col-span-4', 'rows' => 'md:row-span-1', 'h' => 'h-[300px]'],
-                                        ['cols' => 'md:col-span-4', 'rows' => 'md:row-span-2', 'h' => 'h-[300px] md:h-[600px]'],
-                                        ['cols' => 'md:col-span-4', 'rows' => 'md:row-span-1', 'h' => 'h-[300px]'],
-                                        ['cols' => 'md:col-span-4', 'rows' => 'md:row-span-1', 'h' => 'h-[300px]'],
-                                        ['cols' => 'md:col-span-6', 'rows' => 'md:row-span-2', 'h' => 'h-[400px] md:h-[800px]'],
-                                        ['cols' => 'md:col-span-6', 'rows' => 'md:row-span-1', 'h' => 'h-[400px]'],
-                                        ['cols' => 'md:col-span-3', 'rows' => 'md:row-span-1', 'h' => 'h-[300px]'],
-                                        ['cols' => 'md:col-span-3', 'rows' => 'md:row-span-1', 'h' => 'h-[300px]'],
-                                        ['cols' => 'md:col-span-12', 'rows' => 'md:row-span-1', 'h' => 'h-[200px] md:h-[400px]'],
+                                        ['cols' => 'md:col-span-8', 'rows' => 'md:row-span-2'],
+                                        ['cols' => 'md:col-span-4', 'rows' => 'md:row-span-1'],
+                                        ['cols' => 'md:col-span-4', 'rows' => 'md:row-span-2'],
+                                        ['cols' => 'md:col-span-4', 'rows' => 'md:row-span-1'],
+                                        ['cols' => 'md:col-span-4', 'rows' => 'md:row-span-1'],
+                                        ['cols' => 'md:col-span-6', 'rows' => 'md:row-span-2'],
+                                        ['cols' => 'md:col-span-6', 'rows' => 'md:row-span-1'],
+                                        ['cols' => 'md:col-span-3', 'rows' => 'md:row-span-1'],
+                                        ['cols' => 'md:col-span-3', 'rows' => 'md:row-span-1'],
+                                        ['cols' => 'md:col-span-12', 'rows' => 'md:row-span-1'],
                                     ];
                                     $pattern = $patterns[$index % count($patterns)];
                                 @endphp
-                                <div class="col-span-2 {{ $pattern['cols'] }} {{ $pattern['rows'] }} border-2 border-black overflow-hidden group relative bg-white">
+                                <div 
+                                    @click="galleryOpen = true; currentIndex = {{ $index }}"
+                                    class="col-span-2 {{ $pattern['cols'] }} {{ $pattern['rows'] }} border-2 border-black overflow-hidden group relative bg-white cursor-zoom-in min-h-[300px]">
                                     <img src="{{ $media->getUrl('large') }}" 
                                          alt="Mood image for {{ $collection->name }}" 
                                          class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-110">
@@ -168,7 +180,9 @@ $collection = Collection::with(['jewels' => function($q) {
                         <!-- Standard Impact Grid for smaller sets -->
                         <div class="max-w-[1440px] mx-auto px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             @foreach($mediaItems as $index => $media)
-                                <div class="border-4 border-black bg-white shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] overflow-hidden group aspect-square md:aspect-auto md:h-96 relative">
+                                <div 
+                                    @click="galleryOpen = true; currentIndex = {{ $index }}"
+                                    class="border-4 border-black bg-white shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] overflow-hidden group aspect-square md:aspect-auto md:h-96 relative cursor-zoom-in">
                                     <img src="{{ $media->getUrl('large') }}" 
                                          alt="Mood image for {{ $collection->name }}" 
                                          class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 hover:scale-105">
@@ -179,6 +193,70 @@ $collection = Collection::with(['jewels' => function($q) {
                             @endforeach
                         </div>
                     @endif
+
+                    <!-- Brutalist Modal Gallery -->
+                    <template x-teleport="body">
+                        <div 
+                            x-show="galleryOpen" 
+                            x-transition:enter="transition ease-out duration-300"
+                            x-transition:enter-start="opacity-0"
+                            x-transition:enter-end="opacity-100"
+                            x-transition:leave="transition ease-in duration-200"
+                            x-transition:leave-start="opacity-100"
+                            x-transition:leave-end="opacity-0"
+                            class="fixed inset-0 z-[100] bg-black/95 flex flex-col items-center justify-center p-4 md:p-12"
+                            x-cloak
+                        >
+                            <!-- Modal Header -->
+                            <div class="absolute top-0 left-0 w-full p-8 flex justify-between items-center z-[110]">
+                                <div class="text-white font-mono">
+                                    <span class="bg-red-700 px-3 py-1 font-black uppercase text-sm">Exploration_Mode</span>
+                                    <span class="ml-4 opacity-50 text-xs" x-text="(currentIndex + 1) + ' / ' + mediaCount"></span>
+                                </div>
+                                <button @click="galleryOpen = false" class="group flex items-center gap-4 text-white font-black uppercase hover:text-red-700 transition-colors">
+                                    <span>Fermer</span>
+                                    <span class="text-4xl">×</span>
+                                </button>
+                            </div>
+
+                            <!-- Main Slider Area -->
+                            <div class="relative w-full h-full flex items-center justify-center overflow-hidden">
+                                @foreach($mediaItems as $index => $media)
+                                    <div 
+                                        x-show="currentIndex === {{ $index }}"
+                                        x-transition:enter="transition ease-out duration-500 transform"
+                                        x-transition:enter-start="opacity-0 scale-95 translate-x-20"
+                                        x-transition:enter-end="opacity-100 scale-100 translate-x-0"
+                                        x-transition:leave="transition ease-in duration-300 transform absolute"
+                                        x-transition:leave-start="opacity-100 scale-100 translate-x-0"
+                                        x-transition:leave-end="opacity-0 scale-95 -translate-x-20"
+                                        class="w-full h-full flex items-center justify-center"
+                                    >
+                                        <div class="relative border-[12px] border-white shadow-[30px_30px_0px_0px_rgba(185,28,28,1)] max-w-full max-h-full">
+                                            <img src="{{ $media->getUrl('large') }}" 
+                                                 class="max-w-full max-h-[70vh] md:max-h-[80vh] object-contain">
+                                            <div class="absolute -bottom-12 left-0 w-full text-white/20 font-mono text-[8vw] font-black uppercase leading-none select-none pointer-events-none">
+                                                SAMPLE_{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+
+                                <!-- Navigation Buttons -->
+                                <button @click="prev()" class="absolute left-4 md:left-12 top-1/2 -translate-y-1/2 w-16 h-16 md:w-24 md:h-24 border-4 border-white flex items-center justify-center text-white text-4xl font-black hover:bg-red-700 hover:border-red-700 transition-all transform hover:scale-110 z-[120]">
+                                    ←
+                                </button>
+                                <button @click="next()" class="absolute right-4 md:right-12 top-1/2 -translate-y-1/2 w-16 h-16 md:w-24 md:h-24 border-4 border-white flex items-center justify-center text-white text-4xl font-black hover:bg-red-700 hover:border-red-700 transition-all transform hover:scale-110 z-[120]">
+                                    →
+                                </button>
+                            </div>
+
+                            <!-- Keyboard Hints -->
+                            <div class="absolute bottom-8 text-white/30 font-mono text-[10px] uppercase tracking-widest hidden md:block">
+                                [Esc] Fermer // [←/→] Naviguer
+                            </div>
+                        </div>
+                    </template>
                 </section>
             @endif
 
