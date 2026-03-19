@@ -115,18 +115,18 @@ $removeType = function($type) {
 
 <div class="bg-white min-h-screen">
     <!-- Filter Bar -->
-    <div class="sticky top-20 md:top-24 z-40 bg-white border-b-4 border-black px-4 md:px-8 py-6">
+    <div class="sticky top-20 md:top-24 z-40 bg-white border-b-4 border-black px-2 sm:px-4 md:px-8 py-4 sm:py-6">
         @php
             $activeCount = count($selectedMaterials) + count($selectedTypes) + ($hideNoPrice ? 1 : 0);
         @endphp
         
         <div class="max-w-[1440px] mx-auto flex flex-col xl:flex-row justify-between items-stretch xl:items-center gap-6">
-            <div class="relative flex-1 flex gap-3">
+            <div class="relative flex-1 flex gap-2">
                 <input
                     wire:model.live.debounce.300ms="name"
                     wire:input="filterJewels"
-                    class="flex-1 h-14 px-6 font-mono text-base border-4 border-black bg-white text-black focus:bg-black focus:text-white transition-colors outline-none placeholder-black/50"
-                    placeholder="RECHERCHER DANS L'ATELIER..."
+                    class="flex-1 h-14 px-4 md:px-6 font-mono text-sm md:text-base border-4 border-black bg-white text-black focus:bg-black focus:text-white transition-colors outline-none placeholder-black/50"
+                    placeholder="RECHERCHER..."
                     aria-label="Rechercher par nom d'objet"
                 />
                 
@@ -136,11 +136,12 @@ $removeType = function($type) {
                     type="button"
                     class="xl:hidden h-14 px-4 border-4 border-black font-mono text-sm font-black uppercase hover:bg-black hover:text-white focus:bg-black focus:text-white focus:outline-none transition-all flex items-center gap-2 {{ $showMobileFilters ? 'bg-black text-white' : 'bg-white text-black' }}"
                 >
-                    FILTRES 
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0m-9.75 0h9.75" />
+                    </svg>
                     @if($activeCount)
                         <span class="bg-red-700 text-white px-2 py-0.5 text-xs">{{ $activeCount }}</span>
                     @endif
-                    <span class="text-xs transition-transform {{ $showMobileFilters ? 'rotate-180' : '' }}">▼</span>
                 </button>
             </div>
 
