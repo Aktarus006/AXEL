@@ -139,8 +139,8 @@ $collection = Collection::with(['jewels' => function($q) {
                     </div>
 
                     @if($isLargeGallery)
-                        <!-- Brutalist Bento Grid for 10+ images -->
-                        <div class="max-w-[1440px] mx-auto px-4 md:px-8 grid grid-cols-2 md:grid-cols-12 gap-0 border-4 border-black bg-black">
+                        <!-- Brutalist Bento Grid for 10+ images with white space -->
+                        <div class="max-w-[1440px] mx-auto px-4 md:px-8 grid grid-cols-2 md:grid-cols-12 gap-4 md:gap-6">
                             @foreach($mediaItems as $index => $media)
                                 @php
                                     $patterns = [
@@ -159,7 +159,7 @@ $collection = Collection::with(['jewels' => function($q) {
                                 @endphp
                                 <div 
                                     @click="galleryOpen = true; currentIndex = {{ $index }}"
-                                    class="col-span-2 {{ $pattern['cols'] }} {{ $pattern['rows'] }} border-2 border-black overflow-hidden group relative bg-white cursor-zoom-in min-h-[300px]">
+                                    class="col-span-2 {{ $pattern['cols'] }} {{ $pattern['rows'] }} border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden group relative bg-white cursor-zoom-in min-h-[300px]">
                                     <img src="{{ $media->getUrl('large') }}" 
                                          alt="Mood image for {{ $collection->name }}" 
                                          class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-110">
