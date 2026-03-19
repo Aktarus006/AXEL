@@ -7,54 +7,54 @@
             DEMANDER L'ACQUISITION_
         </button>
     @else
-        <form wire:submit="submit" class="w-full border-4 border-black p-8 relative bg-white">
-            <h2 class="text-3xl mb-12 text-black font-black tracking-tighter uppercase border-b-4 border-black pb-4">DEMANDE D'INFORMATION_</h2>
+        <form wire:submit="submit" class="w-full border-4 border-black p-4 md:p-8 relative bg-white">
+            <h2 class="text-2xl md:text-3xl mb-8 md:mb-12 text-black font-black tracking-tighter uppercase border-b-4 border-black pb-4">DEMANDE D'INFORMATION_</h2>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-8 md:mb-12">
                 <!-- Name Input -->
                 <div class="relative">
-                    <label for="name" class="absolute -top-6 left-0 text-xs uppercase tracking-[0.2em] opacity-50 text-black">
+                    <label for="name" class="absolute -top-6 left-0 text-[10px] md:text-xs uppercase tracking-[0.2em] opacity-50 text-black">
                         01 | VOTRE NOM
                     </label>
                     <input
                         type="text"
                         id="name"
                         wire:model="name"
-                        class="w-full bg-transparent border-b-4 border-black py-4 text-black placeholder-black/10 focus:outline-none focus:border-red-700 transition-all duration-300"
+                        class="w-full bg-transparent border-b-4 border-black py-3 md:py-4 text-black placeholder-black/10 focus:outline-none focus:border-red-700 transition-all duration-300"
                         placeholder="NOM_PRÉNOM"
                     />
-                    @error('name') <span class="text-red-700 text-sm mt-1 uppercase">{{ $message }}</span> @enderror
+                    @error('name') <span class="text-red-700 text-xs mt-1 uppercase">{{ $message }}</span> @enderror
                 </div>
 
                 <!-- Email Input -->
                 <div class="relative">
-                    <label for="email" class="absolute -top-6 left-0 text-xs uppercase tracking-[0.2em] opacity-50 text-black">
+                    <label for="email" class="absolute -top-6 left-0 text-[10px] md:text-xs uppercase tracking-[0.2em] opacity-50 text-black">
                         02 | VOTRE EMAIL
                     </label>
                     <input
                         type="email"
                         id="email"
                         wire:model="email"
-                        class="w-full bg-transparent border-b-4 border-black py-4 text-black placeholder-black/10 focus:outline-none focus:border-red-700 transition-all duration-300"
+                        class="w-full bg-transparent border-b-4 border-black py-3 md:py-4 text-black placeholder-black/10 focus:outline-none focus:border-red-700 transition-all duration-300"
                         placeholder="EMAIL_ADRESSE"
                     />
-                    @error('email') <span class="text-red-700 text-sm mt-1 uppercase">{{ $message }}</span> @enderror
+                    @error('email') <span class="text-red-700 text-xs mt-1 uppercase">{{ $message }}</span> @enderror
                 </div>
             </div>
 
             <!-- Message Input -->
-            <div class="relative mb-12">
-                <label for="message" class="absolute -top-6 left-0 text-xs uppercase tracking-[0.2em] opacity-50 text-black">
+            <div class="relative mb-8 md:mb-12">
+                <label for="message" class="absolute -top-6 left-0 text-[10px] md:text-xs uppercase tracking-[0.2em] opacity-50 text-black">
                     03 | VOTRE MESSAGE
                 </label>
                 <textarea
                     id="message"
                     wire:model="message"
                     rows="4"
-                    class="w-full bg-transparent border-b-4 border-black py-4 text-black placeholder-black/10 focus:outline-none focus:border-red-700 transition-all duration-300 resize-none"
+                    class="w-full bg-transparent border-b-4 border-black py-3 md:py-4 text-black placeholder-black/10 focus:outline-none focus:border-red-700 transition-all duration-300 resize-none"
                     placeholder="VOTRE MESSAGE..."
                 ></textarea>
-                @error('message') <span class="text-red-700 text-sm mt-1 uppercase">{{ $message }}</span> @enderror
+                @error('message') <span class="text-red-700 text-xs mt-1 uppercase">{{ $message }}</span> @enderror
             </div>
 
             <!-- Buttons -->
@@ -100,46 +100,3 @@
         </div>
     @endif
 </div>
-
-<?php
-
-use function Livewire\Volt\{state, rules};
-use Illuminate\Support\Facades\Mail;
-use App\Mail\JewelInquiry;
-use Illuminate\Support\Facades\Log;
-
-state([
-    'name' => '',
-    'email' => '',
-    'message' => '',
-    'jewel' => null,
-    'showForm' => false,
-]);
-
-rules([
-    'name' => 'required|min:2',
-    'email' => 'required|email',
-    'message' => 'required|min:10'
-]);
-
-$mount = function($jewel) {
-    $this->jewel = $jewel;
-    $this->message = "Je suis intéressé(e) par {$jewel->name}.";
-};
-
-$submit = function() {
-    Log::info('Jewel inquiry form submit function called');
-    
-    $this->validate();
-    
-    try {
-        session()->flash('success', 'Message sent successfully!');
-        Log::info('Jewel inquiry submitted successfully');
-        $this->name = '';
-        $this->email = '';
-    } catch (\Exception $e) {
-        Log::error('Jewel inquiry error: ' . $e->getMessage());
-    }
-};
-
-?>
