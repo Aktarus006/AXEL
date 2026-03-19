@@ -5,11 +5,13 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\NewsResource\Pages;
 use App\Filament\Resources\NewsResource\RelationManagers;
 use App\Models\News;
+use App\Enums\Status;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -30,7 +32,29 @@ class NewsResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make("title")->searchable(),
                 Tables\Columns\TextColumn::make("description")->searchable(),
-                Tables\Columns\IconColumn::make("online")->boolean(),
+                Tables\Columns\IconColumn::make("online")
+                    ->label('En ligne')
+                    ->icon(fn(Status $state): string => match ($state) {
+                        Status::ONLINE => 'heroicon-s-check-circle',
+                        Status::OFFLINE => 'heroicon-s-x-circle',
+                    })
+                    ->color(fn(Status $state): string => match ($state) {
+                        Status::ONLINE => 'success',
+                        Status::OFFLINE => 'danger',
+                    })
+                    ->sortable()
+                    ->alignCenter()
+                    ->action(function (News $record): void {
+                        $record->online = $record->online === Status::ONLINE ? Status::OFFLINE : Status::ONLINE;
+                        $record->save();
+
+                        Notification::make()
+                            ->title('Statut mis à jour')
+                            ->success()
+                            ->send();
+
+                        redirect(request()->header('Referer'));
+                    }),
                 Tables\Columns\TextColumn::make("creation_date")
                     ->date()
                     ->sortable(),
