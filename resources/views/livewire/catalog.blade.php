@@ -106,6 +106,7 @@ $removeType = function($type) {
             $activeCount = count($selectedMaterials) + count($selectedTypes) + ($hideNoPrice ? 1 : 0);
         @endphp
         
+        <div class="max-w-[1440px] mx-auto flex flex-col xl:flex-row justify-between items-stretch xl:items-center gap-6">
             <div class="relative flex-1 flex gap-3 text-black">
                 <input
                     wire:model.live.debounce.300ms="name"
