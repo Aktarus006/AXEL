@@ -41,10 +41,12 @@ view()->share('news', $news);
                 <div class="group border-b-8 border-black last:border-b-0 hover:bg-neutral-50 transition-colors duration-500">
                     <a href="/news/{{ $article->id }}" class="grid grid-cols-1 md:grid-cols-12 items-stretch">
                         <!-- Date & Index (1 Col) -->
-                        <div class="md:col-span-1 border-b-4 md:border-b-0 md:border-r-8 border-black flex flex-col items-center justify-center bg-white text-black p-4 group-hover:bg-red-700 group-hover:text-white transition-colors py-8 md:py-0">
-                            <span class="text-xs font-black opacity-40 group-hover:opacity-100 uppercase">Item_{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</span>
-                            <div class="text-2xl font-black rotate-0 md:-rotate-90 whitespace-nowrap mt-4">
-                                {{ $article->created_at->format('d.m.Y') }}
+                        <div class="md:col-span-1 border-b-4 md:border-b-0 md:border-r-8 border-black flex flex-col items-center justify-center bg-white text-black p-4 group-hover:bg-red-700 group-hover:text-white transition-colors py-8 md:py-12">
+                            <span class="text-[10px] font-black opacity-40 group-hover:opacity-100 uppercase mb-auto">Item_{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</span>
+                            <div class="flex-1 flex items-center justify-center">
+                                <div class="text-2xl font-black rotate-0 md:-rotate-90 whitespace-nowrap">
+                                    {{ $article->created_at->format('d.m.Y') }}
+                                </div>
                             </div>
                         </div>
 

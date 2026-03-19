@@ -46,7 +46,7 @@ class News extends Model implements HasMedia
             TextInput::make("title")->label("Titre")->required(),
             RichEditor::make("description")->label("Contenu")->required(),
             SpatieMediaLibraryFileUpload::make("image")
-                ->collection("news")
+                ->collection("news/images")
                 ->label("Image")
                 ->rules("image")
                 ->required()
@@ -80,7 +80,7 @@ class News extends Model implements HasMedia
             ->quality(80)
             ->sharpen(10)
             ->nonQueued()
-            ->performOnCollections("news");
+            ->performOnCollections("news/images");
 
         // Small size for cards
         $this->addMediaConversion("small")
@@ -90,7 +90,7 @@ class News extends Model implements HasMedia
             ->quality(80)
             ->sharpen(10)
             ->nonQueued()
-            ->performOnCollections("news");
+            ->performOnCollections("news/images");
 
         // Medium size for article preview
         $this->addMediaConversion("medium")
@@ -100,7 +100,7 @@ class News extends Model implements HasMedia
             ->quality(80)
             ->sharpen(10)
             ->nonQueued()
-            ->performOnCollections("news");
+            ->performOnCollections("news/images");
 
         // Large size for article header
         $this->addMediaConversion("large")
@@ -110,7 +110,7 @@ class News extends Model implements HasMedia
             ->quality(80)
             ->sharpen(10)
             ->nonQueued()
-            ->performOnCollections("news");
+            ->performOnCollections("news/images");
 
         // Full width banner
         $this->addMediaConversion("banner")
@@ -120,6 +120,6 @@ class News extends Model implements HasMedia
             ->quality(80)
             ->sharpen(10)
             ->nonQueued()
-            ->performOnCollections("news");
+            ->performOnCollections("news/images");
     }
 }
