@@ -22,6 +22,13 @@ class News extends Model implements HasMedia
     use HasFactory;
     use InteractsWithMedia;
 
+    protected $fillable = [
+        "title",
+        "description",
+        "online",
+        "creation_date",
+    ];
+
     protected $casts = [
         "id" => "integer",
         "online" => Status::class,
