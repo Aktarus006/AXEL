@@ -15,7 +15,7 @@ use function Livewire\Volt\{state};
             class="fixed top-0 left-0 z-50 w-full transition-all duration-300 border-b-4 border-black">
         <div class="max-w-[1440px] mx-auto flex items-stretch justify-between h-20 md:h-24 px-4 md:px-8">
             <!-- Logo Section -->
-            <a href="/" class="flex items-center group relative gap-6 focus:outline-none focus:bg-black focus:text-white px-2 -mx-2 transition-colors" aria-label="AXEL STUDIO - Retour à l'accueil">
+            <a href="/" class="flex items-center group relative gap-6 focus:outline-none px-2 -mx-2 transition-colors" aria-label="AXEL STUDIO - Retour à l'accueil">
                 <div class="relative w-12 h-12 flex items-center justify-center">
                     <!-- Outer Facet -->
                     <div class="absolute inset-0 border-2 border-black rotate-45 group-hover:rotate-[225deg] transition-all duration-1000 ease-in-out group-hover:border-red-700" aria-hidden="true"></div>

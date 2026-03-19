@@ -62,7 +62,7 @@ state([
                                 >
                             @endif
                         @else
-                            <div class="w-full h-full flex items-center justify-center font-mono text-white text-4xl">★</div>
+                            <div class="w-full h-full flex items-center justify-center font-mono text-white text-4xl rotate-45">◆</div>
                         @endif
 
                         <!-- Content Overlay -->
