@@ -14,12 +14,15 @@ use function Livewire\Volt\{state};
             <h3 class="font-mono text-4xl md:text-6xl font-black text-white uppercase tracking-tighter transform group-hover:-skew-x-12 transition-transform duration-500">
                 AXEL_ENGLEBERT
             </h3>
+            <div class="mt-2 text-white font-mono text-sm md:text-xl font-black tracking-widest opacity-60 group-hover:opacity-100 transition-opacity">
+                TEL: 0499/62.51.95
+            </div>
         </div>
 
         <!-- Copyright & Info -->
         <div class="z-10 flex flex-col items-center md:items-end text-center md:text-right space-y-4">
             <div class="font-mono text-sm md:text-xl text-white uppercase tracking-widest font-bold">
-                <span class="bg-white text-black px-2 mr-2">©2026</span> HANDCRAFTED_IN_BELGIUM
+                <span class="bg-white text-black px-2 mr-2">©2026</span> HANDCRAFTED_IN_LIÈGE_BELGIUM
             </div>
             <div class="font-mono text-xs md:text-sm text-white/60 uppercase tracking-widest">
                 Surgical Precision // Brutalist Aesthetics // Eternal Materials
