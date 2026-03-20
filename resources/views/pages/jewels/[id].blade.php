@@ -221,12 +221,15 @@ view()->share('relatedJewels', $relatedJewels);
                                 <h3 class="inline-block bg-black text-white text-[10px] font-black uppercase px-2 py-1 tracking-[0.2em]">03_ACQUISITION</h3>
                                 <div class="pl-8">
                                     @if($jewel->price > 0)
-                                        <a href="#inquiry" class="group block relative w-full p-8 bg-black hover:bg-red-700 transition-colors text-center overflow-hidden">
-                                            <span class="relative z-10 text-white font-black text-2xl uppercase italic tracking-tighter">Demander une variante_</span>
+                                        <button 
+                                            @click="document.getElementById('inquiry').scrollIntoView({behavior: 'smooth'}); $dispatch('open-jewel-form')"
+                                            class="group block relative w-full p-8 bg-black hover:bg-red-700 transition-colors text-center overflow-hidden"
+                                        >
+                                            <span class="relative z-10 text-white font-black text-2xl uppercase italic tracking-tighter">Acquérir cette pièce_</span>
                                             <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-10 translate-y-10 group-hover:translate-y-0 transition-all">
                                                 <span class="text-white text-6xl font-black uppercase">CONFIRMER_</span>
                                             </div>
-                                        </a>
+                                        </button>
                                     @else
                                         <a href="#custom" class="block w-full py-8 border-4 border-black text-center font-black text-xl hover:bg-black hover:text-white transition-all uppercase tracking-tighter shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                                             S'inspirer de cet univers_

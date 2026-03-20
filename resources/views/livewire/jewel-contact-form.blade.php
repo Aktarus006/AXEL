@@ -1,4 +1,4 @@
-<div class="font-mono">
+<div class="font-mono" x-data="{}" @open-jewel-form.window="$wire.set('showForm', true)">
     @if(!$showForm)
         <button
             wire:click="$set('showForm', true)"
