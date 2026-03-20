@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Enums\Material;
 use App\Enums\Status;
+use App\Enums\Type;
 use App\Filament\Resources\JewelResource\Pages;
 use App\Filament\Resources\JewelResource\RelationManagers;
 use App\Models\Jewel;
@@ -18,12 +19,16 @@ use Filament\Tables\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Action as FilamentAction;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 
 class JewelResource extends Resource
 {
     protected static ?string $model = Jewel::class;
 
     protected static ?string $navigationIcon = "heroicon-o-rectangle-stack";
+
+    protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Form $form): Form
     {
@@ -34,22 +39,23 @@ class JewelResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('media')
-                    ->label('Images')
+                Tables\Columns\ImageColumn::make('thumbnail')
+                    ->label('Aperçu')
                     ->circular()
-                    ->stacked()
-                    ->limit(2)
-                    ->state(function ($record): array {
-                        if (!$record) return [];
+                    ->state(function ($record): ?string {
+                        if (!$record) return null;
 
-                        $images = [];
-                        if ($packshot = $record->getFirstMedia('jewels/packshots')) {
-                            $images[] = $packshot->getUrl('thumbnail');
-                        }
+                        // Priority: 1. Lifestyle, 2. Packshot, 3. Cover
                         if ($lifestyle = $record->getFirstMedia('jewels/lifestyle')) {
-                            $images[] = $lifestyle->getUrl('thumbnail');
+                            return $lifestyle->getUrl('thumbnail');
                         }
-                        return $images;
+                        if ($packshot = $record->getFirstMedia('jewels/packshots')) {
+                            return $packshot->getUrl('thumbnail');
+                        }
+                        if ($cover = $record->getFirstMedia('jewels/cover')) {
+                            return $cover->getUrl('thumbnail');
+                        }
+                        return null;
                     }),
                 Tables\Columns\TextColumn::make("name")
                     ->label('Nom')
@@ -64,9 +70,6 @@ class JewelResource extends Resource
                     ->label('Matériaux')
                     ->badge()
                     ->color('warning')
-                    ->listWithLineBreaks()
-                    ->limitList(2)
-                    ->expandableLimitedList()
                     ->formatStateUsing(fn($state) => collect($state)->map(fn(Material $material) => ucfirst($material->value))->join(', '))
                     ->searchable(),
                 Tables\Columns\IconColumn::make("online")
@@ -89,57 +92,54 @@ class JewelResource extends Resource
                             ->title('Statut mis à jour')
                             ->success()
                             ->send();
-
-                        redirect(request()->header('Referer'));
                     }),
-                Tables\Columns\TextColumn::make("creation_date")
-                    ->label('Date de création')
-                    ->date()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make("collections.name")
                     ->label('Collections')
                     ->badge()
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make("created_at")
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make("updated_at")
+                    ->label('Créé le')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('collections')
+                    ->relationship('collections', 'name')
+                    ->multiple()
+                    ->preload(),
+                SelectFilter::make('online')
+                    ->label('Statut')
+                    ->options(Status::class),
+                SelectFilter::make('material')
+                    ->label('Matière')
+                    ->options(Material::class)
+                    ->query(function (Builder $query, array $data): Builder {
+                        if (empty($data['value'])) return $query;
+                        return $query->whereJsonContains('material', $data['value']);
+                    }),
             ])
             ->actions([
-                Action::make('switchCollection')
-                    ->label('Changer de collection')
-                    ->icon('heroicon-o-arrow-path')
-                    ->form([
-                        Forms\Components\Select::make('collections')
-                            ->label('Collections')
-                            ->multiple()
-                            ->relationship('collections', 'name')
-                            ->required()
-                            ->preload()
-                            ->default(fn(Jewel $record) => $record->collections->pluck('id')->toArray())
-                            ->searchable(),
-                    ])
-                    ->action(function (Jewel $record, array $data): void {
-                        if (isset($data['collections'])) {
-                            $record->collections()->sync($data['collections']);
-                        }
-                    })
-                    ->successNotificationTitle('Collections modifiées'),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('toggleOnline')
+                        ->label('Basculer En Ligne/Hors Ligne')
+                        ->icon('heroicon-o-arrow-path')
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records) {
+                            $records->each(function ($record) {
+                                $record->online = $record->online === Status::ONLINE ? Status::OFFLINE : Status::ONLINE;
+                                $record->save();
+                            });
+                        })
+                        ->deselectRecordsAfterCompletion(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('created_at', 'desc');
     }
 
     public static function getRelations(): array

@@ -6,6 +6,7 @@ use App\Filament\Resources\NewsResource\Pages;
 use App\Filament\Resources\NewsResource\RelationManagers;
 use App\Models\News;
 use App\Enums\Status;
+use App\Enums\Material;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -14,12 +15,15 @@ use Filament\Tables\Table;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Filters\SelectFilter;
 
 class NewsResource extends Resource
 {
     protected static ?string $model = News::class;
 
     protected static ?string $navigationIcon = "heroicon-o-rectangle-stack";
+
+    protected static ?string $recordTitleAttribute = 'title';
 
     public static function form(Form $form): Form
     {
@@ -30,8 +34,10 @@ class NewsResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make("title")->searchable(),
-                Tables\Columns\TextColumn::make("description")->searchable(),
+                Tables\Columns\TextColumn::make("title")
+                    ->label('Titre')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\IconColumn::make("online")
                     ->label('En ligne')
                     ->icon(fn(Status $state): string => match ($state) {
@@ -52,30 +58,42 @@ class NewsResource extends Resource
                             ->title('Statut mis à jour')
                             ->success()
                             ->send();
-
-                        redirect(request()->header('Referer'));
                     }),
                 Tables\Columns\TextColumn::make("creation_date")
+                    ->label('Date de création')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make("created_at")
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make("updated_at")
+                    ->label('Créé le')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('online')
+                    ->label('Statut')
+                    ->options(Status::class),
             ])
-            ->actions([Tables\Actions\EditAction::make()])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('toggleOnline')
+                        ->label('Basculer En Ligne/Hors Ligne')
+                        ->icon('heroicon-o-arrow-path')
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records) {
+                            $records->each(function ($record) {
+                                $record->online = $record->online === Status::ONLINE ? Status::OFFLINE : Status::ONLINE;
+                                $record->save();
+                            });
+                        })
+                        ->deselectRecordsAfterCompletion(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('creation_date', 'desc');
     }
 
     public static function getRelations(): array

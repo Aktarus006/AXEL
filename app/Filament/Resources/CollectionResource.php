@@ -16,12 +16,15 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TagsColumn;
+use Filament\Tables\Filters\SelectFilter;
 
 class CollectionResource extends Resource
 {
     protected static ?string $model = Collection::class;
 
     protected static ?string $navigationIcon = "heroicon-o-rectangle-stack";
+
+    protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Form $form): Form
     {
@@ -56,8 +59,6 @@ class CollectionResource extends Resource
                             ->title('Statut mis à jour')
                             ->success()
                             ->send();
-
-                        redirect(request()->header('Referer'));
                     }),
                 Tables\Columns\TextColumn::make("jewels_count")
                     ->label('Nombre de bijoux')
@@ -71,20 +72,31 @@ class CollectionResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make("updated_at")
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->reorderable('order_column')
             ->defaultSort('order_column')
             ->filters([
-                //
+                SelectFilter::make('online')
+                    ->label('Statut')
+                    ->options(Status::class),
             ])
-            ->actions([Tables\Actions\EditAction::make()])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('toggleOnline')
+                        ->label('Basculer En Ligne/Hors Ligne')
+                        ->icon('heroicon-o-arrow-path')
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records) {
+                            $records->each(function ($record) {
+                                $record->online = $record->online === Status::ONLINE ? Status::OFFLINE : Status::ONLINE;
+                                $record->save();
+                            });
+                        })
+                        ->deselectRecordsAfterCompletion(),
                 ]),
             ]);
     }

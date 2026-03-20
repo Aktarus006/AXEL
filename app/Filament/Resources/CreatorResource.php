@@ -12,12 +12,15 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Filters\TernaryFilter;
 
 class CreatorResource extends Resource
 {
     protected static ?string $model = Creator::class;
 
     protected static ?string $navigationIcon = "heroicon-o-rectangle-stack";
+
+    protected static ?string $recordTitleAttribute = 'first_name';
 
     public static function form(Form $form): Form
     {
@@ -55,25 +58,33 @@ class CreatorResource extends Resource
                     ->sortable(),
                 Tables\Columns\IconColumn::make("online")
                     ->label('En ligne')
-                    ->boolean(),
+                    ->boolean()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make("created_at")
                     ->label('Créé le')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make("updated_at")
-                    ->label('Modifié le')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                TernaryFilter::make('online')
+                    ->label('Statut En Ligne'),
             ])
-            ->actions([Tables\Actions\EditAction::make()])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('toggleOnline')
+                        ->label('Basculer En Ligne')
+                        ->icon('heroicon-o-arrow-path')
+                        ->action(fn (\Illuminate\Database\Eloquent\Collection $records) => $records->each(function ($record) {
+                            $record->online = !$record->online;
+                            $record->save();
+                        }))
+                        ->deselectRecordsAfterCompletion(),
                 ]),
             ]);
     }
