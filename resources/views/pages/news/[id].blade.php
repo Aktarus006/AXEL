@@ -152,6 +152,23 @@ view()->share('otherNews', $otherNews);
                                     </a>
                                 </div>
 
+                                <!-- External Link -->
+                                @if($article->external_url)
+                                    <div class="space-y-6">
+                                        <h3 class="text-xs font-black opacity-30 uppercase tracking-[0.3em]">Source_Externe</h3>
+                                        <a href="{{ $article->external_url }}" target="_blank" class="group block p-6 border-4 border-black bg-black text-white hover:bg-white hover:text-black transition-all relative overflow-hidden">
+                                            <div class="relative z-10">
+                                                <div class="text-[10px] font-black uppercase opacity-50 mb-2">LIEN_VERS_ARTICLE</div>
+                                                <div class="text-lg font-black uppercase tracking-tighter leading-tight">Consulter la source originale →</div>
+                                            </div>
+                                            <!-- Brutalist texture detail -->
+                                            <div class="absolute -right-2 -bottom-2 text-white/10 group-hover:text-black/5 text-6xl font-black transform rotate-12 transition-colors">
+                                                WWW
+                                            </div>
+                                        </a>
+                                    </div>
+                                @endif
+
                                 <!-- Share -->
                                 <div class="space-y-6">
                                     <h3 class="text-xs font-black opacity-30 uppercase tracking-[0.3em]">Partager</h3>

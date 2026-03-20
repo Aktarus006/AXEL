@@ -30,6 +30,7 @@ class News extends Model implements HasMedia
         "creation_date",
         "jewel_id",
         "collection_id",
+        "external_url",
     ];
 
     protected $casts = [
@@ -58,6 +59,11 @@ class News extends Model implements HasMedia
         return [
             TextInput::make("title")->label("Titre")->required(),
             RichEditor::make("description")->label("Contenu")->required(),
+            TextInput::make("external_url")
+                ->label("Lien externe (presse, site tiers, etc.)")
+                ->url()
+                ->placeholder('https://www.site-externe.com/article')
+                ->suffixIcon('heroicon-m-globe-alt'),
             SpatieMediaLibraryFileUpload::make("image")
                 ->collection("news/images")
                 ->label("Image")
