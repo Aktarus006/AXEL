@@ -222,18 +222,21 @@ view()->share('relatedJewels', $relatedJewels);
                                 <div class="pl-8">
                                     @if($jewel->price > 0)
                                         <button 
-                                            @click="document.getElementById('inquiry').scrollIntoView({behavior: 'smooth'}); $dispatch('open-jewel-form')"
+                                            @click="document.getElementById('inquiry').scrollIntoView({behavior: 'smooth'})"
                                             class="group block relative w-full p-8 bg-black hover:bg-red-700 transition-colors text-center overflow-hidden"
                                         >
-                                            <span class="relative z-10 text-white font-black text-2xl uppercase italic tracking-tighter">Acquérir cette pièce_</span>
+                                            <span class="relative z-10 text-white font-black text-2xl uppercase italic tracking-tighter">Transmettre une demande_</span>
                                             <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-10 translate-y-10 group-hover:translate-y-0 transition-all">
-                                                <span class="text-white text-6xl font-black uppercase">CONFIRMER_</span>
+                                                <span class="text-white text-6xl font-black uppercase">OUVRIR_</span>
                                             </div>
                                         </button>
                                     @else
-                                        <a href="#custom" class="block w-full py-8 border-4 border-black text-center font-black text-xl hover:bg-black hover:text-white transition-all uppercase tracking-tighter shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                                        <button 
+                                            @click="document.getElementById('custom').scrollIntoView({behavior: 'smooth'})"
+                                            class="block w-full py-8 border-4 border-black text-center font-black text-xl hover:bg-black hover:text-white transition-all uppercase tracking-tighter shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
+                                        >
                                             S'inspirer de cet univers_
-                                        </a>
+                                        </button>
                                     @endif
                                 </div>
                             </section>
@@ -328,12 +331,10 @@ view()->share('relatedJewels', $relatedJewels);
                 </template>
             </div>
 
-            <!-- Conditional Form Section -->
+            <!-- Simplified Inquiry Section -->
             @if($jewel->price > 0)
-                <section id="inquiry" class="bg-red-700 py-24 px-4 md:px-8 border-y-8 border-black">
-                    <div class="max-w-4xl mx-auto bg-white border-4 md:border-8 border-black p-4 md:p-12 lg:p-16 shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] md:shadow-[20px_20px_0px_0px_rgba(0,0,0,1)]">
-                        <h2 class="text-3xl md:text-4xl font-black uppercase mb-4 border-b-4 border-black pb-4 text-black">Demande d'acquisition</h2>
-                        <p class="font-mono text-xs md:text-sm mb-12 opacity-60 uppercase">Cette pièce est disponible immédiatement. Veuillez remplir le formulaire ci-dessous pour réserver l'objet.</p>
+                <section id="inquiry" class="bg-black py-24 px-4 md:px-8 border-y-8 border-black">
+                    <div class="max-w-4xl mx-auto shadow-[20px_20px_0px_0px_rgba(185,28,28,1)]">
                         <livewire:jewel-contact-form :jewel="$jewel" />
                     </div>
                 </section>
