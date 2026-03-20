@@ -21,7 +21,7 @@ class NewsResource extends Resource
 {
     protected static ?string $model = News::class;
 
-    protected static ?string $navigationIcon = "heroicon-o-rectangle-stack";
+    protected static ?string $navigationIcon = "heroicon-o-newspaper";
 
     protected static ?string $recordTitleAttribute = 'title';
 
@@ -34,10 +34,16 @@ class NewsResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\SpatieMediaLibraryImageColumn::make('image')
+                    ->label('Aperçu')
+                    ->collection('news/images')
+                    ->conversion('thumbnail')
+                    ->circular(),
                 Tables\Columns\TextColumn::make("title")
                     ->label('Titre')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->wrap(),
                 Tables\Columns\IconColumn::make("online")
                     ->label('En ligne')
                     ->icon(fn(Status $state): string => match ($state) {
@@ -59,20 +65,45 @@ class NewsResource extends Resource
                             ->success()
                             ->send();
                     }),
+                Tables\Columns\TextColumn::make("jewel.name")
+                    ->label('Bijou lié')
+                    ->badge()
+                    ->color('info')
+                    ->placeholder('Aucun')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make("collection.name")
+                    ->label('Série liée')
+                    ->badge()
+                    ->color('warning')
+                    ->placeholder('Aucune')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make("creators.last_name")
+                    ->label('Créateurs')
+                    ->badge()
+                    ->color('success')
+                    ->formatStateUsing(fn ($record) => $record->creators->map(fn ($c) => "{$c->first_name} {$c->last_name}")->join(', '))
+                    ->placeholder('Aucun'),
                 Tables\Columns\TextColumn::make("creation_date")
-                    ->label('Date de création')
+                    ->label('Date')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make("created_at")
-                    ->label('Créé le')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 SelectFilter::make('online')
                     ->label('Statut')
                     ->options(Status::class),
+                SelectFilter::make('jewel_id')
+                    ->label('Filtrer par bijou')
+                    ->relationship('jewel', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('collection_id')
+                    ->label('Filtrer par série')
+                    ->relationship('collection', 'name')
+                    ->searchable()
+                    ->preload(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
