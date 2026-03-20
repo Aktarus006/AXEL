@@ -10,7 +10,7 @@ $article = News::with(['media', 'jewel', 'collection', 'creators'])->where('onli
 view()->share('article', $article);
 
 // Get other recent news
-$otherNews = News::where('id', '!=', $id)->where('online', Status::ONLINE)->latest()->take(3)->get();
+$otherNews = News::where('id', '!=', $id)->where('online', Status::ONLINE)->orderBy('creation_date', 'desc')->take(3)->get();
 view()->share('otherNews', $otherNews);
 ?>
 
@@ -54,7 +54,7 @@ view()->share('otherNews', $otherNews);
                         <div class="max-w-5xl space-y-8 text-left">
                             <div class="flex items-center gap-4">
                                 <span class="bg-red-700 text-white px-3 py-1 text-xs font-black uppercase tracking-widest">Chroniques_Atelier</span>
-                                <span class="text-xs opacity-50 uppercase font-black tracking-widest">{{ $article->created_at->format('d.m.Y') }}</span>
+                                <span class="text-xs opacity-50 uppercase font-black tracking-widest">{{ $article->creation_date->format('d.m.Y') }}</span>
                             </div>
                             <h1 class="text-5xl md:text-[10vw] font-black uppercase leading-[0.85] tracking-tighter transform -skew-x-6">
                                 {{ $article->title }}
@@ -238,7 +238,7 @@ view()->share('otherNews', $otherNews);
                                         <div class="absolute inset-0 bg-red-700/0 group-hover:bg-red-700/10 transition-colors"></div>
                                     </div>
                                     <div class="space-y-2">
-                                        <div class="text-xs font-black opacity-40">{{ $other->created_at->format('d.m.Y') }}</div>
+                                        <div class="text-xs font-black opacity-40">{{ $other->creation_date->format('d.m.Y') }}</div>
                                         <h3 class="text-2xl font-black uppercase leading-tight group-hover:text-red-700 transition-colors">{{ $other->title }}</h3>
                                     </div>
                                 </a>
