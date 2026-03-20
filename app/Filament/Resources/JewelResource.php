@@ -39,24 +39,16 @@ class JewelResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('thumbnail')
-                    ->label('Aperçu')
+                Tables\Columns\SpatieMediaLibraryImageColumn::make('lifestyle_thumbnail')
+                    ->label('Lifestyle')
                     ->circular()
-                    ->state(function ($record): ?string {
-                        if (!$record) return null;
-
-                        // Priority: 1. Lifestyle, 2. Packshot, 3. Cover
-                        if ($lifestyle = $record->getFirstMedia('jewels/lifestyle')) {
-                            return $lifestyle->getUrl('thumbnail');
-                        }
-                        if ($packshot = $record->getFirstMedia('jewels/packshots')) {
-                            return $packshot->getUrl('thumbnail');
-                        }
-                        if ($cover = $record->getFirstMedia('jewels/cover')) {
-                            return $cover->getUrl('thumbnail');
-                        }
-                        return null;
-                    }),
+                    ->collection('jewels/lifestyle')
+                    ->conversion('thumbnail'),
+                Tables\Columns\SpatieMediaLibraryImageColumn::make('packshot_thumbnail')
+                    ->label('Packshot')
+                    ->circular()
+                    ->collection('jewels/packshots')
+                    ->conversion('thumbnail'),
                 Tables\Columns\TextColumn::make("name")
                     ->label('Nom')
                     ->searchable()
