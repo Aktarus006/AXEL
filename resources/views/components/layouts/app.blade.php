@@ -7,8 +7,8 @@
     
     <title>{{ config('app.name', 'Axel Englebert Bijoutier') }}</title>
 
-    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}?v=4">
-    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}?v=4">
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}?v=5">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}?v=5">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
