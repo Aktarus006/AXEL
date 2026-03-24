@@ -115,18 +115,20 @@ $collection = Collection::with(['jewels' => function($q) {
             @if($collection->hasMedia('collections'))
                 @php
                     $mediaItems = $collection->getMedia('collections')->sortBy(fn($media) => $media->getCustomProperty('order') ?? $media->order_column);
-                    $isLargeGallery = $mediaItems->count() > 10;
+                    $mediaCount = $mediaItems->count();
                 @endphp
                 
                 <section 
                     x-data="{ 
                         galleryOpen: false, 
                         currentIndex: 0,
-                        mediaCount: {{ $mediaItems->count() }},
+                        mediaCount: {{ $mediaCount }},
                         next() { this.currentIndex = (this.currentIndex + 1) % this.mediaCount },
                         prev() { this.currentIndex = (this.currentIndex - 1 + this.mediaCount) % this.mediaCount }
                     }"
                     @keydown.escape.window="galleryOpen = false"
+                    @keydown.right.window="if(galleryOpen) next()"
+                    @keydown.left.window="if(galleryOpen) prev()"
                     class="bg-neutral-100 py-24 border-t-8 border-black overflow-hidden"
                 >
                     <div class="px-8 mb-12 max-w-[1440px] mx-auto flex items-end justify-between">
@@ -134,71 +136,46 @@ $collection = Collection::with(['jewels' => function($q) {
                             L'UNIVERS_<br><span class="text-red-700">DE LA SÉRIE.</span>
                         </h2>
                         <div class="hidden md:block font-mono text-xs font-black opacity-20 text-right">
-                            EXPLORATION_VISUELLE / {{ str_pad($mediaItems->count(), 2, '0', STR_PAD_LEFT) }}_SAMPLES
+                            EXPLORATION_VISUELLE / {{ str_pad($mediaCount, 2, '0', STR_PAD_LEFT) }}_SAMPLES
                         </div>
                     </div>
 
-                    @if($isLargeGallery)
-                        <!-- Brutalist Bento Grid for 10+ images with white space -->
-                        <div class="max-w-[1440px] mx-auto px-4 md:px-8 grid grid-cols-2 md:grid-cols-12 gap-4 md:gap-6">
-                            @foreach($mediaItems as $index => $media)
-                                @php
-                                    $patterns = [
-                                        ['cols' => 'md:col-span-8', 'rows' => 'md:row-span-2'],
-                                        ['cols' => 'md:col-span-4', 'rows' => 'md:row-span-1'],
-                                        ['cols' => 'md:col-span-4', 'rows' => 'md:row-span-2'],
-                                        ['cols' => 'md:col-span-4', 'rows' => 'md:row-span-1'],
-                                        ['cols' => 'md:col-span-4', 'rows' => 'md:row-span-1'],
-                                        ['cols' => 'md:col-span-6', 'rows' => 'md:row-span-2'],
-                                        ['cols' => 'md:col-span-6', 'rows' => 'md:row-span-1'],
-                                        ['cols' => 'md:col-span-3', 'rows' => 'md:row-span-1'],
-                                        ['cols' => 'md:col-span-3', 'rows' => 'md:row-span-1'],
-                                        ['cols' => 'md:col-span-12', 'rows' => 'md:row-span-1'],
-                                    ];
-                                    $pattern = $patterns[$index % count($patterns)];
-                                @endphp
-                                <div 
-                                    @click="galleryOpen = true; currentIndex = {{ $index }}"
-                                    class="col-span-2 {{ $pattern['cols'] }} {{ $pattern['rows'] }} border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden group relative bg-white cursor-zoom-in min-h-[300px]">
-                                    @php
-                                        $shouldBeInColor = (rand(0, 100) < 30); // 30% chance to be in color by default
-                                    @endphp
+                    <!-- Brutalist Bento Grid (Always used for consistency) -->
+                    <div class="max-w-[1440px] mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6">
+                        @foreach($mediaItems as $index => $media)
+                            @php
+                                $patterns = [
+                                    ['span' => 'lg:col-span-8', 'aspect' => 'aspect-video'],
+                                    ['span' => 'lg:col-span-4', 'aspect' => 'aspect-square'],
+                                    ['span' => 'lg:col-span-4', 'aspect' => 'aspect-[3/4]'],
+                                    ['span' => 'lg:col-span-8', 'aspect' => 'aspect-video'],
+                                    ['span' => 'lg:col-span-6', 'aspect' => 'aspect-square'],
+                                    ['span' => 'lg:col-span-6', 'aspect' => 'aspect-[16/9]'],
+                                ];
+                                $pattern = $patterns[$index % count($patterns)];
+                                $shouldBeInColor = (rand(0, 100) < 30);
+                            @endphp
+                            <div 
+                                @click="galleryOpen = true; currentIndex = {{ $index }}"
+                                class="{{ $pattern['span'] }} border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden group relative bg-white cursor-zoom-in min-h-[300px]">
+                                <div class="{{ $pattern['aspect'] }} w-full h-full">
                                     <img src="{{ $media->getUrl('large') }}" 
                                          alt="Mood image for {{ $collection->name }}" 
                                          class="w-full h-full object-cover {{ $shouldBeInColor ? '' : 'grayscale' }} group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-110">
-                                    
-                                    <!-- Technical Overlay -->
-                                    <div class="absolute inset-0 bg-red-700/0 group-hover:bg-red-700/10 transition-colors pointer-events-none"></div>
-                                    <div class="absolute top-4 right-4 bg-black text-white text-[10px] px-2 py-1 font-black opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-4 group-hover:translate-x-0">
-                                        SAMPLE_{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
-                                    </div>
-                                    
-                                    <!-- Brutalist Cross -->
-                                    <div class="absolute top-0 left-0 w-4 h-4 border-r border-b border-black/20 group-hover:border-white transition-colors"></div>
-                                    <div class="absolute bottom-0 right-0 w-4 h-4 border-l border-t border-black/20 group-hover:border-white transition-colors"></div>
                                 </div>
-                            @endforeach
-                        </div>
-                    @else
-                        <!-- Standard Impact Grid for smaller sets -->
-                        <div class="max-w-[1440px] mx-auto px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            @foreach($mediaItems as $index => $media)
-                                @php
-                                    $shouldBeInColor = (rand(0, 100) < 30);
-                                @endphp
-                                <div 
-                                    @click="galleryOpen = true; currentIndex = {{ $index }}"
-                                    class="border-4 border-black bg-white shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] overflow-hidden group aspect-square md:aspect-auto md:h-96 relative cursor-zoom-in">
-                                    <img src="{{ $media->getUrl('large') }}" 
-                                         alt="Mood image for {{ $collection->name }}" 
-                                         class="w-full h-full object-cover {{ $shouldBeInColor ? '' : 'grayscale' }} group-hover:grayscale-0 transition-all duration-700 hover:scale-105">
-                                    <div class="absolute bottom-4 left-4 bg-black text-white px-2 py-1 text-[10px] font-black uppercase">
-                                        VIEW_DETAIL_{{ $index + 1 }}
-                                    </div>
+                                
+                                <!-- Technical Overlay -->
+                                <div class="absolute inset-0 bg-red-700/0 group-hover:bg-red-700/10 transition-colors pointer-events-none"></div>
+                                <div class="absolute top-4 right-4 bg-black text-white text-[10px] px-2 py-1 font-black opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-4 group-hover:translate-x-0">
+                                    SAMPLE_{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
                                 </div>
-                            @endforeach
-                        </div>
-                    @endif
+                                
+                                <!-- Brutalist Cross -->
+                                <div class="absolute top-0 left-0 w-4 h-4 border-r border-b border-black/20 group-hover:border-white transition-colors"></div>
+                                <div class="absolute bottom-0 right-0 w-4 h-4 border-l border-t border-black/20 group-hover:border-white transition-colors"></div>
+                            </div>
+                        @endforeach
+                    </div>
 
                     <!-- Brutalist Modal Gallery -->
                     <template x-teleport="body">
