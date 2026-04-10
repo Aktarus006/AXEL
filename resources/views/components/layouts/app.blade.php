@@ -28,6 +28,8 @@
         <livewire:footer />
     </div>
 
+    <x-cookie-banner />
+
     @livewireScripts
     @stack('scripts')
 </body>

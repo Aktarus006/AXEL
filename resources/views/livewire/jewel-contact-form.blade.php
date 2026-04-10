@@ -10,6 +10,7 @@ state([
     'name' => '',
     'email' => '',
     'message' => '',
+    'consent' => false,
     'success' => false,
 ]);
 
@@ -17,6 +18,7 @@ rules([
     'name' => 'required|min:2',
     'email' => 'required|email',
     'message' => 'required|min:10',
+    'consent' => 'accepted'
 ]);
 
 $submit = function () {
@@ -34,6 +36,7 @@ $submit = function () {
         $this->name = '';
         $this->email = '';
         $this->message = '';
+        $this->consent = false;
     } catch (\Exception $e) {
         Log::error('Jewel inquiry error: ' . $e->getMessage());
         $this->addError('submit', 'Erreur lors de l\'envoi.');
@@ -102,6 +105,22 @@ $submit = function () {
             ></textarea>
             @error('message') <span class="text-red-700 text-[10px] font-black uppercase mt-1 block">{{ $message }}</span> @enderror
         </div>
+
+        <!-- Consent Checkbox -->
+        <div class="mb-10 flex items-start gap-3">
+            <div class="flex items-center h-5">
+                <input 
+                    id="consent-jewel"
+                    type="checkbox"
+                    wire:model="consent"
+                    class="w-5 h-5 border-2 border-black text-red-700 focus:ring-red-700 rounded-none cursor-pointer"
+                >
+            </div>
+            <label for="consent-jewel" class="text-[9px] md:text-[10px] uppercase tracking-widest font-black text-black/60 cursor-pointer">
+                J'ACCEPTE QUE MES DONNÉES SOIENT TRAITÉES CONFORMÉMENT À LA <a href="/politique-de-confidentialite" class="underline hover:text-red-700" target="_blank">POLITIQUE_DE_CONFIDENTIALITÉ</a>.
+            </label>
+        </div>
+        @error('consent') <div class="text-red-700 text-[10px] uppercase mb-4 font-black">{{ $message }}</div> @enderror
 
         <!-- Submit Button -->
         <div class="flex justify-between items-end gap-4 md:gap-8">

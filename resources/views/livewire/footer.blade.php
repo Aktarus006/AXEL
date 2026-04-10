@@ -27,7 +27,8 @@ use function Livewire\Volt\{state};
             <div class="font-mono text-xs md:text-sm text-white/60 uppercase tracking-widest">
                 Surgical Precision // Brutalist Aesthetics // Eternal Materials
             </div>
-            <div class="pt-4 border-t-4 border-white md:w-full">
+            <div class="pt-4 border-t-4 border-white md:w-full flex flex-col md:flex-row items-center md:justify-end gap-4">
+                <a href="/politique-de-confidentialite" class="font-mono text-white/60 hover:text-white transition-colors uppercase text-[10px] md:text-xs">POLITIQUE_DE_CONFIDENTIALITÉ</a>
                 <a href="#" class="font-mono text-white hover:text-red-600 transition-colors uppercase font-black" aria-label="Retourner en haut de la page">Back to Top ↑</a>
             </div>
         </div>

@@ -65,7 +65,7 @@ view()->share('newsGrouped', $newsGrouped);
                             <!-- Content Section (7 Cols) -->
                             <div class="md:col-span-7 p-8 md:p-16 flex flex-col justify-center space-y-6">
                                 <div class="space-y-2">
-                                    <span class="text-xs font-black uppercase tracking-[0.3em] text-red-700">Actualités_Atelier</span>
+                                    <span class="text-xs font-black uppercase tracking-[0.3em] text-red-700">Articles_Atelier</span>
                                     <h2 class="text-4xl md:text-6xl font-black uppercase leading-none tracking-tighter group-hover:translate-x-4 transition-transform duration-500">
                                         {{ $article->title }}
                                     </h2>

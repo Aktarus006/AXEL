@@ -34,7 +34,7 @@ use function Livewire\Volt\{state};
             <nav class="hidden lg:flex items-center space-x-8" aria-label="Navigation principale">
                 <a href="/jewels" class="font-mono text-lg font-bold uppercase hover:text-red-700 focus:outline-none transition-colors tracking-tight">Bijoux</a>
                 <a href="/collections" class="font-mono text-lg font-bold uppercase hover:text-red-700 focus:outline-none transition-colors tracking-tight">Collections</a>
-                <a href="/news" class="font-mono text-lg font-bold uppercase hover:text-red-700 focus:outline-none transition-colors tracking-tight">Actualités</a>
+                <a href="/news" class="font-mono text-lg font-bold uppercase hover:text-red-700 focus:outline-none transition-colors tracking-tight">Articles</a>
                 <a href="/#about" class="font-mono text-lg font-bold uppercase hover:text-red-700 focus:outline-none transition-colors tracking-tight">L'Atelier</a>
                 <a href="/#contact" class="px-6 py-3 bg-black text-white font-mono font-bold uppercase hover:bg-red-700 focus:outline-none transition-all transform hover:-translate-y-1 active:translate-y-0">
                     Contact
@@ -68,7 +68,7 @@ use function Livewire\Volt\{state};
             <nav class="flex flex-col p-8 space-y-6">
                 <a href="/jewels" @click="mobileMenuOpen = false" class="font-mono text-4xl font-black uppercase hover:text-red-700 focus:bg-black focus:text-white px-2 transition-colors">Bijoux</a>
                 <a href="/collections" @click="mobileMenuOpen = false" class="font-mono text-4xl font-black uppercase hover:text-red-700 focus:bg-black focus:text-white px-2 transition-colors">Collections</a>
-                <a href="/news" @click="mobileMenuOpen = false" class="font-mono text-4xl font-black uppercase hover:text-red-700 focus:bg-black focus:text-white px-2 transition-colors">Actualités</a>
+                <a href="/news" @click="mobileMenuOpen = false" class="font-mono text-4xl font-black uppercase hover:text-red-700 focus:bg-black focus:text-white px-2 transition-colors">Articles</a>
                 <a href="/#about" @click="mobileMenuOpen = false" class="font-mono text-4xl font-black uppercase hover:text-red-700 focus:bg-black focus:text-white px-2 transition-colors">L'Atelier</a>
                 <a href="/#contact" @click="mobileMenuOpen = false" class="font-mono text-4xl font-black uppercase bg-black text-white p-4 text-center focus:bg-red-700 transition-colors">Contact</a>
             </nav>

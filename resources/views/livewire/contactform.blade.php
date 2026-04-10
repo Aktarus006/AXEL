@@ -9,6 +9,7 @@ state([
     'name' => '',
     'email' => '',
     'message' => '',
+    'consent' => false,
     'success' => false,
     'error' => false,
 ]);
@@ -16,7 +17,8 @@ state([
 rules([
     'name' => 'required|min:2',
     'email' => 'required|email',
-    'message' => 'required|min:10'
+    'message' => 'required|min:10',
+    'consent' => 'accepted'
 ]);
 
 $submit = function() {  Log::info('Contact form submit function called');
@@ -36,6 +38,7 @@ $submit = function() {  Log::info('Contact form submit function called');
         $this->name = '';
         $this->email = '';
         $this->message = '';
+        $this->consent = false;
     } catch (\Exception $e) {
         Log::error('Contact form error: ' . $e->getMessage());
         $this->error = true;
@@ -91,6 +94,22 @@ $submit = function() {  Log::info('Contact form submit function called');
                 placeholder="DÉCRIVEZ VOTRE DEMANDE ICI..."
             ></textarea>
             @error('message') <span class="text-red-700 text-xs mt-1 uppercase">{{ $message }}</span> @enderror
+        </div>
+
+        <!-- Consent Checkbox -->
+        <div class="mb-12 flex items-start gap-4">
+            <div class="flex items-center h-6">
+                <input 
+                    id="consent"
+                    type="checkbox"
+                    wire:model="consent"
+                    class="w-6 h-6 border-2 border-black text-red-700 focus:ring-red-700 rounded-none cursor-pointer"
+                >
+            </div>
+            <label for="consent" class="text-[10px] md:text-xs uppercase tracking-widest font-black text-black/60 cursor-pointer">
+                J'ACCEPTE QUE MES DONNÉES SOIENT TRAITÉES CONFORMÉMENT À LA <a href="/politique-de-confidentialite" class="underline hover:text-red-700" target="_blank">POLITIQUE_DE_CONFIDENTIALITÉ</a>.
+            </label>
+            @error('consent') <div class="text-red-700 text-[10px] md:text-xs uppercase mt-1">{{ $message }}</div> @enderror
         </div>
 
         <!-- Submit Button -->
