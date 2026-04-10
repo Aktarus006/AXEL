@@ -21,7 +21,7 @@
                         Le responsable du traitement des données est :<br>
                         <strong>Axel Englebert</strong><br>
                         Liège, Belgique<br>
-                        Email : contact@axel.com (à confirmer)<br>
+                        Email : axel.englebert.atelier@gmail.com<br>
                         Téléphone : 0499/62.51.95
                     </p>
                 </section>
