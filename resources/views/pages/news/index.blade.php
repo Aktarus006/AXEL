@@ -65,9 +65,9 @@ view()->share('newsGrouped', $newsGrouped);
                 @foreach($featuredNews as $article)
                     <div class="group border-b-8 border-black last:border-b-0 hover:bg-black hover:text-white transition-all duration-500 overflow-hidden">
                         <div class="w-full max-w-[1920px] mx-auto">
-                            <a href="/news/{{ $article->id }}" class="flex flex-col lg:grid lg:grid-cols-12 items-stretch">
-                                <!-- Big Featured Image (7 Cols) -->
-                                <div class="w-full lg:col-span-7 border-b-8 lg:border-b-0 lg:border-r-8 border-black overflow-hidden relative bg-neutral-200 aspect-video lg:aspect-auto">
+                            <a href="/news/{{ $article->id }}" class="flex flex-col lg:grid lg:grid-cols-2 items-stretch lg:max-h-[600px]">
+                                <!-- Big Featured Image (6 Cols) -->
+                                <div class="w-full lg:h-full border-b-8 lg:border-b-0 lg:border-r-8 border-black overflow-hidden relative bg-neutral-200 aspect-video lg:aspect-auto">
                                     @if($article->hasMedia('news/images'))
                                         <img
                                             src="{{ $article->getFirstMediaUrl('news/images', 'large') }}"
@@ -81,19 +81,19 @@ view()->share('newsGrouped', $newsGrouped);
                                     </div>
                                 </div>
 
-                                <!-- Content Section (5 Cols) -->
-                                <div class="w-full lg:col-span-5 p-8 md:p-12 lg:p-20 flex flex-col justify-center space-y-6 md:space-y-8">
+                                <!-- Content Section (6 Cols) -->
+                                <div class="w-full p-8 md:p-12 lg:p-16 flex flex-col justify-center space-y-6 md:space-y-8">
                                     <div class="space-y-4">
                                         <div class="flex items-center gap-4">
                                             <span class="text-xs font-black uppercase tracking-[0.3em] text-red-700 group-hover:text-red-500">Articles_Atelier</span>
                                             <span class="text-[10px] md:text-xs font-black opacity-30 group-hover:opacity-100 uppercase">{{ $article->creation_date->format('d.m.Y') }}</span>
                                         </div>
-                                        <h2 class="text-4xl md:text-5xl lg:text-7xl font-black uppercase leading-[0.9] tracking-tighter group-hover:translate-x-4 transition-transform duration-500 break-words">
+                                        <h2 class="text-4xl md:text-5xl lg:text-6xl font-black uppercase leading-[0.9] tracking-tighter group-hover:translate-x-4 transition-transform duration-500 break-words">
                                             {{ $article->title }}
                                         </h2>
                                     </div>
 
-                                    <div class="prose prose-sm font-mono text-black/60 group-hover:text-white/80 max-w-xl transition-colors duration-500 leading-relaxed">
+                                    <div class="prose prose-sm font-mono text-black/60 group-hover:text-white/80 max-w-xl transition-colors duration-500 leading-relaxed line-clamp-3 lg:line-clamp-4">
                                         {{ Str::limit(strip_tags(html_entity_decode($article->description)), 250) }}
                                     </div>
 
