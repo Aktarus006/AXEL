@@ -44,17 +44,14 @@
         }
         if (this.dragging && this.dropping && this.dragging.collection_name !== this.dropping) {
             console.log('Moving media from', this.dragging.collection_name, 'to', this.dropping);
-            Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id')).moveMedia(this.dragging.id, this.dropping);
+            $wire.moveMedia(this.dragging.id, this.dropping);
         }
         this.dragging = null;
         this.dropping = null;
     },
     deleteMedia(mediaId) {
         if (confirm('Êtes-vous sûr de vouloir supprimer cette image ?')) {
-            const livewireComponent = Livewire.find(
-                document.querySelector('[wire\\:id]').getAttribute('wire:id')
-            );
-            livewireComponent.call('deleteMedia', mediaId);
+            $wire.deleteMedia(mediaId);
         }
     },
     openPreview(media) {

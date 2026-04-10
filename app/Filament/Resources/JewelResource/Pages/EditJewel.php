@@ -107,28 +107,58 @@ class EditJewel extends EditRecord
         }
     }
 
+    #[On("media-uploaded")]
+    #[On("media-moved")]
+    #[On("media-deleted")]
+    public function refresh()
+    {
+        $this->record->refresh();
+    }
+
     public function moveMedia($mediaId, $toCollection)
     {
-        $allowedCollections = ["jewels/packshots", "jewels/lifestyle"];
-        if (!in_array($toCollection, $allowedCollections)) {
-            throw new \Exception("Collection non autorisée");
-        }
-        
-        $media = $this->record->media()->find($mediaId);
-        if ($media) {
-            $media->move($this->record, $toCollection);
-            Notification::make()->success()->title("Image déplacée")->send();
-            $this->dispatch("media-moved");
+        try {
+            Log::info("Moving media {$mediaId} to {$toCollection}");
+            $allowedCollections = ["jewels/packshots", "jewels/lifestyle"];
+            if (!in_array($toCollection, $allowedCollections)) {
+                throw new \Exception("Collection non autorisée: {$toCollection}");
+            }
+            
+            $media = $this->record->media()->find($mediaId);
+            if ($media) {
+                $media->move($this->record, $toCollection);
+                Notification::make()->success()->title("Image déplacée")->send();
+                $this->dispatch("media-moved");
+            } else {
+                Log::warning("Media {$mediaId} not found for moving.");
+                Notification::make()->danger()->title("Image introuvable")->send();
+            }
+        } catch (\Exception $e) {
+            Log::error("Error moving media: " . $e->getMessage());
+            Notification::make()->danger()->title("Erreur lors du déplacement")->body($e->getMessage())->send();
         }
     }
 
     public function deleteMedia($mediaId)
     {
-        $media = $this->record->media()->find($mediaId);
-        if ($media) {
-            $media->delete();
-            Notification::make()->success()->title("Image supprimée")->send();
-            $this->dispatch("media-deleted");
+        try {
+            Log::info("Attempting to delete media {$mediaId}");
+            $media = $this->record->media()->find($mediaId);
+            if ($media) {
+                Log::info("Media found, deleting: " . $media->file_name);
+                $media->delete();
+                Notification::make()->success()->title("Image supprimée")->send();
+                $this->dispatch("media-deleted");
+            } else {
+                Log::warning("Media {$mediaId} not found for deletion.");
+                Notification::make()->danger()->title("Image introuvable")->send();
+            }
+        } catch (\Exception $e) {
+            Log::error("Error deleting media: " . $e->getMessage(), [
+                'mediaId' => $mediaId,
+                'exception' => $e
+            ]);
+            Notification::make()->danger()->title("Erreur lors de la suppression")->body($e->getMessage())->send();
         }
     }
 }
