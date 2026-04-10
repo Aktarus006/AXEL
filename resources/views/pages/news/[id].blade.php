@@ -9,8 +9,8 @@ $article = News::with(['media', 'jewel', 'collection', 'creators'])->where('onli
 // Ensure variables are available
 view()->share('article', $article);
 
-// Get other recent news
-$otherNews = News::where('id', '!=', $id)->where('online', Status::ONLINE)->orderBy('creation_date', 'desc')->take(3)->get();
+// Get other random news
+$otherNews = News::where('id', '!=', $id)->where('online', Status::ONLINE)->inRandomOrder()->take(3)->get();
 view()->share('otherNews', $otherNews);
 ?>
 

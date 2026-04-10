@@ -2,11 +2,18 @@
 use App\Models\News;
 use App\Enums\Status;
 
+$featuredNews = News::where('online', Status::ONLINE)
+    ->where('featured', true)
+    ->orderBy('creation_date', 'desc')
+    ->get();
+
 $newsGrouped = News::where('online', Status::ONLINE)
+    ->where('featured', false)
     ->orderBy('creation_date', 'desc')
     ->get()
     ->groupBy(fn($item) => $item->creation_date->format('Y'));
 
+view()->share('featuredNews', $featuredNews);
 view()->share('newsGrouped', $newsGrouped);
 ?>
 
@@ -41,6 +48,58 @@ view()->share('newsGrouped', $newsGrouped);
 
         <!-- News Editorial Grid -->
         <div class="max-w-[1440px] mx-auto border-x-8 border-black">
+            
+            @if($featuredNews->isNotEmpty())
+                <!-- Featured Section Header -->
+                <div class="bg-red-700 text-white p-8 border-b-8 border-black flex items-center justify-between">
+                    <h2 class="text-4xl font-black italic transform -skew-x-12 tracking-tighter uppercase">À_LA_UNE</h2>
+                    <div class="h-px flex-1 bg-white/20 mx-8"></div>
+                    <span class="text-xs font-black opacity-60 uppercase tracking-[0.3em]">SÉLECTION_ÉDITORIALE</span>
+                </div>
+
+                @foreach($featuredNews as $article)
+                    <div class="group border-b-8 border-black last:border-b-0 hover:bg-black hover:text-white transition-all duration-500">
+                        <a href="/news/{{ $article->id }}" class="grid grid-cols-1 lg:grid-cols-12 items-stretch min-h-[500px]">
+                            <!-- Big Featured Image (7 Cols) -->
+                            <div class="lg:col-span-7 border-b-4 lg:border-b-0 lg:border-r-8 border-black overflow-hidden relative bg-neutral-200">
+                                @if($article->hasMedia('news/images'))
+                                    <img
+                                        src="{{ $article->getFirstMediaUrl('news/images', 'large') }}"
+                                        alt="{{ $article->title }}"
+                                        class="w-full h-full object-cover transition-all duration-[2000ms] grayscale group-hover:grayscale-0 group-hover:scale-105"
+                                    >
+                                @endif
+                                <div class="absolute inset-0 bg-red-700/0 group-hover:bg-red-700/5 transition-colors duration-500"></div>
+                                <div class="absolute top-8 left-8 bg-black text-white px-4 py-2 text-xs font-black uppercase tracking-widest border-2 border-white">
+                                    FEATURED_ARTICLE
+                                </div>
+                            </div>
+
+                            <!-- Content Section (5 Cols) -->
+                            <div class="lg:col-span-5 p-12 lg:p-20 flex flex-col justify-center space-y-8">
+                                <div class="space-y-4">
+                                    <div class="flex items-center gap-4">
+                                        <span class="text-xs font-black uppercase tracking-[0.3em] text-red-700 group-hover:text-red-500">Articles_Atelier</span>
+                                        <span class="text-xs font-black opacity-30 group-hover:opacity-100 uppercase">{{ $article->creation_date->format('d.m.Y') }}</span>
+                                    </div>
+                                    <h2 class="text-5xl lg:text-7xl font-black uppercase leading-[0.9] tracking-tighter group-hover:translate-x-4 transition-transform duration-500">
+                                        {{ $article->title }}
+                                    </h2>
+                                </div>
+
+                                <div class="prose prose-sm font-mono text-black/60 group-hover:text-white/80 max-w-xl transition-colors duration-500 leading-relaxed">
+                                    {{ Str::limit(strip_tags(html_entity_decode($article->description)), 250) }}
+                                </div>
+
+                                <div class="flex items-center gap-4 pt-4">
+                                    <span class="font-black text-2xl underline underline-offset-8 decoration-8 decoration-red-700 group-hover:decoration-white transition-all">LIRE_L'ARTICLE_</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                @endforeach
+            @endif
+
             @forelse ($newsGrouped as $year => $articles)
                 <!-- Year Header -->
                 <div class="bg-black text-white p-8 border-b-8 border-black flex items-center justify-between">

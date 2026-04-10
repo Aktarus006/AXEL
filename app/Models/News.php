@@ -27,6 +27,7 @@ class News extends Model implements HasMedia
         "title",
         "description",
         "online",
+        "featured",
         "creation_date",
         "jewel_id",
         "collection_id",
@@ -36,6 +37,7 @@ class News extends Model implements HasMedia
     protected $casts = [
         "id" => "integer",
         "online" => Status::class,
+        "featured" => "boolean",
         "creation_date" => "date",
     ];
 
@@ -83,6 +85,10 @@ class News extends Model implements HasMedia
                 ->options(Status::class)
                 ->inline()
                 ->default(Status::OFFLINE),
+            Toggle::make("featured")
+                ->label("Mettre en avant (Featured)")
+                ->default(false)
+                ->helperText("Les articles mis en avant apparaissent en haut de la liste."),
             DatePicker::make("creation_date")
                 ->label("Date de création")
                 ->required(),
