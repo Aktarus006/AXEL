@@ -82,7 +82,7 @@ view()->share('newsGrouped', $newsGrouped);
                                 </div>
 
                                 <!-- Content Section (6 Cols) -->
-                                <div class="w-full p-8 md:p-12 lg:p-16 flex flex-col justify-center space-y-6 md:space-y-8">
+                                <div class="w-full p-8 md:p-12 lg:p-16 flex flex-col justify-start space-y-6 md:space-y-8">
                                     <div class="space-y-4">
                                         <div class="flex items-center gap-4">
                                             <span class="text-xs font-black uppercase tracking-[0.3em] text-red-700 group-hover:text-red-500">Articles_Atelier</span>
